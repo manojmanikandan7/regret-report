@@ -1,0 +1,572 @@
+% Word count aim: 4000-4500
+% current: 3165
+\chapter{Background}
+\label{cha:backg}
+
+
+\section{Computational Problems}
+
+\subsection{Problem Formulations}
+% Define problem instances and problem classes.
+% Distinguish between decision, search, and optimization problems.
+% Clarify deterministic vs. stochastic problem formulations.
+
+A \textit{computational problem} is a formal specification of a task defined over a set of
+\textit{problem instances}. Each instance encodes the input data relevant to a particular
+occurrence of the problem. The \textit{problem class} describes the collection of all
+such problem instances together with the corresponding output requirements.~\cite{HOOS200513}
+ 
+Problems are broadly categorized by the nature of their required output. 
+\begin{itemize}
+    \item A \textit{decision problem} demands a binary answer, whether a given instance satisfies some property. 
+    \item A \textit{search problem} asks for the construction of an explicit solution
+    satisfying a specified property, such as a feasible assignment or a path in a graph.
+    \item An \textit{optimization problem} further requires that the returned solution be optimal (or near-optimal) with respect to some objective function.~\cite{HOOS200513}
+\end{itemize}
+
+A further distinction concerns the role of randomness in the problem formulation. In a
+\textit{deterministic} formulation, both the instance and every algorithm operating on it are fully specified without any probabilistic component. In a \textit{stochastic}
+formulation, the instance itself, the objective evaluations, or the algorithm may involve randomness. Noisy objective functions, where repeated evaluation of the same candidate
+solution may return different values, are a canonical example and arise naturally in
+simulation-based and real-world settings.
+
+\subsection{Algorithms}
+\subsubsection{Algorithm Properties}
+\paragraph{Deterministic and Randomized Algorithms. }
+% Definitions and differences.
+
+\paragraph{Adaptive vs. Non-Adaptive Algorithms}
+% Sequential decision processes.
+% Role of feedback.
+
+\subsubsection{Oracle-Based Computation}
+% Definition of oracle access.
+% Query-response interaction model.
+
+An \textit{oracle} is an abstract computational device that answers queries about a
+problem instance. In optimization, the most common oracle is the \textit{function
+evaluation oracle}, which, given a query point $x \in \mathcal{X}$, returns the
+objective value $f(x)$ (or a noisy estimate thereof). The algorithm interacts with the
+oracle in a \textit{query-response} model: it submits a query and receives a response
+before deciding on the next query. The total number of such interactions constitutes the
+\textit{query complexity} of the algorithm, formalized in
+Section~\ref{subsubsec:infocomplexity}~\cite{nocedal2006numerical, droste2006blackbox}.
+
+
+
+\subsection{Search Space}
+\subsubsection{Structure of the Search Space}
+% Finite vs. infinite spaces.
+% Discrete vs. continuous domains.
+% Combinatorial vs. geometric domains.
+
+The \textit{search space} $\mathcal{X}$ is the set of all candidate solutions considered
+by an algorithm. Search spaces may be \textit{finite} or \textit{infinite}, and
+\textit{discrete} or \textit{continuous}. 
+ 
+Discrete combinatorial search spaces, in particular the Boolean hypercube $\{0,1\}^n$, are central to the theoretical analysis of evolutionary algorithms (\acrshort{ea}) and other randomized search
+heuristics~\cite{droste2002analysis,HOOS200561} used in theoretical \acrshort{bbo} analysis. 
+Continuous spaces $\mathbb{R}^d$ arise in numerical optimization~\cite{nocedal2006numerical}, and mixed spaces containing both discrete and continuous variables occur in practice but are considerably harder to
+analyze~\cite{audet2017derivative}.
+ 
+The structure of the search space, and in particular how neighboring solutions relate to
+one another, fundamentally influences the difficulty of optimization. This is encoded by
+a \textit{neighborhood function} $\mathcal{N} : \mathcal{X} \to 2^{\mathcal{X}}$,
+assigning to each candidate solution the set of solutions reachable in a single step!CITE: Hoos and Stützle - 2005 - INTRODUCTION!.
+For the Boolean hypercube, the standard neighborhood consists of all strings at Hamming
+distance one !CITE: a resource using hamming distance!.
+
+\begin{remark}[Problem domain of interest]
+This project is concerned with \emph{Pseudo-Boolean, Combinatorial Optimization problems}, with solution space $\mathcal{X} \subseteq \{0,1\}^n$. A candidate solution can be represented as a \emph{bitstring}: a sequence of alphabets $a \in \{0,1\}$. The objective functions considered for such problems are of the form $f:\mathcal{X} \to \mathbb{R}_0^+$, where $\mathbb{R}_0^+$ denotes the non-negative reals. Without loss of generality, an objective function with co-domain $\mathcal{T} \subseteq \mathbb{R}$ can be mapped to this convention via the affine shift
+\[
+    g: \mathbb{R} \to \mathbb{R}_0^+, \qquad g(x) = x - \min_{y \in \mathcal{X}} f(y),
+\]
+which is well-defined whenever $f$ attains its minimum on $\mathcal{X}$, and preserves the ordering of all objective values by construction.
+\end{remark}
+
+
+\subsubsection{Constraints and Feasibility}
+% Feasible region definition.
+% Constrained vs. unconstrained problems.
+
+In a \textit{constrained} optimization problem, the \textit{feasible region}
+$\mathcal{F} \subseteq \mathcal{X}$ is defined by one or more constraints that a valid
+solution must satisfy~\cite{nocedal2006numerical, bertsekas2009convex}. 
+An \textit{unconstrained} problem places no restriction beyond
+membership in $\mathcal{X}$. Constraints may be \textit{hard} (a solution violating them
+is inadmissible) or \textit{soft} (violations are penalized in the objective). The
+boundary of the feasible region can significantly complicate optimization, particularly
+for local search methods that may generate infeasible intermediate solutions.
+
+\subsection{Objective Functions and Landscape Properties}
+
+The geometric structure of the objective function determines both which algorithms are
+applicable and what convergence guarantees are attainable. A central organizing
+principle is that access to higher-order analytical information about $f$, i.e., gradients, 
+curvature, or structural properties such as convexity, generally enables stronger
+theoretical guarantees and more efficient algorithms; restricting this access,
+as in the black-box setting, correspondingly limits what can be guaranteed.
+ 
+\subsubsection{Zeroth-, First-, and Second-Order Methods}
+% Keep existing content; add forward reference to §2.2 (BBO = zeroth-order world)
+ 
+Optimization algorithms can be classified by the order of analytical information they
+require from $f$. This \textit{information hierarchy} has three tiers.
+ 
+\textit{Zeroth-order} methods use only evaluations of $f(x)$, with no gradient or
+curvature information. The algorithm observes only the output of the function evaluation
+oracle at each queried point and must infer search directions from comparisons of
+objective values alone. This exactly describes the black-box model formalized in
+Section~\ref{sec:bbo}: when the internal structure of $f$ is inaccessible or
+analytically intractable, zeroth-order methods are the only option. Their weaker
+information access is the fundamental reason black-box optimization is harder in
+general than white-box optimization, and it is the regime in which all algorithms
+studied in this project operate.
+ 
+\textit{First-order} methods additionally access the gradient $\nabla f(x) \in
+\mathbb{R}^d$, which encodes the direction of steepest ascent at $x$. For a
+differentiable function $f : \mathbb{R}^d \to \mathbb{R}$, gradient-based methods
+exploit this to define descent directions and form the backbone of classical continuous
+optimization~\cite{nocedal2006numerical}. When $f$ is convex but non-differentiable,
+the gradient generalizes to the \textit{subdifferential} $\partial f(x)$, the set of
+all \textit{subgradients} $g$ satisfying
+\[
+  f(y) \geq f(x) + g^\top(y - x) \quad \forall\, y \in \mathbb{R}^d.
+\]
+Subgradient methods replace the gradient with any element of $\partial f(x)$, recovering
+convergence under convexity alone, albeit at rates slower than those attainable with
+smooth gradients~\cite{bertsekas2009convex}.
+ 
+\textit{Second-order} methods further access the Hessian $\nabla^2 f(x) \in
+\mathbb{R}^{d \times d}$, which captures local curvature. Methods that utilize or
+approximate the Hessian, such as Newton and quasi-Newton schemes, can achieve
+superlinear or quadratic convergence near a solution~\cite{nocedal2006numerical}, at the
+cost of maintaining a $d \times d$ matrix.
+ 
+Together, these three tiers define distinct levels of oracle access, and their
+availability directly governs the choice and efficiency of applicable algorithms. The
+move from second-order to zeroth-order corresponds to progressively weaker assumptions
+about what the oracle reveals, culminating in the black-box model where only function
+values are observable.
+ 
+\subsubsection{Landscape Properties}
+ 
+The following geometric properties of $f$ characterize which tier of analytical
+information is both available and useful.
+ 
+\paragraph{Convexity.}
+A function $f : \mathbb{R}^d \to \mathbb{R}$ is \textit{convex} if for all
+$x, y \in \mathbb{R}^d$ and $\lambda \in [0,1]$~\cite{bertsekas2009convex},
+\[
+  f\!\left(\lambda x + (1-\lambda)y\right) \leq \lambda f(x) + (1-\lambda)f(y).
+\]
+Convexity guarantees that every local minimum is global, rendering the landscape
+tractable for first-order methods. \textit{Strong convexity} additionally requires
+\[
+  f(y) \geq f(x) + \nabla f(x)^\top(y - x) + \tfrac{\mu}{2}\|y - x\|^2
+\]
+for some $\mu > 0$, implying a unique global minimum and linear convergence rates for
+gradient descent~!CITE: Nesterov 2004!.
+ 
+\paragraph{Smoothness and Lipschitz Continuity.}
+% TODO
+ 
+\paragraph{Ruggedness and Multimodality.}
+% - Multiple local optima, deceptive gradients, epistatic interactions
+% - Motivates heuristic / stochastic methods: no first-order structure to exploit
+% - Forward reference to NK-landscapes as a tunable model of ruggedness
+
+\subsection{Complexity Measures}
+\subsubsection{Classical Complexity: Time and Space}
+% Standard asymptotic measures.
+
+\subsubsection{Information Complexity: Query and Oracle Complexity}
+\label{subsubsec:infocomplexity}
+% Number of oracle calls as complexity measure.
+
+\subsubsection{Expected vs. Worst-Case Analysis}
+% Runtime notions in randomized algorithms.
+
+
+\subsection{Probabilistic Tools for Algorithm Analysis}
+\subsubsection{Expectation and Variance}
+\subsubsection{Concentration Inequalities}
+\paragraph{Markov's Inequality. }
+\paragraph{Chebyshev's Inequality. }
+\paragraph{Chernoff Bounds. }
+
+\newpage
+
+\section{Black-Box Optimization}
+\label{sec:bbo}
+
+\subsection{The Black-Box Model}
+% Formal oracle model.
+% Zeroth-order information.
+% Information revealed per query.
+
+In the \textit{black-box optimization} model, the algorithm has no access to the
+analytical form of the objective function. It interacts with the objective exclusively
+through an oracle that, upon receiving a query $x \in \mathcal{X}$, returns $f(x)$ (or
+a noisy estimate thereof)~\cite{droste2006blackbox,doerr2020theory,lengler2019drift}. 
+This constitutes \textit{zeroth-order} information: no gradient or higher-order information is available.
+The black-box model is appropriate whenever the objective arises from a simulation,
+physical experiment, or any process whose internal structure is inaccessible or too
+complex to exploit analytically.
+
+
+\subsubsection{Variants of Black-Box Models}
+% Unrestricted model.
+% Ranking-based model.
+% Memory-restricted model.
+
+
+\subsection{White-Box vs. Black-Box Optimization}
+% - What structural knowledge white-box methods exploit
+% - Gradient availability as the dividing line
+% - Computational trade-offs: information richness vs. access cost
+
+\subsection{Black-Box Complexity}
+\label{subsec:bb-complexity}
+% - Definition: minimum number of queries any algorithm requires in the worst case
+%   to solve a given problem class  [droste2006blackbox]
+% - Yao's Minimax Principle: lower bounds via distributions over instances
+% - Upper bounds (algorithmic) and lower bounds (information-theoretic)
+% - Comparison-based lower bounds (sorting analogy)
+% - What these results say about the hardness of combinatorial BBO
+
+\subsection{Purpose of Randomized Search Heuristics}
+% Explain why, given the BBO setting, one turns to general-purpose
+% stochastic methods rather than problem-specific exact algorithms.
+%
+% - No-Free-Lunch Theorems: statement and implications for algorithm comparison
+%   [wolpert1997no or similar]
+%   No universally superior algorithm exists across all problem instances;
+%   the choice of algorithm embeds implicit assumptions about problem structure.
+% - Practical consequences:
+%     When the function structure is unknown, heuristic methods are natural
+%     When exact methods are computationally infeasible (NP-hard instances),
+%     anytime heuristics offer the best available solution within a budget
+%     Stochasticity enables escape from local optima that deterministic
+%     local search cannot avoid
+% - Taxonomy of derivative-free / black-box methods:
+%     Exact DFO (Nelder-Mead, pattern search, model-based DFO)
+%     Bayesian Optimization (Gaussian process surrogate + acquisition)
+%     Evolutionary / population-based heuristics
+%     Single-solution local search heuristics
+%     Simulated Annealing and other acceptance-criterion methods
+% - Scope of this project: randomized single- and population-based heuristics
+%   on combinatorial / pseudo-Boolean domains
+ 
+\subsubsection{No-Free-Lunch Theorems}
+ 
+\subsubsection{Taxonomy of Derivative-Free Methods}
+% Brief map of the full space; help the reader locate RSHs within it
+
+
+\subsection{Randomized Search Heuristic Algorithms}
+
+
+\subsubsection[\texorpdfstring{Evolutionary Algorithms (EA)}{Evolutionary Algorithms (EA)}]{Evolutionary Algorithms (\acrshort{ea})}
+
+
+
+\subsubsection{Simulated Annealing}
+
+
+\paragraph{Cooling Schedules}
+
+
+
+\subsubsection[\texorpdfstring{Randomized Local Search (RLS)}{Randomized Local Search (RLS)}]{\acrfull{rls}}
+
+
+
+
+\paragraph[\texorpdfstring{Stochastic Hill-Climber - Greedy RLS}{Stochastic Hill-Climber - Greedy RLS}]{Stochastic Hill-Climber - Greedy \acrshort{rls}}
+
+
+
+\paragraph[\texorpdfstring{$\epsilon$-greedy RLS}{epsilon-greedy RLS}]{$\epsilon-greedy$ \acrshort{rls}}
+
+
+
+\paragraph[\texorpdfstring{Decaying $\epsilon-greedy$ RLS}{Decaying epsilon-greedy RLS}]{Decaying $\epsilon-greedy$ \acrshort{rls}}
+
+
+
+\subsection{Few Pseudo-Boolean Problems}
+
+The \textit{pseudo-Boolean} setting considers functions $f : \{0,1\}^n \to \mathbb{R}$
+defined on binary strings of length $n$. Several benchmark functions are widely used to
+study and compare the behavior of randomized search heuristics, each encoding a
+different type of difficulty.~\cite{lengler2019drift,droste2006blackbox}
+
+\subsubsection{OneMax}
+
+The \textsc{OneMax} function counts the number of one-bits in a bit string:
+\[
+  \textsc{OneMax}(x) = \sum_{i=1}^{n} x_i, \qquad x \in \{0,1\}^n.
+\]
+The unique global maximum is $x^{*} = 1^n$ with $\textsc{OneMax}(1^n) = n$.
+\textsc{OneMax} is the canonical baseline benchmark: the landscape is unimodal and every
+improving move increases the function value by exactly one, providing a clear gradient
+for local search methods. The expected runtime of the $(1+1)$~\acrfull{ea} on \textsc{OneMax} is
+$\Theta(n \log n)$. !CITE: Droste, Jansen, Wegener (2002)!
+
+\subsubsection{LeadingOnes}
+
+The \textsc{LeadingOnes} function counts the length of the maximal leading prefix of
+ones:
+\[
+  \textsc{LeadingOnes}(x) = \sum_{i=1}^{n} \prod_{j=1}^{i} x_j.
+\]
+Equivalently, $\textsc{LeadingOnes}(x)$ equals the index of the first zero bit minus
+one, or $n$ if no zero exists. The unique global optimum is again $1^n$. Because
+progress requires the leading bit to be set before any subsequent bit can contribute,
+\textsc{LeadingOnes} is significantly harder than \textsc{OneMax}: the expected runtime
+of the $(1+1)$~\acrshort{ea} is $\Theta(n^2)$. !CITE: Droste, Jansen, Wegener (2002)!
+
+
+\subsubsection{Jump}
+
+The \textsc{Jump} function with parameter $k \in \{1, \ldots, n\}$ coincides with
+\textsc{OneMax} on bit strings with at most $n - k$ ones and on the global optimum
+$1^n$, but introduces a region of reduced fitness for strings with between $n-k+1$ and
+$n-1$ ones. This creates a ``gap'' of width $k$ that algorithms relying on single-bit
+improvements cannot cross: the set of strings with exactly $n-k$ ones constitutes a
+local optimum of standard local search, and reaching the global optimum $1^n$ requires
+flipping all $k$ remaining zero bits simultaneously. For the $(1+1)$~\acrshort{ea} with standard
+bit mutation at rate $1/n$, the probability of a specific $k$-bit flip is
+$\Theta(n^{-k})$, giving an expected runtime of $\Theta(n^k)$ on $\textsc{Jump}_k$.
+
+Formally, \textsc{Jump}$_{k,n} \colon \{0,1\}^n \to \mathbb{R}$ is defined as
+\[
+  \textsc{Jump}_{k,n}(x) \;=\;
+  \begin{cases}
+    k + \displaystyle\sum_{i=1}^{n} x_i & \text{if } \displaystyle\sum_{i=1}^{n} x_i \leq n - k
+    \text{ or } \displaystyle\sum_{i=1}^{n} x_i = n, \\[8pt]
+    n - \displaystyle\sum_{i=1}^{n} x_i & \text{otherwise.}
+  \end{cases}
+\]
+Droste, Jansen, and Wegener~\cite{droste2002analysis} proved that the expected running
+time of the $(1+1)$~\acrshort{ea} on $\textsc{Jump}_{k,n}$ is $\Theta(n^k + n\log n)$ for
+$k \in \{1, 2, \ldots, n\}$, which simplifies to $\Theta(n^k)$ for $k \geq 2$.
+\subsubsection{BinaryValue[BinVal]}
+The \textsc{BinaryValue} (\textsc{BinVal}) function interprets a bit string as a binary
+integer by weighting bits exponentially by position:
+\[
+  \textsc{BinVal}(x) = \sum_{i=1}^{n} 2^{i-1}\, x_i.
+\]
+The global optimum is $1^n$ with value $2^n - 1$. The exponential weighting means that
+the most significant bit contributes more than the combined value of all less significant
+bits, making \textsc{BinVal} highly structured.
+
+\subsubsection{Trap}
+\subsubsection{Plateau}
+\subsubsection{Hierarchical If-Only-If}
+
+
+\subsubsection{MaxSAT}
+\textit{Maximum Satisfiability} (MaxSAT) is the optimization variant of the Boolean
+satisfiability problem (SAT). Given a propositional formula in conjunctive normal form (CNF) !TODO: Cite or explain CNF!
+with $m$ clauses over $n$ Boolean variables, the goal is to find a truth assignment that
+maximizes the number of satisfied clauses. MaxSAT is NP-hard in general~\cite{hutchison_search_2004}
+and serves as an important benchmark for combinatorial optimization algorithms.
+
+\subsubsection{Tunable Landscapes: NK-Landscapes}
+
+\textit{NK-landscapes}~\cite{kauffman1987towards} are a parametric family of pseudo-Boolean
+functions controlled by two integers: $N$ (the number of variables) and $K$ (the number
+of epistatic interactions per variable, $0 \leq K \leq N-1$). The fitness of a string
+$x \in \{0,1\}^N$ is defined as
+\[
+  f(x) = \frac{1}{N} \sum_{i=1}^{N} f_i\!\left(x_i,\, x_{\pi(i,1)},
+      \ldots,\, x_{\pi(i,K)}\right),
+\]
+where each local contribution $f_i : \{0,1\}^{K+1} \to [0,1]$ is drawn independently
+and uniformly at random, and $\pi(i, \cdot)$ denotes the $K$ epistatic neighbours of
+variable $i$.
+
+When $K = 0$ the contributions are independent, producing a smooth, additively separable
+landscape analogous to \textsc{OneMax}. As $K$ increases toward $N-1$, epistatic
+interactions intensify and the landscape becomes increasingly rugged, with the number of
+local optima growing in the limit. NK-landscapes thus provide a tunable model of
+ruggedness and are widely used to study algorithmic scalability and robustness across a
+spectrum of problem difficulties.
+
+\subsection{Traditional Performance Measures in BBO}
+% - Expected runtime (hitting time to reach the optimum or a quality threshold)
+%   as the standard measure in EA theory  [droste2002analysis; doerr2020theory]
+% - Fixed-budget analysis: quality of best-found solution after T queries
+%   [Jansen & Zarges 2014 or similar]
+% - Fixed-target analysis: minimum budget to reach a target quality with
+%   probability >= 1-delta  [!CITE!]
+% - Limitations of these measures:
+%     Binary in nature (found / not found)
+%     Ignore the trajectory of quality improvement
+%     Do not penalise "wasteful" queries on already-known-poor regions
+% - This gap motivates regret as a more informative measure
+
+
+\newpage
+\section{Sequential and Online Optimization Frameworks}
+
+\subsection{Exploration-Exploitation Trade-off}
+%   Gathering information (exploration) vs. using current best
+%   knowledge (exploitation)
+% - Why pure exploitation fails (local optima / suboptimal arms)
+% - Why pure exploration fails (never converges to good solutions)
+% - This tension is shared with BBO
+
+\subsection{Multi-Armed Bandits}
+% - Formal stochastic bandit model: K arms, reward distributions, T rounds
+% - Objective: maximize cumulative reward (equivalently, minimize regret)
+% - Stochastic MAB: UCB1, Thompson Sampling — brief intuition  [!CITE!]
+% - Contextual bandits: features available at each round  [!CITE!]
+% - Pure exploration / best-arm identification: goal is simple regret
+%   at the end of the horizon, not cumulative regret  [bubeck2011pure]
+% - Connection to BBO: each candidate solution is an "arm"; the oracle
+%   is the reward; the algorithm decides which arm to pull
+
+\subsection{Online Optimization}
+% Sequential decision-making setup.
+% Adversarial vs. stochastic settings.
+
+
+
+% TODO: Confirm
+\subsection{Reinforcement Learning}
+% Value functions and policies.
+% Policy optimization perspective.
+
+\newpage
+\section{Computational Regret}
+
+\subsection{Definition of Regret}
+% Formal mathematical definition.
+% Regret vs. loss.
+Let $f : \mathcal{X} \to \mathbb{R}$ be an objective function with global optimum value
+$f^{*} = \max_{x \in \mathcal{X}} f(x)$. An algorithm that queries points
+$x_1, x_2, \ldots, x_T$ incurs \textit{regret} by querying suboptimal solutions. Regret
+quantifies the gap between the algorithm's performance and that of an oracle always
+querying the optimum~\cite{cesa2006prediction}.
+!TODO: add more context with reference to MAB \& rewards!
+
+\subsection{Types of Regret}
+
+\subsubsection{Instantaneous Regret}
+% Per-round performance gap.
+The \textit{instantaneous regret} at round $t$ is
+\[
+  \rho_t = f^{*} - f(x_t),
+\]
+capturing the suboptimality of the single query made at step $t$.
+A related variant tracks the \textit{incumbent} (best-so-far) solution rather than
+the current query:
+\[
+  \rho^{\mathrm{inc}}_t = f^{*} - f(\hat{x}_t),
+  \quad \hat{x}_t = \operatorname{arg\,max}_{s \leq t} f(x_s).
+\]
+Because $\hat{x}_t$ is non-decreasing in quality, $\rho^{\mathrm{inc}}_t$ is
+monotonically non-increasing over $t$, and is equivalent to simple regret evaluated at time $t$(~\ref{subsubsec:sr}).
+
+\subsubsection{Cumulative Regret}
+\label{subsubsec:cr}
+% Definition, interpretation, and relationship to IR.
+Two cumulative regret variants arise naturally and serve different purposes.
+ 
+The \textit{\acrfull{cr}} after $T$ rounds is~\cite{cesa2006prediction}
+\[
+  R_T = \sum_{t=1}^{T} \rho_t = \sum_{t=1}^{T} \bigl(f^{*} - f(x_t)\bigr).
+\]
+This is the standard formulation from the online learning literature: it sums the
+instantaneous suboptimality of each individual query, regardless of what the algorithm
+has previously observed. Minimizing $R_T$ corresponds to performing well
+\textit{throughout} the optimization process, penalizing every suboptimal query equally.
+ 
+The \textit{incumbent cumulative regret} instead tracks the best-so-far process
+\[
+  B(t) \;:=\; \max_{s \leq t} f(x_s),
+\]
+yielding
+\[
+  R^{\mathrm{inc}}_T = \sum_{t=1}^{T} \rho^{\mathrm{inc}}_t = \sum_{t=1}^{T}
+  \bigl(f^{*} - B(t)\bigr).
+\]
+Since $B(t)$ is non-decreasing in $t$, the per-step contributions
+$\rho^{\mathrm{inc}}_t$ are non-increasing, and $R^{\mathrm{inc}}_T \leq R_T$ for all
+$T$. The incumbent formulation is the appropriate notion when the practitioner retains
+the best solution found rather than only the most recent query, which is the standard
+convention for the randomized search heuristics studied in this project. All regret
+analyses in Chapter~\ref{cha:exper} use $R^{\mathrm{inc}}_T$ unless otherwise stated.
+ 
+In continuous time, the incumbent cumulative regret is approximated via a left-hold
+(piecewise-constant) integral
+\[
+  R^{\mathrm{inc}}_T \approx \sum_{t=1}^{T} \rho^{\mathrm{inc}}_{t-1}\,\Delta t_{\,t},
+  \quad \Delta t_{\,t} = t - t_{t-1},
+\]
+which accounts for unequal spacing between evaluations when function evaluation time is
+non-uniform. In all experiments reported here, evaluations are unit-cost and time is
+measured in discrete query counts, so $\Delta t_t = 1$ throughout and this reduces to
+the standard discrete sum.
+
+\subsubsection{Simple Regret}
+% Final recommendation quality.
+\label{subsubsec:sr}
+The \textit{\acrfull{sr}} after $T$ rounds is~\cite{bubeck2011pure}
+\[
+  r_T = f^{*} - f(\hat{x}_T),
+\]
+where $\hat{x}_T = \operatorname{arg\,max}_{t \leq T} f(x_t)$ is the best solution
+encountered. Simple regret measures the quality of the \textit{final output} and is the
+appropriate notion when the goal is to return a good solution rather than to perform well
+during the search. Note that $r_T = \rho^{\mathrm{inc}}_T$: simple regret is precisely the incumbent instantaneous regret at the final round.
+
+When comparing algorithms across multiple independent runs, the standard scalar summary
+is the \textit{expected simple regret}
+\[
+  \mathbb{E}[r_T] = \frac{1}{N}\sum_{i=1}^{N} r_T^{(i)},
+\]
+where $r_T^{(i)}$ denotes the simple regret of the $i$-th run.
+
+\subsubsection{Normalized Regret}
+% Scale-free comparison across problem instances.
+To enable comparison across problem instances with different objective scales, simple
+regret can be normalized by the range of attainable fitness values:
+\[
+  \tilde{r}_T = \frac{f^{*} - f(\hat{x}_T)}{f^{*} - f_{\mathrm{worst}}} \in [0, 1],
+\]
+where $f_{\mathrm{worst}}$ is the worst observed or theoretical fitness value. A value of
+$0$ indicates an optimal solution was found; a value of $1$ indicates no improvement over
+the worst case. When $f^{*} = f_{\mathrm{worst}}$ (a degenerate constant landscape), the
+problem is trivially solved and normalized regret is defined as $0$.
+
+
+
+% Expectation over prior distributions.
+
+\subsection{Regret in Black-Box Optimization}
+% Regret under query constraints.
+% Regret under noisy oracle access (Aside).
+% Regret as fine-grained runtime measure.
+Regret provides a fine-grained complexity measure in the black-box setting: rather than
+simply asking whether an algorithm finds the optimum within $T$ queries, regret tracks
+how suboptimal the queries are throughout the process. This is particularly relevant
+when every evaluation is costly and performing well before the budget is exhausted
+matters in practice.
+
+\subsection{Regret Bounds}
+% Upper bounds.
+% Lower bounds.
+% Minimax regret.
+% Instance-dependent bounds.
+
+\subsection{Connections to Runtime Analysis}
+% Relationship between regret and optimization time.
+% Trade-offs between exploration and convergence.
+% Regret as a refined complexity notion.
+
+\newpage
+

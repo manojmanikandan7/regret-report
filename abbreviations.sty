@@ -1,0 +1,31 @@
+\ProvidesPackage{abbreviations}
+
+\usepackage[toc, acronym]{glossaries}
+
+\newacronym{bbo}{BBO}{Black-Box Optimization}
+
+\newacronym{bbop}{BBOP}{Black-Box Optimization Problem}
+
+\newacronym{bbc}{BBC}{Black-Box Complexity}
+
+\newacronym{ml}{ML}{Machine Learning}
+
+\newacronym{sa}{SA}{Simulated Annealing}
+\newacronym{ea}{EA}{Evolutionary Algorithms}
+
+\newacronym{sr}{SR}{Simple Regret}
+\newacronym{cr}{CR}{Cumulative Regret}
+\newacronym{cli}{CLI}{Command-Line Interface}
+\newacronym{ci}{CI}{Continuous Integration}
+\newacronym{rls}{RLS}{Randomized Local Search}
+
+\newacronym{ttfo}{TTFO}{Time to First Optimum}
+
+% HACK: glossary entries can't print name as defined (i.e., if name = YAML, can't print it exactly)
+% Use only \acrshort
+\newacronym{yaml}{YAML}{\textit{acr.~YAML Ain't Markup Language}. A human-readable data serialization language, commonly used for configuration files.}
+\newacronym{json}{JSON}{\textit{acr.~JavaScript Object Notation}. An open standard file format and data interchange format that uses human-readable text to store and transmit data objects consisting of name–value pairs and arrays (or other serializable values).}
+
+% For grouping by initial letter
+\setglossarystyle{listhypergroup}
+\makeglossaries

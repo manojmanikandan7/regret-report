@@ -1,0 +1,64 @@
+% Word count aim: 1500-2000
+\chapter{Introduction}
+\label{cha:intro}
+
+% Put in an illustrative picture
+\section{Motivation}
+Many aspects of our day-to-day lives revolves around finding optimality in problems that we can have no comprehensible insight about. It can be observed in industrial processes of ! TODO!. These types of problems are said to be \acrfull{bbo} problems. 
+
+We do not get much tools to interact with them save from a cost/objective function $\mathbf{f}: \mathcal{X} \mapsto \mathcal{S}$ (the `oracle') that provides an abstract representation of the problem, where $\mathcal{X}$ is the search space, $\mathcal{S}$ the evaluation space !TODO: find concrete refs!. Typically, $\mathcal{S} \subseteq R$. The task is to minimize or maximize the solutions produced by this objective function, i.e., find a solution that Much study is done in optimizing this cost function without the liberty of classic mathematical tools such as derivability, smoothness and convexity (these methods warrant the oracle to return additional information, such as gradients, apart from the evaluation value of an input \cite{liu_primer_2020}). 
+
+\subsection{Conventional Solutions}
+% A brief history of how this problem came to be
+Classical analysis of solving \acrshort{bbo} problems are concerned with the so-called \acrfull{bbc}, that is, deriving the runtime bounds for an algorithm to sample a (global) optimum, depending only on the problem size $\mathbf{n}$. The reasoning behind this is palpable; the \textit{computational} complexity of evaluating the objective function for such \acrshort{bbo} systems are usually expensive. 
+
+An obvious example is Hyperparameter Tuning in \acrfull{ml} models !CITE!. The optimal hyperparameters could be thought of as the \textit{optima} for the \acrfull{bbop} of the tuning that maximizes their validation loss \footnote{`how well the model fits the underlying probability distribution of the data inputs \& outputs'}. 
+
+
+\subsection{The Problem}
+% What's the problem I'm trying to solve? 
+% Why is this a problem? 
+% How does solving this help anyone? 
+While this approach secures the bounds on the first sampling of the optimum, it presents no clues on the solution quality produced by the algorithm. Consider the case when the algorithm samples the optimum at time $t$, then in the next step $t+1$, moves completely away from the vicinity. This algorithm might then produce worse answers, asymptotically. 
+
+\subsection{Project's Alternative}
+
+\newpage
+% Give context to the reader about the objectives
+\section{Objectives}
+\subsection{General Aims}
+% TODO
+\subsection{Theoretical Exploration}
+% TODO
+\subsection{Supplementary Software Development} % State hypotheses here
+% TODO
+\subsection{Experimental Analysis} % State hypotheses here
+% TODO
+
+\newpage
+\section{Project Outline}
+% TODO: Maybe include Gantt Chart...?
+% Sem 1
+% 
+\subsection{Literature Study}
+
+\subsection{Isolating Relevant Benchmarks}
+
+\subsection{Development of Experiment framework}
+
+\subsection{Orchestrating Experiments}
+
+\subsection{Evaluating Results}
+
+\subsection{}
+
+\newpage
+\section{Ethical Considerations}
+
+\newpage
+\section{Report Structure}
+\subsection{Background}% \& Literature Review}
+\subsection{Software Design}
+\subsection{Experiment Structure}
+\subsection{Evaluation \& Discussion of Results}
+\subsection{Conclusion \& Future Work}

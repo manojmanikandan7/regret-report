@@ -1,0 +1,145 @@
+
+\documentclass[12pt,BSc,wordcount,twoside]{muthesis}
+
+% TODO: remove draft
+% \documentclass[12pt,BSc,wordcount,twoside,draft]{muthesis}
+
+% The regulations say that 12pt should be used
+% Change the MSc option to MPhil, MRes or PhD if appropriate
+% Add 'anon' to the above options to replace your name with your student ID
+
+\usepackage{verbatim}
+
+\usepackage{graphicx}
+\graphicspath{{./assets/}}
+
+\usepackage{float}
+
+\usepackage{url} % typeset URL's reasonably
+\usepackage{hyperref} % typeset URL's reasonably
+\usepackage[dvipsnames]{xcolor}
+\usepackage{listings}
+
+\usepackage{pslatex} % Use Postscript fonts
+\usepackage{lmodern}
+\usepackage[T1]{fontenc} % for suppressing encoding errors
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\usepackage{multirow}
+
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{longtable}
+\usepackage[square]{natbib}
+\lstset{
+columns=flexible,
+breaklines=true
+}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=darkgray,
+  % breaklinks=true,
+  citecolor=BlueViolet,
+  % urlcolor=blue
+}
+
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark} 
+
+\usepackage{csquotes}
+\usepackage{rotating}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric}
+
+% Uncomment the next line if you want subsubsections to be numbered
+\setcounter{secnumdepth}{3}
+% Uncomment the next line if you want subsubsections to be appear in
+% the table of contents
+\setcounter{tocdepth}{3}
+
+% Uncomment the following lines if you want to include the date as a
+% header in draft versions
+% \usepackage{fancyhdr}
+% \pagestyle{fancy}
+% \lhead{}  % left head
+% \chead{Draft: \today} % centre head
+% \lfoot{}
+% \cfoot{\thepage}
+% \rfoot{}
+
+\usepackage{abbreviations}
+\begin{document}
+% Uncomment the following lines to leave out list of figures, tables
+% and copyright until final printing
+% TODO: comment
+\figurespagefalse
+\tablespagefalse
+\copyrightfalse
+
+\title{Regret in Runtime Analysis of Black-Box Algorithms}
+\author{Manoj Manikandan}
+\stuid{11409534}
+\principaladviser{Dr. Jonathan Shapiro}
+
+\beforeabstract
+
+\prefacesection{Abstract}
+\input{abstract}
+
+\afterabstract
+
+\prefacesection{Acknowledgements}
+I would like to express my sincere gratitude to my supervisor, Dr. Jonathan Shapiro, for his disproportionate support and guidance throughout this project. I also thank my second marker for taking their time to evaluate and assess my work. Moreover, Moreover, I am immensely grateful to my family and friends for their immeasurable support and for encouraging my ambitious pursuits throughout my degree.
+\afterpreface
+
+\printglossary[type=\acronymtype, title=Abbreviations \& Acronyms, toctitle=Abbreviations \& Acronyms]
+
+% These include the actual text
+\include{chapters/chapter_introduction}
+% Word count aim                1500-2000
+
+\include{chapters/chapter_background}
+% Word count aim                5000-6000
+
+\include{chapters/chapter_design}
+% Word count aim                0700-0800
+
+\include{chapters/chapter_experiments}
+% Word count aim                0000-0000
+
+\include{chapters/chapter_evaluation}
+% Word count aim                0000-0000
+
+\include{chapters/chapter_conclusion_future_work}
+% Word count aim                1750-2500
+
+% Total                         8950-11300
+
+\bibliography{bibliography/refs, bibliography/software}    % this causes the references to be listed
+
+\bibliographystyle{plain}
+%% the bibliography style determines the format  in which both citations and references are printed,
+%% other possible values are plain and abbrv
+%%
+%% If you want more control of the format of your citations you might want to take a look at
+%% natbib.sty, which should be part of any standard LaTeX installation
+%%
+%% University regulations simply require that your citation style be consistent, so see what style
+%% your supervisor recommends.
+
+% Appendices start here
+
+% \appendix
+
+% \include{appendices/appendix1}
+
+
+\end{document}
