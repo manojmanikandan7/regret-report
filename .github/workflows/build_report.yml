@@ -15,7 +15,7 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v4
         with:
-          root_file: poster.tex
+          root_file: report.tex
           post_compile: "latexmk -c"
           texlive_version: latest
 
