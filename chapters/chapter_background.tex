@@ -1,8 +1,6 @@
 % Word count aim: 4000-4500
 % current: 3165
 \chapter{Background}
-\label{cha:backg}
-
 
 \section{Computational Problems}
 
@@ -18,11 +16,14 @@ such problem instances together with the corresponding output requirements.~\cit
  
 Problems are broadly categorized by the nature of their required output. 
 \begin{itemize}
-    \item A \textit{decision problem} demands a binary answer, whether a given instance satisfies some property. 
+    \item A \textit{decision problem} demands a binary answer, whether a solution exists for a problem instance. 
     \item A \textit{search problem} asks for the construction of an explicit solution
-    satisfying a specified property, such as a feasible assignment or a path in a graph.
-    \item An \textit{optimization problem} further requires that the returned solution be optimal (or near-optimal) with respect to some objective function.~\cite{HOOS200513}
+    satisfying a specified property, such as a feasible assignment or a path in a graph, or conclude no solution exists.
+    \item An \textit{optimization problem} further requires that the returned solution be optimal (or near-optimal) with 
+    respect to some given objective function.
 \end{itemize}
+The decision and search problem variants are closely related because algorithms solving the 
+search variant can always be used to solve the decision variant.~\cite{HOOS200513}
 
 A further distinction concerns the role of randomness in the problem formulation. In a
 \textit{deterministic} formulation, both the instance and every algorithm operating on it are fully specified without any probabilistic component. In a \textit{stochastic}
@@ -429,16 +430,22 @@ spectrum of problem difficulties.
 % - Connection to BBO: each candidate solution is an "arm"; the oracle
 %   is the reward; the algorithm decides which arm to pull
 
-\subsection{Online Optimization}
-% Sequential decision-making setup.
-% Adversarial vs. stochastic settings.
-
-
-
-% TODO: Confirm
-\subsection{Reinforcement Learning}
-% Value functions and policies.
-% Policy optimization perspective.
+\subsection{Reinforcement Learning (Overview)}
+% - Value functions, policies, and the policy optimization perspective
+% - Regret in RL: exploration bonus methods, PAC-MDP bounds  [!CITE!]
+% - Note the separation from BBO: RL involves state transitions;
+%   BBO is stateless between queries (unless memory is used)
+% - Keep brief — RL is context, not a primary focus
+ 
+\subsection{Bayesian Optimization}
+% - Surrogate-model approach to expensive BBO  [!CITE Mockus / Shahriari!]
+% - Gaussian process surrogate + acquisition function (EI, UCB, PI)
+% - Regret in BO: cumulative and simple regret bounds for GP-UCB
+%   [Srinivas et al. 2010 — key reference]
+% - BO as the bridge domain: it lives at the intersection of online learning
+%   and BBO, and has the most mature regret theory outside the bandit literature
+% - Distinction from the RSH setting: BO uses a learned surrogate;
+%   RSHs are memoryless or use no probabilistic model
 
 \newpage
 \section{Computational Regret}
@@ -545,8 +552,33 @@ problem is trivially solved and normalized regret is defined as $0$.
 
 
 
-% Expectation over prior distributions.
 
+
+\subsection{Regret Bounds}
+% - Upper bounds (algorithmic): what a given algorithm guarantees
+%     UCB1: O(sqrt(KT log T)) cumulative regret  [!CITE!]
+%     GP-UCB: sublinear cumulative regret for continuous domains  [Srinivas et al.]
+% - Lower bounds (information-theoretic): what no algorithm can beat
+%     Omega(sqrt(KT)) for K-armed stochastic bandits
+% - Minimax regret: min_{algorithm} max_{instance} R_T
+%     Connection to Yao's principle  (already introduced in §2.2.2)
+% - Instance-dependent (gap-based) bounds: tighter bounds when suboptimality
+%     gaps Delta_i = f^* - f(arm_i) are large  [!CITE!]
+% - Sublinear regret as the benchmark: R_T = o(T) implies average per-round
+%     regret -> 0, i.e., the algorithm learns to behave near-optimally
+ 
+\subsubsection{Upper Bounds}
+ 
+\subsubsection{Lower Bounds and Minimax Regret}
+ 
+\subsubsection{Instance-Dependent Bounds}
+
+\subsection{Connections to Runtime Analysis}
+% Relationship between regret and optimization time.
+% Trade-offs between exploration and convergence.
+% Regret as a refined complexity notion.
+
+\newpage
 \subsection{Regret in Black-Box Optimization}
 % Regret under query constraints.
 % Regret under noisy oracle access (Aside).
@@ -556,17 +588,4 @@ simply asking whether an algorithm finds the optimum within $T$ queries, regret 
 how suboptimal the queries are throughout the process. This is particularly relevant
 when every evaluation is costly and performing well before the budget is exhausted
 matters in practice.
-
-\subsection{Regret Bounds}
-% Upper bounds.
-% Lower bounds.
-% Minimax regret.
-% Instance-dependent bounds.
-
-\subsection{Connections to Runtime Analysis}
-% Relationship between regret and optimization time.
-% Trade-offs between exploration and convergence.
-% Regret as a refined complexity notion.
-
-\newpage
 
