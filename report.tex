@@ -1,9 +1,6 @@
 
 \documentclass[12pt,BSc,wordcount,twoside]{muthesis}
 
-% TODO: remove draft
-% \documentclass[12pt,BSc,wordcount,twoside,draft]{muthesis}
-
 % The regulations say that 12pt should be used
 % Change the MSc option to MPhil, MRes or PhD if appropriate
 % Add 'anon' to the above options to replace your name with your student ID
@@ -11,6 +8,7 @@
 \usepackage{verbatim}
 
 \usepackage{graphicx}
+\usepackage{wrapfig}
 \graphicspath{{./assets/}}
 
 \usepackage{float}
@@ -33,6 +31,8 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{longtable}
+\usepackage{booktabs} 
+\usepackage{nicefrac}
 \usepackage[numbers,square]{natbib}
 \lstset{
 columns=flexible,
@@ -111,6 +111,8 @@ I would like to express my sincere gratitude to my supervisor, Dr. Jonathan Shap
 
 \include{chapters/chapter_design}
 % Word count aim                0700-0800
+
+\include{chapters/chapter_profiles}
 
 \include{chapters/chapter_experiments}
 % Word count aim                0000-0000

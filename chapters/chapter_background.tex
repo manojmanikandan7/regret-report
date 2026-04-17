@@ -189,12 +189,12 @@ gradient descent~!CITE: Nesterov 2004!.
 % Runtime notions in randomized algorithms.
 
 
-\subsection{Probabilistic Tools for Algorithm Analysis}
-\subsubsection{Expectation and Variance}
-\subsubsection{Concentration Inequalities}
-\paragraph{Markov's Inequality. }
-\paragraph{Chebyshev's Inequality. }
-\paragraph{Chernoff Bounds. }
+% \subsection{Probabilistic Tools for Algorithm Analysis}
+% \subsubsection{Expectation and Variance}
+% \subsubsection{Concentration Inequalities}
+% \paragraph{Markov's Inequality. }
+% \paragraph{Chebyshev's Inequality. }
+% \paragraph{Chernoff Bounds. }
 
 \newpage
 
@@ -205,6 +205,9 @@ gradient descent~!CITE: Nesterov 2004!.
 % Formal oracle model.
 % Zeroth-order information.
 % Information revealed per query.
+% - What structural knowledge white-box methods exploit
+% - Gradient availability as the dividing line
+% - Computational trade-offs: information richness vs. access cost
 
 In the \textit{black-box optimization} model, the algorithm has no access to the
 analytical form of the objective function. It interacts with the objective exclusively
@@ -215,17 +218,15 @@ The black-box model is appropriate whenever the objective arises from a simulati
 physical experiment, or any process whose internal structure is inaccessible or too
 complex to exploit analytically.
 
+In contrast, in \textit{white-box optimization}, information about the problem instance is make available to 
+the algorithm. This enables algorithms usage of some computational tools such as gradients, supporting
+optimization convergence.
 
 \subsubsection{Variants of Black-Box Models}
 % Unrestricted model.
 % Ranking-based model.
 % Memory-restricted model.
 
-
-\subsection{White-Box vs. Black-Box Optimization}
-% - What structural knowledge white-box methods exploit
-% - Gradient availability as the dividing line
-% - Computational trade-offs: information richness vs. access cost
 
 \subsection{Black-Box Complexity}
 \label{subsec:bb-complexity}
@@ -397,6 +398,7 @@ ruggedness and are widely used to study algorithmic scalability and robustness a
 spectrum of problem difficulties.
 
 \subsection{Traditional Performance Measures in BBO}
+\label{subsec:bbo-perf}
 % - Expected runtime (hitting time to reach the optimum or a quality threshold)
 %   as the standard measure in EA theory  [droste2002analysis; doerr2020theory]
 % - Fixed-budget analysis: quality of best-found solution after T queries
@@ -408,10 +410,141 @@ spectrum of problem difficulties.
 %     Ignore the trajectory of quality improvement
 %     Do not penalise "wasteful" queries on already-known-poor regions
 % - This gap motivates regret as a more informative measure
+The theoretical analysis of \acrshort{bbo} algorithms has developed several complementary
+frameworks for quantifying performance. Each framework fixes one dimension of the
+problem, either the evaluation budget or the target solution quality, and asks what
+can be guaranteed along the other. Together they form the standard vocabulary for
+comparing randomized search heuristics, yet all share a common limitation that
+motivates the regret-based view developed in Section~\ref{sec:regret}.
 
+
+\subsubsection{Expected Runtime (Hitting Time)}
+% - The canonical measure: E[tau_{f*}], expected evaluations to first reach the optimum
+% - Equivalent to the expected first hitting time of the target level f*
+% - Central to EA theory: Theta(n log n) for (1+1) EA on OneMax,
+%   Theta(n^2) for LeadingOnes, Theta(n^k) for Jump_k  [droste2002analysis]
+% - Analysis via drift theory, Markov chains, the fitness-level method
+%   [doerr2020theory; lengler2019drift]
+% - Well-suited for establishing complexity hierarchies and ranking algorithms
+%   on a given benchmark
+ 
+The predominant performance measure in the runtime analysis of evolutionary algorithms
+is the \textit{expected optimization time}: the expected number of function evaluations
+until an optimal solution is queried for the first time~\cite{droste2002analysis,
+doerr2020theory}. Formally, for a black-box algorithm producing query sequence
+$x_1, x_2, \ldots$, the \textit{first hitting time} of the global optimum is
+\[
+    \tau_{f^*} \;:=\; \min\bigl\{t \in \mathbb{N} : f(x_t) = f^*\bigr\},
+\]
+and the expected runtime is $\mathbb{E}[\tau_{f^*}]$. This quantity has proved
+immensely useful for establishing complexity hierarchies and ranking algorithms; the
+results $\Theta(n \log n)$ for the $(1+1)$~\acrshort{ea} on \textsc{OneMax},
+$\Theta(n^2)$ on \textsc{LeadingOnes}, and $\Theta(n^k)$ on $\textsc{Jump}_k$ are
+canonical examples~\cite{droste2002analysis}. The primary analytical tools for deriving
+such bounds are drift theory~\cite{lengler2019drift}, the fitness-level method, and
+Markov chain arguments~\cite{doerr2020theory}.
+ 
+\subsubsection{Fixed-Budget Analysis}
+\label{subsubsec:fixed-budget}
+% - Orthogonal view: fix T, characterize E[f*_T(A)] = expected quality within budget
+%   [jansen2014fixed]
+% - Practically motivated: practitioner cannot in general detect optimality;
+%   the run terminates at budget exhaustion regardless
+% - Different ranking than expected runtime is possible:
+%   an algorithm with larger E[tau_{f*}] may still dominate within a given budget
+% - Connects directly to simple regret: minimising simple regret <=> maximising E[f*_T]
+% - Forward ref: this is the fixed-budget view of performance;
+%   §\ref{sec:regret} generalises it to the entire trajectory
+ 
+In \textit{fixed-budget analysis}~\cite{jansen2014fixed}, the evaluation budget $T$ is
+fixed in advance and the quantity of interest is the expected quality of the best
+solution found within that budget. Denoting by $f^{*}_T(\mathcal{A})$ the best
+objective value achieved by algorithm $\mathcal{A}$ within $T$ evaluations, the
+fixed-budget framework characterizes $\mathbb{E}[f^{*}_T(\mathcal{A})]$ as a function
+of $T$~\cite{jansen2014fixed}. This perspective is practically motivated: in almost all
+realistic settings a user cannot detect when the global optimum has been found, and the
+algorithm must simply return the best solution found when the budget is
+exhausted~\cite{pinto2018practice}. As a consequence, comparing two algorithms under a
+fixed budget may reverse the conclusions drawn from comparing their expected runtimes:
+an algorithm with a larger $\mathbb{E}[\tau_{f^*}]$ may still produce superior
+intermediate solutions within a given budget~\cite{jansen2014fixed}. This framework
+connects directly to the simple regret defined in
+Section~\ref{subsubsec:sr}: maximizing $\mathbb{E}[f^{*}_T(\mathcal{A})]$ is
+equivalent to minimizing expected simple regret at budget $T$.
+ 
+\subsubsection{Fixed-Target Analysis and Runtime Profiles}
+\label{subsubsec:fixed-target}
+% - Fixed-target: for a quality threshold v, characterise the distribution of tau_v
+%   [Doerr & Lengler 2015 - OneMax in black-box models with restrictions]
+% - More informative than the single tau_{f*}: a full collection of hitting times
+%   across all levels v gives the expectation-based runtime profile  [pinto2018practice]
+% - Distributional profile P(v,t) = P(tau_v > t): the primitive object from which
+%   E[tau_v] and subsequently cumulative regret are derived
+%   (full formal treatment in Chapter X / Runtime Profiles section)
+% - Practical value: identifies crossover levels where one algorithm overtakes
+%   another, guiding adaptive strategy design  [pinto2018practice]
+% - Pinto & Doerr's open question: a combined anytime measure is needed 
+ 
+\textit{Fixed-target analysis} generalizes the expected runtime by considering not only
+the global optimum but every intermediate fitness level. For a target quality $v$, the
+\textit{first hitting time} is
+\[
+    \tau_v \;:=\; \min\bigl\{t \in \mathbb{N} : f(x_t) \geq v\bigr\},
+\]
+and the goal is to characterize the distribution of $\tau_v$ for all relevant $v$.
+This viewpoint appears in the analysis of restricted black-box models; for example,
+Doerr and Lengler~\cite{doerr2015onemax} derive hitting-time bounds across all
+fitness levels for \textsc{OneMax} under several information-theoretic restrictions,
+revealing how model constraints shift the difficulty at each tier of the landscape.
+ 
+Pinto and Doerr~\cite{pinto2018practice} formalize this into the \textit{runtime
+profile} framework: the \textit{expectation-based runtime profile}
+$\bigl(\mathbb{E}[\tau_v]\bigr)_v$ and the strictly finer \textit{distributional
+runtime profile} $\mathcal{P}(v,t) := \mathbb{P}(\tau_v > t)$ together capture
+the full anytime behavior of an algorithm rather than only its behavior at the endpoint.
+Crucially, runtime profiles can identify \textit{crossover fitness levels} where one
+algorithm overtakes another in the quality trajectory — behavior invisible to the single
+expected optimization time. The formal development, including the connection between
+distributional runtime profiles and cumulative regret, is given in
+Section~\ref{subsec:regret-profiles}.
+ 
+\subsubsection{Limitations and the Case for a Continuous Performance Measure}
+\label{subsubsec:perf-limitations}
+% - Expected runtime is binary: found / not found at a single threshold
+% - Fixed-budget gives one scalar per budget T, ignores the trajectory
+% - Even runtime profiles are a collection of per-level scalars, not a single
+%   summary of the entire quality trajectory
+% - None of these penalise "wasted" queries on suboptimal regions:
+%   an algorithm that stagnates at low fitness and then jumps to the optimum
+%   is indistinguishable from one that makes steady progress, by E[tau_{f*}] alone
+% - Pinto & Doerr explicitly call for a combined anytime measure from ML/online
+%   learning  [pinto2018practice, p.22]; regret is the natural candidate
+% - Transition: §2.5 (Sequential Decision-Making) and §2.6 (Regret Formalism)
+%   develop this measure from first principles; §2.7 brings it back to BBO
+ 
+Despite their individual strengths, all three frameworks above share a structural
+limitation: they measure algorithm performance at isolated thresholds rather than over
+the entire quality trajectory. The expected runtime reduces the run to a single hitting
+event; fixed-budget analysis reduces it to a single scalar per budget value; and even
+the runtime profile, while richer, is a collection of per-level summaries rather than
+a unified measure of trajectory quality. Crucially, none of these measures penalizes an
+algorithm for spending many evaluations at low fitness values: a strategy that stagnates
+near the starting fitness and then discovers the optimum in a single lucky step is
+indistinguishable from one that makes steady, monotone progress, as far as
+$\mathbb{E}[\tau_{f^*}]$ is concerned.
+ 
+Pinto and Doerr~\cite{pinto2018practice} identify this gap explicitly, calling for
+\textit{combined measures} capable of describing the anytime behavior of an evolutionary
+algorithm within a unified framework, and naming regret-based measures from machine
+learning as a natural candidate, while noting that a fully satisfying formulation
+remains an open problem. This project takes that call as its starting point. The
+sequential decision-making framework and the formal vocabulary of regret are developed
+in Sections~\ref{sec:online}--\ref{sec:regret}; their synthesis with \acrshort{bbo} performance
+analysis is the subject of Section~\ref{sec:regret-bbo}.
 
 \newpage
 \section{Sequential and Online Optimization Frameworks}
+\label{sec:online}
 
 \subsection{Exploration-Exploitation Trade-off}
 %   Gathering information (exploration) vs. using current best
@@ -419,6 +552,11 @@ spectrum of problem difficulties.
 % - Why pure exploitation fails (local optima / suboptimal arms)
 % - Why pure exploration fails (never converges to good solutions)
 % - This tension is shared with BBO
+ 
+Sequential black-box optimization is governed by the exploration--exploitation trade-off. At each round, the algorithm must either explore uncertain regions of the search space to gain information or exploit the currently best-known region to obtain good values immediately~\cite{cesa2006prediction,bubeck2012regret,lattimore2020bandit}
+Since each evaluation is both a measurement and a search step, neither extreme is satisfactory: pure exploitation can lock onto a suboptimal region, while pure exploration wastes budget.
+
+This tension is central to regret-based analysis. Regret measures the cost of not knowing the objective in advance, so it captures both slow identification of good regions and repeated evaluation of poor ones.
 
 \subsection{Multi-Armed Bandits}
 % - Formal stochastic bandit model: K arms, reward distributions, T rounds
@@ -429,6 +567,14 @@ spectrum of problem difficulties.
 %   at the end of the horizon, not cumulative regret  [bubeck2011pure]
 % - Connection to BBO: each candidate solution is an "arm"; the oracle
 %   is the reward; the algorithm decides which arm to pull
+The \acrshort{mab} model is the basic framework for sequential decision-making under partial feedback~\cite{bubeck2012regret,lattimore2020bandit}. In the stochastic $K$-armed setting, an algorithm chooses an arm $A_t \in \{1,\dots,K\}$ at each round and observes only the reward of that arm. If arm $i$ has mean reward $\mu_i$ and $\mu^*=\max_i \mu_i$, the standard pseudo-regret is
+\[
+    \bar{R}_T = T\mu^* - \sum_{t=1}^{T} \mu_{A_t}
+    = \sum_{i:\Delta_i>0} \Delta_i \, \mathbb{E}[N_i(T)],
+\]
+where $\Delta_i=\mu^*-\mu_i$ is the suboptimality gap and $N_i(T)$ is the number of pulls of arm $i$ up to time $T$~\cite{bubeck2012regret,lattimore2020bandit}. Regret is therefore driven by how often the learner samples suboptimal actions.
+
+This model connects naturally to \acrshort{bbo}. In a finite search space, candidate solutions can be viewed as arms and objective evaluations as arm pulls. For large or structured domains, however, this flat view breaks down, motivating more structured models such as Bayesian optimization.
 
 \subsection{Reinforcement Learning (Overview)}
 % - Value functions, policies, and the policy optimization perspective
@@ -446,15 +592,19 @@ spectrum of problem difficulties.
 %   and BBO, and has the most mature regret theory outside the bandit literature
 % - Distinction from the RSH setting: BO uses a learned surrogate;
 %   RSHs are memoryless or use no probabilistic model
+\acrfull{bo} treats expensive black-box optimization as a sequential learning problem. The unknown objective is modelled by a probabilistic surrogate, typically a Gaussian process, and an acquisition function selects the next query by balancing predicted value against uncertainty~\cite{jones1998efficient,shahriari2015taking,frazier2018tutorial}.
+
+For this chapter, Bayesian optimization matters mainly because it is the clearest bridge between regret theory and black-box optimization. In particular, \textsc{GP-UCB} admits sublinear cumulative-regret guarantees under Gaussian-process or RKHS\footnote{\textit{abbr.}~Reproducing kernel Hilbert space. (Optionally see \cite{ghojogh2021reproducing})} assumptions~\cite{srinivas2009gaussian,chowdhury2017kernelized,scarlett2017lower}. At the same time, these guarantees rely on surrogate assumptions that are much more natural in low-dimensional continuous spaces than in pseudo-Boolean domains such as $\{0,1\}^n$. This makes regret an established concept in black-box optimization, but not yet one that transfers directly to the combinatorial heuristics studied here.
 
 \newpage
 \section{Computational Regret}
+\label{sec:regret}
 
 \subsection{Definition of Regret}
 % Formal mathematical definition.
 % Regret vs. loss.
 Let $f : \mathcal{X} \to \mathbb{R}$ be an objective function with global optimum value
-$f^{*} = \max_{x \in \mathcal{X}} f(x)$. An algorithm that queries points
+\\$f^{*} = \max_{x \in \mathcal{X}} f(x)$. An algorithm that queries points
 $x_1, x_2, \ldots, x_T$ incurs \textit{regret} by querying suboptimal solutions. Regret
 quantifies the gap between the algorithm's performance and that of an oracle always
 querying the optimum~\cite{cesa2006prediction}.
@@ -529,7 +679,7 @@ The \textit{\acrfull{sr}} after $T$ rounds is~\cite{bubeck2011pure}
 where $\hat{x}_T = \operatorname{arg\,max}_{t \leq T} f(x_t)$ is the best solution
 encountered. Simple regret measures the quality of the \textit{final output} and is the
 appropriate notion when the goal is to return a good solution rather than to perform well
-during the search. Note that $r_T = \rho^{\mathrm{inc}}_T$: simple regret is precisely the incumbent instantaneous regret at the final round.
+during the search. Note that $r_T = \rho^{\mathrm{inc}}_T$: simple regret is the incumbent instantaneous regret at the final round.
 
 When comparing algorithms across multiple independent runs, the standard scalar summary
 is the \textit{expected simple regret}
@@ -566,12 +716,15 @@ problem is trivially solved and normalized regret is defined as $0$.
 %     gaps Delta_i = f^* - f(arm_i) are large  [!CITE!]
 % - Sublinear regret as the benchmark: R_T = o(T) implies average per-round
 %     regret -> 0, i.e., the algorithm learns to behave near-optimally
+Regret analysis studies how regret grows with the budget $T$. The central benchmark is sublinear regret: if $R_T=o(T)$, then the average regret $R_T/T$ tends to zero, meaning that the algorithm asymptotically performs as well as an oracle with full information~\cite{cesa2006prediction,bubeck2012regret,lattimore2020bandit}.
+
+In finite stochastic bandits, classic upper bounds show that algorithms such as \textsc{UCB1} achieve logarithmic gap-dependent regret and sublinear worst-case regret~\cite{auer2002finite}. Matching lower-bound results show that logarithmic regret is, in general, unavoidable up to constants under standard assumptions~\cite{lai1985adaptive}. In Gaussian-process bandits, both upper and lower bounds depend on information gain and kernel structure rather than only on the number of actions~\cite{srinivas2009gaussian,chowdhury2017kernelized,scarlett2017lower}. These results are important here mainly as a template: regret can be treated as a complexity measure for sequential optimization.
  
-\subsubsection{Upper Bounds}
+% \subsubsection{Upper Bounds}
  
-\subsubsection{Lower Bounds and Minimax Regret}
+% \subsubsection{Lower Bounds and Minimax Regret}
  
-\subsubsection{Instance-Dependent Bounds}
+% \subsubsection{Instance-Dependent Bounds}
 
 \subsection{Connections to Runtime Analysis}
 % Relationship between regret and optimization time.
@@ -579,13 +732,97 @@ problem is trivially solved and normalized regret is defined as $0$.
 % Regret as a refined complexity notion.
 
 \newpage
-\subsection{Regret in Black-Box Optimization}
-% Regret under query constraints.
-% Regret under noisy oracle access (Aside).
-% Regret as fine-grained runtime measure.
+\section{Regret-Aware Black-Box Optimization}
+\label{sec:regret-bbo}
+ 
+% PURPOSE: This section is the intellectual payoff of the chapter.  It
+% synthesizes Acts 1 and 2 and positions the project within the literature.
+% The reader should finish this section understanding:
+%   (a) why regret is a natural and informative measure for BBO,
+%   (b) what has already been done at this intersection,
+%   (c) what remains open, and
+%   (d) how this project advances the state of knowledge.
 Regret provides a fine-grained complexity measure in the black-box setting: rather than
 simply asking whether an algorithm finds the optimum within $T$ queries, regret tracks
 how suboptimal the queries are throughout the process. This is particularly relevant
 when every evaluation is costly and performing well before the budget is exhausted
 matters in practice.
+ 
+\subsection{Regret as a Performance Measure for Randomized Search Heuristics}
+\label{subsec:regret-as-perf}
+% - Reframe the classical runtime analysis question in regret terms:
+%     Runtime analysis asks: E[T_opt] = ?
+%     Regret analysis asks:  E[R_T^inc] = ? for a fixed budget T
+% - These are complementary views of the same underlying process
+% - Fixed-budget analysis (§2.3.5) is essentially simple regret analysis;
+%   making this explicit is conceptually useful
+% - Incumbent cumulative regret captures the "area above the fitness curve",
+%   generalizing simple regret to the entire trajectory
+% - Implications for algorithm design:
+%     A low-simple-regret algorithm is good at pure optimization
+%     A low-cumulative-regret algorithm is good at "anytime" optimization
+%     These objectives can conflict (exploitation vs. exploration tension
+%     reappears at the algorithmic design level)
+For randomized search heuristics, regret complements rather than replaces runtime analysis. Runtime asks when a target is first reached; regret asks how good the algorithm's queried or retained solutions are throughout the run. Fixed-budget analysis already moves in this direction, since expected simple regret is just the expected final suboptimality after a budget of $T$ evaluations~\cite{jansen2014fixed,bubeck2011pure}.
 
+The distinction matters operationally. Low simple regret is appropriate when only the final returned solution matters. Low cumulative regret is appropriate in anytime settings, where useful intermediate performance also matters~\cite{cesa2006prediction,pinto2018practice}. For the heuristics considered in this project, the incumbent-based formulation is the natural one because the algorithm's output at interruption is the best-so-far solution.
+
+
+\subsection{Related Work: Regret in Bayesian and Surrogate-Based Optimization}
+\label{subsec:rw-bo-regret}
+% - BO is the domain with the most developed regret theory for BBO
+% - GP-UCB [Srinivas et al. 2010]: O(sqrt(T gamma_T)) cumulative regret
+%   where gamma_T is the information gain — first sublinear regret result
+%   for a continuous BBO algorithm
+% - Thompson Sampling for BO [Russo & Van Roy, Chowdhury & Srinavas]: 
+%   Bayesian regret bounds
+% - Limitations of BO for the combinatorial setting:
+%     GP priors ill-suited to {0,1}^n without kernel engineering
+%     Acquisition function optimization is itself an NP-hard BBO problem
+%     Poor scaling to large n
+% - This motivates studying regret for simpler, combinatorial RSHs
+ 
+\subsection{Related Work: Regret-Inspired Analysis of Evolutionary Algorithms}
+\label{subsec:rw-ea-regret}
+% - Fixed-budget / anytime guarantees in EA theory
+%   [Jansen & Zarges; Doerr & Doerr — heavy-tailed mutations!CITE!]
+% - (1+lambda) EA and population diversity as implicit exploration strategies
+% - Algorithms explicitly designed with the exploration-exploitation trade-off
+%   in mind: parameter control, self-adaptation, hybrid methods
+% - Note: most EA theory is runtime-centric; regret framing is novel here
+% - What "regret-aware" EA design might look like:
+%     Reward-shaping analogies
+%     Budget-sensitive mutation rates
+%     Acceptance criteria derived from regret minimization objectives
+ 
+\subsection{Related Work: Bandit-Inspired Metaheuristics}
+\label{subsec:rw-bandit-meta}
+% - Algorithm selection / portfolio methods framed as MAB problems
+%   [!CITE Fialho, Maturana, Whitley, etc.!]
+% - Operator selection in EAs using UCB / EXP3-style rules
+%   [adaptive operator selection literature]
+% - Hyper-heuristics with bandit-based move selection
+% - Common thread: regret minimization used to select operators or algorithms,
+%   not to evaluate the optimizer itself — this project does the latter
+ 
+\subsection{Connections to Runtime Analysis via Drift Theory}
+\label{subsec:drift-regret}
+% - Drift theory  [lengler2019drift] is the primary tool for EA runtime proofs
+% - Additive, multiplicative, variable drift theorems
+% - How drift on the fitness function implies bounds on E[R_T^inc]:
+%     A lower-bounded drift implies the incumbent fitness increases quickly
+%     => the cumulative regret decreases quickly
+%     Formalizing this connection is a contribution of this project
+% - This subsection can be brief if the formal derivation belongs in
+%   Chapter 3 (Methodology / Theory); just sketch the intuition here
+ 
+\subsection{Open Questions and Project Scope}
+\label{subsec:open-questions}
+% - Summary of what is NOT yet known:
+%     Tight cumulative regret bounds for (1+1) EA / RLS on standard benchmarks
+%     How the exploration-exploitation tension manifests quantitatively
+%     Whether epsilon-greedy and SA schedules can be tuned to minimize regret
+%       rather than (only) expected runtime
+% - Research questions this project addresses:
+%     [enumerate your specific RQs here]
+% - Chapter roadmap: what follows from this background

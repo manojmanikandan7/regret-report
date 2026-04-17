@@ -2,6 +2,8 @@
 % Current: 997
 \chapter{Supplementary Software Design}
 \label{cha:design}
+This chapter discusses the supplementary software developed for
+carrying out a large number of experiments efficiently.
 
 \section{Purpose of the Software}
 % Max 200 words
@@ -10,13 +12,13 @@ A supplementary experimental framework, \texttt{regret}, was developed to
 support the orchestration and analysis of experiments on pseudo-Boolean and
 combinatorial optimization problems. The framework was motivated by the
 absence of readily available tooling that combines (i)~flexible, declarative
-experiment dispatch, (ii)~trajectory-level data collection, and
+batch experiment execution, (ii)~trajectory-level data collection, and
 (iii)~regret-specific analysis pipelines in a single cohesive system.
 
 Existing platforms such as Google Vizier~\cite{google_vizier} and
 EvoX~\cite{evox} address hyperparameter optimization and population-based
 search respectively, but neither provides native support for regret metrics,
-runtime profile analysis, or the configuration-first dispatch model required
+runtime profile analysis, or the configuration-first experiment execution model required
 for this project's experimental protocol. \texttt{regret} was therefore
 purpose-built to fill this gap, providing a reproducible, extensible
 environment for studying simple, instantaneous, and cumulative regret across
@@ -47,7 +49,7 @@ this study.
     % This can help with flexible dispatch, parallelized workflow and batching of experiment orchestrations, all from the flexibility of a config.
 The framework supports the full experimental life-cycle through a single
 \acrfull{cli}, \texttt{run\_experiment}, which accepts one or more
-\acrshort{yaml} configuration files and dispatches the appropriate sub-command.
+\acrshort{yaml} configuration files and executes the appropriate sub-command.
 Table~\ref{tab:cli-commands} summarizes the available commands.
 
 \begin{table}[ht]
@@ -79,7 +81,7 @@ Table~\ref{tab:cli-commands} summarizes the available commands.
 \end{tabular}
 \end{table}
 
-\paragraph{Experiment dispatch.}
+\paragraph{Batch Experiment Execution.}
 All experiments are specified declaratively via \acrshort{yaml} configuration files
 validated against a \acrshort{json} Schema prior to execution. A configuration defines
 the suite name, evaluation budgets, run count, output mode, and lists of
@@ -88,7 +90,8 @@ by string keys resolved against internal registries, providing a clean
 separation between configuration and implementation.
 
 \paragraph{Parallelised execution.}
-When \texttt{parallel: true} is set, independent runs are dispatched via
+When \texttt{parallel: true} is set in the \acrshort{yaml} configuration, 
+independent runs are initiated via
 Python's \texttt{ProcessPoolExecutor}, with per-run random seeds fixed to
 indices $0, 1, \ldots, r-1$ to ensure full reproducibility. Results are
 reordered by seed index after completion.
@@ -106,31 +109,75 @@ execution of logically grouped experiment suites from a single invocation.
 \subsection{Design Decisions}
 % Max 150 words
 % Why the dispatching framework? Why the 
-The software was designed to be extensive \& configurable for other developers and users to interact with quickly, with options for modularity when required. 
+The software was intended to be extensive \& configurable for other developers and users to interact with quickly, with options for modularity when required. 
 This was enabled by the adoption of configuration-first, job dispatch policy for independent and declarative experimentation. Problems and Algorithms to test against can easily be defined by extending abstract classes \texttt{Problem} \& \texttt{Algorithm}, ensuring a common interface for consistent interactions.
 
-\subsubsection{Dispatching framework}
+% \begin{figure}[h]
+% \centering
+% \begin{minipage}{0.48\textwidth}
+% \textbf{Traditional}
+% \begin{verbatim}
+% {
+%   ...
+%   "results": [
+%     {
+%       "regret": --,
+%       "best_value: --,
+%       "optimal": --,
+%       "evaluations": --,
+%       "seed": --,
+%       "trajectory": [
+%         [
+%           1,
+%           618324347019193.0,
+%           618324347019193.0
+%         ],
+%         [
+%           2,
+%           622722393530297.0,
+%           622722393530297.0
+%         ],
+%         [
+%           3,
+%           622722393538489.0,
+%           622722393538489.0
+%         ],
+%         ...
+%         ]
+%     ...
+%     ]
+% ...
+% }
+% \end{verbatim}
+% \end{minipage}
+% % \hfill
+% \begin{minipage}{0.48\textwidth}
+% \textbf{Version B}
+% \begin{verbatim}
+% def add_numbers(x, y):
+%     result = x + y
+%     return result
+% \end{verbatim}
+% \end{minipage}
+% \end{figure}
+
+\subsubsection{Independent Job Execution framework}
 
 The \acrshort{cli} is implemented using \textbf{Typer}~\cite{typer}, which maps
 sub-commands to typed Python functions with automatic argument parsing. The
-orchestration layer (\texttt{regret.experiments.orchestration}) coordinates
-problem instantiation, algorithm dispatch, result persistence, and plot
+``orchestration'' layer coordinates
+problem \& algorithm instantiation, result persistence, and plot
 generation, delegating individual runs to \texttt{ExperimentRunner}. Parallel
 execution uses \texttt{ProcessPoolExecutor} from Python's standard
 \texttt{concurrent.futures} module; results are collected via
 \texttt{as\_completed} and reordered by seed for deterministic output
 ordering. Figure~\ref{fig:dispatch-pipeline} illustrates the full validation
-and dispatch pipeline.
+and the experiment (job) dispatch pipeline.
+
 
 
 % TODO: Expand flowchart
-\begin{figure}[ht]
-\caption[Configuration parse pipeline]{Validation and dispatch pipeline. \acrshort{yaml} configuration files are
-     validated structurally via \acrshort{json} Schema and then semantically against
-     class registries before execution begins. Any validation failure
-     raises a \texttt{ValidationError} and halts the pipeline before
-     computation begins.}
-\label{fig:dispatch-pipeline}
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[
   node distance = 2cm and 3cm,
@@ -186,7 +233,18 @@ and dispatch pipeline.
 \draw[darrow] (sem)  -- (e2);
 
 \end{tikzpicture}
+\caption[Configuration parse pipeline]{Validation and job dispatch pipeline. \acrshort{yaml} configuration files are
+     validated structurally via \acrshort{json} Schema and then semantically against
+     class registries before execution begins. Any validation failure
+     raises a \texttt{ValidationError} and halts the pipeline before
+     computation begins.}
+\label{fig:dispatch-pipeline}
 \end{figure}
+
+\subsubsection{Raw Output \acrshort{json} files}
+The output \acrshort{json} files are \textit{compacted} by replacing redundant stylistic whitespaces and newlines with other seperators. This reduced the raw file sizes by upto 50\%. 
+\acrshort{json} files were preferred for storing the raw files since it included \textit{mixed} data, including metadata, general statistics for each run, along with the trajectories.
+A `NoSQL' (key-value) database was considered but not used since the experiments were relatively small scale. 
 
 
 \subsubsection{UML Diagram}
@@ -409,7 +467,7 @@ Table~\ref{tab:output-structure} summarizes the full output organization.
   comparison heatmap. \\[4pt]
 \texttt{.../n<N>/history/}
  & Trajectory plots: best/current value, instantaneous and cumulative
-  regret, TTFO distribution. \\[4pt]
+  regret, \acrfull{ttfo} distribution. \\[4pt]
 \texttt{.../n<N>/distributions/}
  & Budget-specific plots: regret boxplots and performance profiles. \\[4pt]
 \texttt{.../n<N>/profiles/}
@@ -438,7 +496,7 @@ Performance profile      & \texttt{performance\_profile\_b\{budget\}}    & No \\
 History (best-so-far)    & \texttt{history\_best}                        & No \\
 Instantaneous regret     & \texttt{history\_regret\_instantaneous}       & No \\
 Cumulative regret        & \texttt{history\_regret\_cumulative}          & No \\
-TTFO distribution        & \texttt{history\_ttfo\_markers}               & No \\
+\acrshort{ttfo} distribution        & \texttt{history\_ttfo\_markers}               & No \\
 Runtime profile surface  & \texttt{inverse\_runtime\_profile\_surface\_\{alg\}} & Yes \\
 Runtime profile curves   & \texttt{inverse\_runtime\_profile\_curves}   & Yes \\
 CR profile verification  & \texttt{cr\_profile\_verification}            & Yes \\
@@ -450,10 +508,15 @@ CR profile verification  & \texttt{cr\_profile\_verification}            & Yes \
 
 \section{Testing strategy}
 % Mention TDD, Red-Green Testing, selective coverage (weighted)
-The test suite follows a \textbf{Test-Driven Development} (TDD) discipline
-using a red--green workflow: tests were written prior to or alongside
-implementation and serve as executable specifications. Coverage is measured
-using \texttt{coverage}~\cite{coverage} with branch tracking enabled, and a
+\begin{wrapfigure}{r}{0.5\textwidth} %this figure will be at the right
+    \centering
+    \includegraphics[width=0.5\textwidth]{red-green-refactor.png}
+    \caption[Red--Green--Refactor \acrshort{tdd} technique]{Red--Green--Refactor \acrshort{tdd} technique. Start by writing a failing test (the red step). Next, write code that is just enough to make the written test pass (the green step). Finally, as the regularities and properties of the problem space are understood, refactors can be implemented that keeps the code clean (the blue step). The refactor step is safe since it will always be backed up by tests.~\cite{calais2023test}}
+\end{wrapfigure}
+The test suite follows a \acrfull{tdd} discipline
+using a red--green--refactor workflow: tests were written prior to or alongside
+implementation and serve as executable specifications~\cite{agha2023test,calais2023test}. Coverage is measured
+using the \texttt{coverage}~\cite{coverage} package with branch tracking enabled, and a
 minimum threshold of \textbf{50\% branch coverage} is enforced in 
 \acrfull{ci} via GitHub Actions. Coverage is also computed across Python~3.12, 3.13, and 3.14 in \acrfull{ci} for redundancy and support (the project must be compatible for \texttt{python} $\geq$ 3.12).
 
