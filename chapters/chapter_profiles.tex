@@ -1,0 +1,302 @@
+\chapter{Runtime Profiles and Anytime Performance}
+\label{cha:profiles}
+
+
+
+\section{Motivation}
+
+Section~\ref{subsec:bbo-perf} surveyed the three standard frameworks for measuring
+the performance of black-box optimization algorithms: the expected runtime
+$\mathbb{E}[\tau_{f^*}]$, fixed-budget analysis, and fixed-target analysis culminating
+in the runtime profile framework from \cite{pinto2018practice}. Each
+improves on its predecessor in descriptive richness, yet none provides a single scalar
+that captures solution quality at every point in the run. Fixed-budget analysis, for
+instance, compresses the full trajectory to one value per budget~\cite{jansen2014fixed}.
+What the practitioner actually observes is the evolution of solution quality over the
+\emph{entire} course of the run.
+ 
+Pinto and Doerr make the case for this richer mode of reporting directly:
+\begin{displayquote}
+Our intention is rather to highlight to researchers working on theoretical aspects in
+evolutionary computation that, beyond being possibly more relevant for practitioners,
+explicitly reporting runtime profiles can give quite interesting insights into the
+performance of \acrshort{ea}s.
+{(\cite{pinto2018practice}, p.~19)}
+\end{displayquote}
+
+This chapter takes that framing as its starting point. Building on the notation established in Section~\ref{subsubsec:fixed-target}, this chapter formalizes the distributional runtime profile as a mathematical
+object, and then proves that expected cumulative regret decomposes exactly as a
+double sum over this profile. The result unifies the runtime-analysis and
+regret-based perspectives into a single identity, providing the
+\emph{combined anytime measure} \citet{pinto2018practice} call for.
+ 
+
+
+% \section{Fixed-Budget Analysis}
+
+% As introduced in Section~\ref{subsubsec:fixed-budget}, fixed-budget analysis
+% characterizes $\mathbb{E}[f^{*}_T(\mathcal{A})]$ (the expected quality of the best
+% solution found by algorithm $\mathcal{A}$ within a budget of $T$ evaluations) and
+% establishes that maximizing this quantity is equivalent to minimizing expected simple
+% regret (Section~\ref{subsubsec:sr}) at budget $T$~\cite{jansen2014fixed}. Fixed-budget
+% analysis therefore furnishes a natural starting point: it converts the binary "found /
+% not found" question of expected runtime into a quality-valued statement, but still
+% compresses the entire trajectory into a single scalar per budget value. The runtime
+% profile framework, introduced below, lifts this to a trajectory-level characterization.
+
+
+\section{Variants}
+
+\subsection{Expectation-Based Runtime Profiles}
+
+Building on the first hitting time $\tau_v$ defined in
+Section~\ref{subsubsec:fixed-target}, \citet{pinto2018practice} propose
+reporting the full collection of expected first hitting times
+$\bigl(\mathbb{E}[\tau_v]\bigr)_{v}$ across all relevant target levels, the
+\textit{expectation-based runtime profile}. When canonical fitness levels exist, such
+as for \textsc{OneMax} or \textsc{LeadingOnes}, these provide natural targets; for
+other functions, intermediate values identified during analysis or by linear
+interpolation of the fitness range may be used~\cite{pinto2018practice}. No new
+algorithms or proof techniques are required: the profile is typically already implicit
+in existing runtime proofs and calls only for a richer mode of presentation.
+ 
+The practical value of this richer view is illustrated by the behavior of $(1+1)$~\acrshort{ea}
+variants on \textsc{LeadingOnes}: reporting only the expected optimization time suggests
+RLS is superior, yet the runtime profile reveals that
+$(1+1)$~EA$_{>0}$ (see !TODO: ref $(1+1)$-EA$_{\geq 0}$ variant!)
+reaches all intermediate fitness levels $i \leq 7{,}980$ faster than RLS for problem
+size $n = 10{,}000$, with RLS only pulling ahead in the final portion of the
+run~\cite{pinto2018practice}. Such crossover behavior is directly relevant to the
+design of adaptive parameter and operator selection schemes.
+
+\subsection{Distributional Runtime Profiles}
+
+The expectation-based runtime profile of~\cite{pinto2018practice} summarizes the
+distribution of $\tau_v$ by its mean. A finer characterization, and the appropriate
+quantity for connecting runtime profiles to regret-based measures, is the
+\textit{distributional runtime profile}
+\begin{equation}
+    \mathcal{P}(v, t) \;:=\; \mathbb{P}(\tau_v > t),
+\end{equation}
+which records, for each target level $v$ and time step $t$, the probability that level
+$v$ has not yet been reached by time $t$. The expectation-based profile is recovered by
+the standard tail-sum formula for non-negative integer-valued random
+variables~\cite[p.~16]{doerr2020theory}:
+\begin{equation}
+    \label{eqn:dist-runtime-rel}
+    \mathbb{E}[\tau_v] \;=\; \sum_{t=0}^{\infty} \mathbb{P}(\tau_v > t).
+\end{equation}
+The distributional profile is the more primitive object from which expectation-based
+statements follow, and it constitutes the formal link between runtime profiles and
+the cumulative regret framework developed below.
+
+\begin{remark}[Naming convention]
+\label{rem:profile-naming}
+The term \emph{runtime profile} appears in two distinct senses in the literature and in
+this work. \cite{pinto2018practice} uses it to denote the
+\emph{expectation-based} runtime profile $\bigl(\mathbb{E}[\tau_v]\bigr)_v$, which
+summarizes per-level performance by expected hitting times. The present work additionally
+employs the strictly finer \emph{distributional} runtime profile $\mathcal{P}(v,t) =
+\mathbb{P}(\tau_v > t)$, from which the expectation-based profile is recovered via the
+tail-sum formula (Equation~\ref{eqn:dist-runtime-rel}). To avoid ambiguity, both
+notions are referred to explicitly whenever both are in scope. Hereafter, and in all
+practical experimentation in this report, \emph{runtime profile} refers to the
+distributional variant $\mathcal{P}(v,t)$ unless otherwise stated.
+\end{remark}
+
+\section{Connection to Cumulative Regret}
+\label{subsec:regret-profiles}
+
+One of the directions suggested by Pinto and Doerr in their \textit{Future Works}
+section is restated for emphasis:
+\begin{displayquote}
+    We feel that there is a need for combined measures that are capable of describing
+    the anytime behavior of an \acrshort{ea}. Regret-based measure as
+    used in machine learning could be a key here, but we haven't been able so far to
+    identify a fully satisfying measure.
+    {(\cite{pinto2018practice}, p.~22)}
+\end{displayquote}
+As far as we know, establishing such a relationship remains an open question.
+This section consolidates the following proposal: that the \textit{\acrfull{cr}}
+(Section~\ref{subsubsec:cr}) and the distributional runtime profile are not independent
+approaches to algorithm performance but are two representations of the same underlying
+quantity. The identity below attempts to establish this relation.
+
+The relationship can be made explicit through a formal setup. A randomized black-box
+algorithm produces an adaptive sequence of query points $x_1, x_2, \ldots \in
+\{0,1\}^n$. Recall from Section~\ref{subsubsec:cr} the \textit{best-so-far process}
+\[
+    B(t) \;:=\; \max_{s \leq t} f(x_s),
+\]
+which records the best objective value seen up to time $t$. Since $B(t)$ is
+non-decreasing in $t$, the event $\{B(t) < v\}$ is equivalent to $\{\tau_v > t\}$:
+the level $v$ has not yet been hit. The incumbent cumulative regret over a budget of
+$T$ evaluations is therefore
+\[
+    \mathrm{CR}(T) \;:=\; \sum_{t=1}^{T} \bigl(f^* - B(t)\bigr).
+\]
+
+The proof of the main theorem relies on two elementary lemmas.
+
+\begin{lemma}[Tail-sum representation for the gap]
+\label{lem:tailsum}
+For any integer $b$ with $0 \le b \le f^*$,
+\[
+    f^* - b \;=\; \sum_{v=1}^{f^*} \mathbf{1}[b < v].
+\]
+\end{lemma}
+
+\begin{proof}
+The right-hand side counts the integers $v \in \{1,\ldots,f^*\}$ that strictly exceed
+$b$, namely the set $\{b+1,\ldots,f^*\}$, which has cardinality $f^* - b$.
+\end{proof}
+
+\begin{lemma}[Indicator equivalence]
+\label{lem:indicator}
+For all $v \in \{1, \ldots, f^*\}$ and $t \in \mathbb{N}$,
+\[
+    \mathbf{1}[B(t) < v] \;=\; \mathbf{1}[\tau_v > t].
+\]
+\end{lemma}
+
+\begin{proof}
+Since $B(t)$ is non-decreasing in $t$, the event $\{B(t) \ge v\}$ is equivalent to
+$\{\tau_v \le t\}$. Taking complements gives $\{B(t) < v\} = \{\tau_v > t\}$, so the
+two indicators agree on every sample path.
+\end{proof}
+
+The following identity connects \textit{expected} cumulative regret to the distributional
+runtime profile.
+
+\begin{theorem}[Tail-Sum Regret Representation]
+\label{thm:regret-profile}
+For any randomized black-box algorithm operating on $f$ with finite budget
+$T \in \mathbb{N}$,
+\[
+    \mathbb{E}[\mathrm{CR}(T)]
+    \;=\;
+    \sum_{v=1}^{f^*} \sum_{t=1}^{T} \mathbb{P}(\tau_v > t).
+\]
+\end{theorem}
+
+\begin{proof}
+For each $t$, Lemma~\ref{lem:tailsum} applied to $b = B(t)$ gives
+\[
+    f^* - B(t) \;=\; \sum_{v=1}^{f^*} \mathbf{1}[B(t) < v].
+\]
+Summing over $t = 1, \ldots, T$ yields
+\[
+    \mathrm{CR}(T)
+    \;=\; \sum_{t=1}^{T}\bigl(f^* - B(t)\bigr)
+    \;=\; \sum_{t=1}^{T} \sum_{v=1}^{f^*} \mathbf{1}[B(t) < v].
+\]
+By Lemma~\ref{lem:indicator}, $\mathbf{1}[B(t) < v] = \mathbf{1}[\tau_v > t]$ on every
+sample path, so
+\[
+    \mathrm{CR}(T) \;=\; \sum_{t=1}^{T} \sum_{v=1}^{f^*} \mathbf{1}[\tau_v > t].
+\]
+Taking expectations and applying linearity of expectation together with
+$\mathbb{E}[\mathbf{1}[\tau_v > t]] = \mathbb{P}(\tau_v > t)$ gives
+\[
+    \mathbb{E}[\mathrm{CR}(T)]
+    \;=\; \sum_{t=1}^{T} \sum_{v=1}^{f^*} \mathbb{P}(\tau_v > t).
+\]
+Since both sums are finite, their order may be exchanged, yielding the stated result.
+\end{proof}
+
+Theorem~\ref{thm:regret-profile} expresses expected cumulative regret as a double sum
+of the distributional runtime profile: $\mathbb{E}[\mathrm{CR}(T)]$ is the total
+expected time the algorithm spends below each fitness level $v$, summed over all levels.
+An algorithm with a uniformly smaller runtime profile (one that reaches each fitness
+level earlier in expectation) therefore incurs lower cumulative regret. The regret
+measure thus simultaneously rewards early progress at every tier of the landscape,
+formalizing the intuition that steady improvement throughout a run is preferable to
+stagnation followed by a late breakthrough, even when both strategies share the same
+expected optimization time.
+
+Taking the infinite-horizon limit, and applying the tail-sum identity for
+$\mathbb{E}[\tau_v]$ along with the monotone convergence theorem, yields the following
+asymptotic connection.
+
+\begin{corollary}[Asymptotic Regret and Expected Hitting Times]
+\label{cor:asymptotic-regret}
+Suppose that $\tau_v$ is almost surely finite with finite expectation for each
+$v \in \{1, \ldots, f^*\}$. Then
+\[
+    \lim_{T \to \infty} \mathbb{E}[\mathrm{CR}(T)]
+    \;=\;
+    \sum_{v=1}^{f^*} \mathbb{E}[\tau_v] \;-\; f^*.
+\]
+\end{corollary}
+ 
+\begin{proof}
+\textbf{Step 1: Tail-sum identity for $\mathbb{E}[\tau_v]$.}
+Since $\tau_v \in \mathbb{N}_{\geq 1}$ by the convention that $t = 1$ is the first
+oracle call and initialization is excluded from the query budget, we have
+$\mathbb{P}(\tau_v > 0) = 1$. The standard tail-sum formula for a positive
+integer-valued random variable then gives
+\[
+    \mathbb{E}[\tau_v]
+    \;=\; \sum_{t=0}^{\infty} \mathbb{P}(\tau_v > t)
+    \;=\; 1 + \sum_{t=1}^{\infty} \mathbb{P}(\tau_v > t),
+\]
+hence $\sum_{t=1}^{\infty} \mathbb{P}(\tau_v > t) = \mathbb{E}[\tau_v] - 1$.
+ 
+\textbf{Step 2: Passing to the limit in Theorem~\ref{thm:regret-profile}.}
+For each fixed $v$, the partial sums $\sum_{t=1}^{T}\mathbb{P}(\tau_v > t)$ are
+non-decreasing in $T$ and non-negative, so the monotone convergence theorem gives
+\[
+    \lim_{T\to\infty} \sum_{t=1}^{T} \mathbb{P}(\tau_v > t)
+    \;=\; \sum_{t=1}^{\infty} \mathbb{P}(\tau_v > t)
+    \;=\; \mathbb{E}[\tau_v] - 1.
+\]
+ 
+\textbf{Step 3: Summing over $v$.}
+Applying Step 2 to each $v = 1,\ldots, f^*$ and invoking
+Theorem~\ref{thm:regret-profile},
+\[
+    \lim_{T \to \infty} \mathbb{E}[\mathrm{CR}(T)]
+    \;=\; \sum_{v=1}^{f^*}\bigl(\mathbb{E}[\tau_v] - 1\bigr)
+    \;=\; \sum_{v=1}^{f^*} \mathbb{E}[\tau_v] \;-\; f^*. \qedhere
+\]
+\end{proof}
+ 
+Corollary~\ref{cor:asymptotic-regret} provides a unifying perspective: the long-run
+expected cumulative regret decomposes as the sum of the expected first hitting times
+over all fitness levels, minus the constant $f^*$ arising from the $t = 0$ term in the
+tail-sum identity. Algorithms that reach all intermediate fitness levels quickly are
+therefore those that incur low long-run cumulative regret. This formalizes
+the intuition advanced in~\cite{pinto2018practice} that an algorithm making steady
+progress through the fitness landscape is preferable to one that stagnates at low
+fitness values even if both ultimately find the optimum in the same expected time.
+ 
+The identity also reveals that the regret-based measures studied in the online learning
+literature~\cite{cesa2006prediction} and the runtime profile framework
+of~\cite{pinto2018practice} are not independent approaches to measuring algorithm
+performance but are two views of the same underlying quantity, connected through the
+distributional runtime profile $\mathcal{P}(v, t)$.
+
+\section{Practical Relevance}
+\label{subsec:profiles-relevance}
+
+As discussed in Section~\ref{subsubsec:perf-limitations}, the limitations of
+classical performance measures stem from their treatment of optimization as a
+sequence of threshold events rather than as a continuous quality trajectory.
+
+Pinto and Doerr~\cite{pinto2018practice} note that runtime profiles are particularly
+valuable for the design of non-static parameter and operator selection strategies in
+\acrshort{ea}s (such as adaptive mutation rates, crossover probabilities, and selection
+pressure) since such strategies must make decisions based on current solution quality
+rather than on the expected optimization time alone. The identification of
+\emph{crossover fitness levels} (where one algorithm overtakes another in the runtime
+profile) provides actionable guidance for when to switch between strategies.
+
+Furthermore, as established in Theorem~\ref{thm:regret-profile}, any collection of
+upper bounds on $\mathbb{E}[\tau_v]$ for all levels $v$ simultaneously yields an upper
+bound on expected cumulative regret, and conversely, lower bounds on regret propagate to
+lower bounds on a weighted aggregate of first hitting times. Cumulative regret thus
+provides a single scalar summary of the entire runtime profile, complementing the
+per-level view that the profile itself offers. The two representations (regret as a
+scalar, runtime profile as a function) are therefore best understood as complementary
+instruments for the same measurement task, connected by the identity of
+Theorem~\ref{thm:regret-profile}.
