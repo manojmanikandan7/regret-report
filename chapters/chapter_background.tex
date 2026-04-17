@@ -1,5 +1,5 @@
 % Word count aim: 4000-4500
-% current: 3165
+% current: 3293
 \chapter{Background}
 
 \section{Computational Problems}
@@ -270,7 +270,53 @@ optimization convergence.
 
 
 \subsubsection[\texorpdfstring{Evolutionary Algorithms (EA)}{Evolutionary Algorithms (EA)}]{Evolutionary Algorithms (\acrshort{ea})}
+\label{subsubsec:ea}
 
+Evolutionary algorithms are a broad family of population-based, randomized search
+heuristics inspired by biological evolution. In discrete optimization, the canonical
+paradigm maintains one or more \emph{candidate solutions} (bit strings) and iterates
+two operators: \emph{mutation}, which perturbs a solution stochastically, and
+\emph{selection}, which retains solutions according to their objective
+value~\cite{droste2002analysis,doerr2020theory}. The simplest instance of this
+paradigm, the $(1+1)$~EA, serves as the theoretical baseline throughout this project.
+
+\paragraph{The $(1+1)$~EA.}
+\label{par:oneone-ea}
+The $(1+1)$~EA maintains a single current solution $x \in \{0,1\}^n$. In each
+iteration it produces one offspring $y$ by \emph{standard bit mutation}: every bit is
+flipped independently with probability $p$. The offspring replaces the parent if and
+only if $f(y) \geq f(x)$ (\emph{elitist selection}). With the standard choice $p =
+1/n$ the expected number of flipped bits is exactly one. The resulting process is a
+homogeneous Markov chain on $\{0,1\}^n$ with a non-decreasing fitness
+sequence~\cite{droste2002analysis,witt2013tight}.
+
+\begin{algorithm}[H]
+\caption{The $(1+1)$~EA with mutation probability $p \in (0,1)$}
+\label{alg:oneone-ea}
+\begin{algorithmic}[1]
+  \State Sample $x \in \{0,1\}^n$ uniformly at random; evaluate $f(x)$
+  \Repeat
+    \State $y \gets x$
+    \For{$i = 1, \ldots, n$}
+      \State flip $y_i$ with probability $p$, independently
+    \EndFor
+    \If{$f(y) \geq f(x)$} $x \gets y$ \EndIf
+  \Until{termination criterion met}
+\end{algorithmic}
+\end{algorithm}
+
+\noindent The classical runtime results for $p = 1/n$ are
+\[
+  \mathbb{E}[T_{\textsc{OneMax}}] = e\,n\ln n + O(n)
+  \qquad \text{and} \qquad
+  \mathbb{E}[T_{\textsc{LeadingOnes}}] = \tfrac{e-1}{2}\,n^2 + o(n^2),
+\]
+and the $\Theta(n\log n)$ bound extends to \emph{all} linear pseudo-Boolean functions
+with non-zero weights~\cite{witt2013tight}. On general landscapes the algorithm may require
+exponential time: even simple quadratic and unimodal functions can trap it
+indefinitely without restarts or adaptive mutation~\cite{droste2002analysis}. Advanced variants and
+implementation-aware refinements are discussed in
+Appendix~\ref{app:ea}.
 
 
 \subsubsection{Simulated Annealing}
