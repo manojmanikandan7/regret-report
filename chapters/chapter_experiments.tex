@@ -88,7 +88,7 @@ reference algorithm).
 
 \paragraph{Trajectory plots.}
 All trajectory plots are averaged across runs at \texttt{budget\_for\_plots},
-with a standard-error band and optional TTFO markers at the mean
+with a standard-error band and optional \acrshort{ttfo} markers at the mean
 time-to-first-optimum. The suite produces several complementary variants.
 
 The \emph{best-value history} (\texttt{history\_best}) plots the
@@ -117,7 +117,7 @@ during the trapped phase grows linearly with time and is the key signal for
 barrier-crossing suites (05, 06, 09, 10); this slope is suppressed on a
 log axis, so cumulative regret is plotted on a linear $y$-axis throughout.
 
-The \emph{TTFO distribution} (\texttt{ttfo\_distribution}) plots individual
+The \textit{\acrshort{ttfo} distribution} plots individual
 run-level times-to-first-optimum as jittered points per algorithm. This plot
 is conditioned on convergence: runs that did not reach the optimum contribute
 no point, so when $P(\text{opt}) \approx 0$ across the suite the scatter is
@@ -125,7 +125,11 @@ sparse and adds little beyond the convergence probability plot.
 
 \paragraph{Runtime profile plots.}
 These require \texttt{suite.profile:~true} and are produced only in suites
-03, 08, and 12. The inverse runtime profile
+03, 08, and 12. Their methodological basis is developed in
+Chapter~\ref{cha:profiles}; here they are described only as outputs of the
+experimental pipeline.
+
+The inverse runtime profile
 $P(\tau_v \leq T)$---the probability that fitness level $v$ was first reached
 by evaluation $T$---is the common basis.
 
@@ -134,18 +138,17 @@ plots this probability as a heat map over $(T, v)$ for each algorithm
 separately, with iso-probability contours overlaid. A front that stalls at
 some $v_{\text{local}} < f^{*}$ regardless of additional budget identifies
 the saturation level of the algorithm on that landscape.
+
 The \emph{profile curves} (\texttt{inverse\_runtime\_profile\_curves}) plot
 $P(\tau_v \leq T)$ versus $T$ at four selected fitness levels
 ($f^{*} \times \{0.25, 0.5, 0.75, 0.95\}$), overlaying all algorithms on
 the same panel for direct comparison.
 
-The \emph{profile verification} plot (\texttt{cr\_profile\_verification}),
-enabled only in suite 08, overlays two independent estimates of
-$\mathbb{E}[\text{CR}(T)]$: the empirical mean across runs, and the value
-derived via the tail-sum identity from the inverse profile. For integer-valued
-unit-increment fitness functions the identity is exact and any gap indicates a
-computational error; for the continuous-valued NK landscape (suite 12) a minor
-gap reflects finite-grid discretisation and not a bug.
+The \emph{profile verification} plot (\texttt{cr\_profile\_verification})
+overlays two independent estimates of $\mathbb{E}[\text{CR}(T)]$: the empirical
+mean across runs, and the value derived from the inverse profile. Its role in
+the experiments is implementation verification rather than theoretical
+development.
 
 \paragraph{Summary tables.}
 Tables are exported per-suite in \LaTeX, CSV, or Markdown.
@@ -154,9 +157,14 @@ one row per algorithm reporting mean, median, standard deviation, interquartile
 range, a 95\% bootstrap confidence interval, $P(\text{opt})$, and run count,
 sorted by ascending mean regret. The mean--median gap is informative when
 distributions are skewed by a minority of non-converging runs.
-An \emph{aggregate cross-problem table} summarises each algorithm's
+An \emph{aggregate cross-problem table} summarizes each algorithm's
 across-problem mean regret, mean $P(\text{opt})$, and the count of problems
 on which it achieved the lowest mean regret among all algorithms in the suite.
+
+The framework also implements current-value history plots
+(\texttt{history\_current}), but these are not part of the reported experiment
+set because the regret trajectories already provide the more direct diagnostic
+view used throughout this chapter.
 
 
  
