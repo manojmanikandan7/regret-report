@@ -12,6 +12,10 @@ jobs:
           ref: ${{ github.head_ref }}
           # Value already defaults to true, but `persist-credentials` is required to push new commits to the repository.
           persist-credentials: true
+      - name: wordcount in report
+        run: |
+          apt-get update && apt-get install -y texcount
+          texcount -1 -sum -inc report.tex > word.count
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v4
         with:
