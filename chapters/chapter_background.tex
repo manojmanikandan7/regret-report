@@ -512,8 +512,61 @@ all less significant
 bits, making \textsc{BinVal} highly structured.
 
 \subsubsection{Trap}
+
 \subsubsection{Plateau}
-\subsubsection{Hierarchical If-Only-If}
+
+\subsubsection{Hierarchical If-and-Only-If (HIFF)}
+
+The \acrfull{hiff} function,
+introduced by Watson, Hornby, and Pollack~\cite{watson1998modeling},
+is a benchmark designed to model \textit{hierarchical building-block
+interdependency}: a property absent from earlier \acrfull{ga} test
+problems, which treat sub-problems as separable. In \acrshort{hiff},
+the optimal solution to a block of bits depends on how that block
+combines with its neighbors at the next level of the hierarchy,
+making sub-problems \textit{non-separable} in a consistent,
+multi-level sense.
+
+The fitness of a bitstring $x \in \{0,1\}^n$, where $n$ must be a
+power of two, is defined recursively. A block $B$ of length one
+always contributes a fitness of one. For any longer block, if all
+bits in $B$ are identical (all zeros or all ones), the block
+contributes $|B|$ to fitness and its two halves are recursively
+evaluated; otherwise only the recursive evaluation of the two halves
+contributes. Formally,
+\[
+  f(B) =
+  \begin{cases}
+    1 & \text{if } |B| = 1, \\
+    |B| + f(B_L) + f(B_R) & \text{if } |B| > 1 \text{ and all bits
+    in } B \text{ are equal,} \\
+    f(B_L) + f(B_R) & \text{otherwise,}
+  \end{cases}
+\]
+where $B_L$ and $B_R$ denote the left and right halves of $B$.
+The global optimum is achieved by the all-zeros or all-ones
+bitstring, giving a maximum fitness of $n(\log_2 n + 1)$. Two
+global optima exist and are maximally distant from one another,
+a structural feature that makes \acrshort{hiff} acutely challenging
+for hill-climbing algorithms: a single bit-flip from either optimum
+disrupts the top-level block uniformity and causes a sharp fitness
+drop, so local search stagnates at intermediate solutions in which
+only lower-level blocks are uniform~\cite{watson1998modeling}.
+
+The landscape is highly multimodal. Secondary optima consist of
+strings with contiguous blocks of zeros and ones at each
+hierarchical level (for example, the first $n/2$ bits all zero and
+the remaining $n/2$ all one for a length-$n$ string), and these
+local optima are maximally distant from both global optima.
+Oates et al.~\cite{oates2000triphase} demonstrate empirically that
+this structure induces a characteristic tri-modal performance profile
+in evolutionary search: progress occurs in discrete phases
+corresponding to the successive exploitation of one-bit, two-bit,
+and higher-order mutations needed to escape each tier of local
+optima. This property makes \acrshort{hiff} a useful diagnostic
+benchmark for regret analysis, as the hierarchical barrier structure
+should produce a distinctive staircase signature in the cumulative
+regret trajectory.
 
 \subsubsection{MaxSAT}
 \textit{Maximum Satisfiability} (MaxSAT) is the optimization variant

@@ -282,8 +282,8 @@ is developed in Chapter~\ref{cha:profiles}.
       & 4 Plateau ($k\in\{2,5,10,20\}$)
       & 3$\times$EA + SA-Log-d4.0
       & 30 & 20\,000 & No \\
-      07 & HIFF scaling
-      & 3 HIFF ($n\in\{32,64,128\}$)
+      07 & \acrshort{hiff} scaling
+      & 3 \acrshort{hiff} ($n\in\{32,64,128\}$)
       & RLS, 4$\times$EA, SA-Log-d4.0
       & 25 & 50\,000 & No \\
       09 & Jump: plateau duration (extended)
@@ -365,7 +365,7 @@ algorithm.
 \subsection{Suite 02: Extended Pseudo-Boolean Benchmark}
 
 Suite 02 extends the baseline to nine problems, adding Jump-5, Trap-5,
-Plateau-10, HIFF-64, and a combinatorial instance (Petersen-3-Color).
+Plateau-10, \acrshort{hiff}-64, and a combinatorial instance (Petersen-3-Color).
 The algorithm set is identical to suite 01 (the same four families).
 Budgets range from 500 to 20\,000 over 50 runs. Profile analysis is disabled.
 
@@ -684,8 +684,10 @@ converge within the 20\,000-evaluation budget. Profile analysis is disabled.
 
 % Profile analysis is disabled.
 
-Suite 07 evaluates \acrshort{hiff} at $n \in \{32,64,128\}$ under \acrshort{rls}, four
-$(1+1)$-\acrshort{ea} variants, and SA-Log-d\_4.0 at a fixed $d=4.0$. \acrshort{rls}
+Suite 07 evaluates \acrshort{hiff} at $n \in \{32,64,128\}$ under
+\acrshort{rls}, four
+$(1+1)$-\acrshort{ea} variants, and SA-Log-d\_4.0 at a fixed $d=4.0$.
+\acrshort{rls}
 is included as a zero-temperature reference whose rapid saturation on large
 instances anchors the comparison: a single bit-flip disrupts any uniform
 sub-block, so \acrshort{rls} is expected to stagnate at the first hierarchical
