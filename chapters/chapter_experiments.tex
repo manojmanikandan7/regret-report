@@ -122,7 +122,8 @@ purpose, and the suites or conditions that enable it.
 
 For hill-climbing algorithms (RLS, $(1+1)$-EA) the current-solution and
 incumbent IR variants coincide because no worsening moves are accepted. For SA
-and \acrshort{rls}Exploration the two diverge during active exploration, making the
+and \acrshort{rls}Exploration the two diverge during active
+exploration, making the
 current-solution variant a direct diagnostic of temperature-driven behaviour.
 Cumulative regret is always plotted on a linear $y$-axis: its slope during the
 trapped phase grows linearly with time, and a log axis would suppress that
@@ -693,38 +694,38 @@ instances anchors the comparison: a single bit-flip disrupts any uniform
 sub-block, so \acrshort{rls} is expected to stagnate at the first hierarchical
 level for $n \geq 64$. Table~\ref{tab:suite07-rates} shows the exact mutation
 rate values used for each EA variant at each problem size.
- 
+
 \begin{table}[htbp]
-\centering
-\caption{Per-problem mutation rates in suite 07. Values are set via
-  \texttt{by\_problem} overrides to exact decimal representations of
+  \centering
+  \caption{Per-problem mutation rates in suite 07. Values are set via
+    \texttt{by\_problem} overrides to exact decimal representations of
   $\{0.5/n,1/n,2/n,3/n\}$ at each problem size.}
-\label{tab:suite07-rates}
-\small
-\begin{tabular}{@{}lrrr@{}}
-\toprule
-\textbf{Algorithm} & $n=32$ & $n=64$ & $n=128$ \\
-\midrule
-EA-mu\_0.5-by-n
-  & $\nicefrac{1}{64}\approx0.01563$
-  & $\nicefrac{1}{128}\approx0.00781$
-  & $\nicefrac{1}{256}\approx0.00391$ \\
-EA-mu\_1-by-n
-  & $\nicefrac{1}{32}\approx0.03125$
-  & $\nicefrac{1}{64}\approx0.01563$
-  & $\nicefrac{1}{128}\approx0.00781$ \\
-EA-mu\_2-by-n
-  & $\nicefrac{2}{32}\approx0.06250$
-  & $\nicefrac{2}{64}\approx0.03125$
-  & $\nicefrac{2}{128}\approx0.01563$ \\
-EA-mu\_3-by-n
-  & $\nicefrac{3}{32}\approx0.09375$
-  & $\nicefrac{3}{64}\approx0.04688$
-  & $\nicefrac{3}{128}\approx0.02344$ \\
-\bottomrule
-\end{tabular}
+  \label{tab:suite07-rates}
+  \small
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    \textbf{Algorithm} & $n=32$ & $n=64$ & $n=128$ \\
+    \midrule
+    EA-mu\_0.5-by-n
+    & $\nicefrac{1}{64}\approx0.01563$
+    & $\nicefrac{1}{128}\approx0.00781$
+    & $\nicefrac{1}{256}\approx0.00391$ \\
+    EA-mu\_1-by-n
+    & $\nicefrac{1}{32}\approx0.03125$
+    & $\nicefrac{1}{64}\approx0.01563$
+    & $\nicefrac{1}{128}\approx0.00781$ \\
+    EA-mu\_2-by-n
+    & $\nicefrac{2}{32}\approx0.06250$
+    & $\nicefrac{2}{64}\approx0.03125$
+    & $\nicefrac{2}{128}\approx0.01563$ \\
+    EA-mu\_3-by-n
+    & $\nicefrac{3}{32}\approx0.09375$
+    & $\nicefrac{3}{64}\approx0.04688$
+    & $\nicefrac{3}{128}\approx0.02344$ \\
+    \bottomrule
+  \end{tabular}
 \end{table}
- 
+
 For $n=128$, \texttt{budget\_for\_plots} is set to 50\,000, the largest budget
 in the suite. Convergence is not expected within this budget; the setting is
 deliberate, making the unsolved $n=128$ trajectory an informative contrast to
@@ -846,40 +847,40 @@ seed 42) under three algorithms: \acrshort{rls}, the $(1+1)$-\acrshort{ea}, and
 SA-Log-d\_4.0. The NK instances use the same fixed seed as suite 03, making
 the landscape realisations identical across both suites for the shared $k$
 values.
- 
+
 Suite 12 differs from suite 03 in two structural ways. First, it includes
 NK-k0 ($k=0$, fully separable), absent from suite 03. At $k=0$ each locus
 contributes independently to fitness, providing a baseline against which
 saturation at higher $k$ can be measured. Second, the SA cooling parameter
-escalates with $k$ via \texttt{by\_problem} overrides (Table~\ref{tab:suite12-d}),
+escalates with $k$ via \texttt{by\_problem} overrides
+(Table~\ref{tab:suite12-d}),
 reflecting that deeper local optima at higher epistasis require higher
 temperature to maintain non-trivial acceptance probability. This tuning means
 suite 12 does not form a clean grid design for studying the SA
 cooling--epistasis interaction (that role belongs to suite 03), but gives
 the SA variant a reasonable operating point at each $k$ to assess whether
 adequate temperature maintenance changes the saturation outcome.
- 
+
 \begin{table}[htbp]
-\centering
-\caption{SA-Log cooling parameter $d$ per NK instance in suite 12.
-  Values increase monotonically with epistasis $k$ to compensate for
+  \centering
+  \caption{SA-Log cooling parameter $d$ per NK instance in suite 12.
+    Values increase monotonically with epistasis $k$ to compensate for
   deeper local optima.}
-\label{tab:suite12-d}
-\small
-\begin{tabular}{@{}lrrrrr@{}}
-\toprule
-\textbf{NK instance} & NK-k0 & NK-k2 & NK-k4 & NK-k6 & NK-k8 \\
-\midrule
-$d$ & 4.0 & 4.0 & 8.0 & 8.0 & 12.0 \\
-\bottomrule
-\end{tabular}
+  \label{tab:suite12-d}
+  \small
+  \begin{tabular}{@{}lrrrrr@{}}
+    \toprule
+    \textbf{NK instance} & NK-k0 & NK-k2 & NK-k4 & NK-k6 & NK-k8 \\
+    \midrule
+    $d$ & 4.0 & 4.0 & 8.0 & 8.0 & 12.0 \\
+    \bottomrule
+  \end{tabular}
 \end{table}
- 
+
 Profile analysis is enabled, producing inverse runtime profile surfaces and
 curves. The \texttt{cr\_profile\_verification} plot is not enabled in this
 suite: the NK landscape uses a continuous fitness function normalized to
 $[0,1]$, so the integer-grid profile implementation does not apply exactly.
-
 
 \subsection{Suite 13: Regret Scaling with Problem Size}
 
@@ -944,34 +945,36 @@ Profile analysis is disabled.
 Several structural relationships between suites affect which results can be
 meaningfully compared. Table~\ref{tab:cross-suite} summarizes the three
 principal links; the paragraphs below elaborate the design rationale.
- 
+
 \begin{table}[htbp]
-\centering
-\caption{Principal cross-suite design relationships.}
-\label{tab:cross-suite}
-\small
-\begin{tabular}{@{}p{2.5cm}p{2.6cm}p{4.0cm}p{3.5cm}@{}}
-\toprule
-\textbf{Relationship} & \textbf{Suites} & \textbf{Shared} & \textbf{Differs} \\
-\midrule
-Barrier types at equal rates
-  & 04, 05, 06, 10
-  & EA rates $1/n$ and $2/n$; problems at same nominal $k$
-  & Barrier type (Trap/Jump/Plateau); additional rates per suite \\
-\addlinespace
-Jump at two time horizons
-  & 05, 09
-  & All 5 Jump instances; EA variants at $1/n$ and $k/n$
-  & Budget list and \texttt{budget\_for\_plots} (onset vs.\ duration) \\
-\addlinespace
-NK at two SA designs
-  & 03, 12
-  & $n=20$, seed 42; shared $k\in\{2,4,6,8\}$; identical landscapes
-  & Suite 03: $6\times5$ $d$-grid, no tuning; Suite 12: per-$k$ $d$ escalation, adds $k=0$ \\
-\bottomrule
-\end{tabular}
+  \centering
+  \caption{Principal cross-suite design relationships.}
+  \label{tab:cross-suite}
+  \small
+  \begin{tabular}{@{}p{2.5cm}p{2.6cm}p{4.0cm}p{3.5cm}@{}}
+    \toprule
+    \textbf{Relationship} & \textbf{Suites} & \textbf{Shared} &
+    \textbf{Differs} \\
+    \midrule
+    Barrier types at equal rates
+    & 04, 05, 06, 10
+    & EA rates $1/n$ and $2/n$; problems at same nominal $k$
+    & Barrier type (Trap/Jump/Plateau); additional rates per suite \\
+    \addlinespace
+    Jump at two time horizons
+    & 05, 09
+    & All 5 Jump instances; EA variants at $1/n$ and $k/n$
+    & Budget list and \texttt{budget\_for\_plots} (onset vs.\ duration) \\
+    \addlinespace
+    NK at two SA designs
+    & 03, 12
+    & $n=20$, seed 42; shared $k\in\{2,4,6,8\}$; identical landscapes
+    & Suite 03: $6\times5$ $d$-grid, no tuning; Suite 12: per-$k$ $d$
+    escalation, adds $k=0$ \\
+    \bottomrule
+  \end{tabular}
 \end{table}
- 
+
 \paragraph{Barrier types across suites 04--06 and 10.}
 Suites 04, 05, and 06 share the fixed rates $1/n$ and $2/n$. The full rate
 sets differ: suite 04 uses $\{0.5/n, 1/n, 2/n, 5/n\}$; suite 05 uses
@@ -981,14 +984,14 @@ for the same reason). At the shared rates, results on Trap-$k$, Jump-$k$, and
 Plateau-$k$ at the same $k$ are directly comparable since the algorithm is
 otherwise identical. Suite 10 consolidates this comparison by running all four
 EA rates on all three barrier types simultaneously at $k=5$.
- 
+
 \paragraph{Jump across suites 05 and 09.}
 Suites 05 and 09 are identical in problem and algorithm configuration; they
 differ only in budget list and \texttt{budget\_for\_plots}. Suite 05 is
 oriented toward observing plateau onset at small $k$; suite 09 extends the
 horizon to study plateau duration at all $k$ values, including those where
 convergence within budget is unlikely.
- 
+
 \paragraph{NK across suites 03 and 12.}
 Both suites use $n=20$, seed 42. Suite 03 covers $k\in\{1,2,4,6,8\}$ and
 suite 12 covers $k\in\{0,2,4,6,8\}$; the shared values are
