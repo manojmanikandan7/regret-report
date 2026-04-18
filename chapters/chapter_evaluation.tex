@@ -1,7 +1,136 @@
 \chapter{Evaluation \& Discussion of Results}
-\label{cha:eval}
+\label{cha:results}
 
+\section{Overview}
+% Brief orientation: how to read the plots, what each output type reveals,
+% and cross-references to the experiment structure
+% (Sec.~\ref{sec:exper:structure}).
 
-\section{PLACEHOLDER}
-\section{PLACEHOLDER}
-\section{PLACEHOLDER}
+\section{Baseline Suites}
+\label{sec:results:baseline}
+
+\subsection{Suite 01: Algorithm-Family Comparison}
+\label{sec:results:suite01}
+
+\subsubsection{Aggregate Regret and Convergence}
+% regret_curves (log-log), convergence_probability, comparison_heatmap
+% Key question: at which budget does each family overtake the others?
+
+\subsubsection{Regret Distributions and TTFO}
+% regret_boxplots, performance_profile, ttfo_distribution at budget_for_plots
+% Pairwise annotations (vs. RLS)
+
+\subsubsection{Trajectory Analysis}
+% history_best, regret_instantaneous, regret_instantaneous_best,
+% regret_cumulative_best per problem
+% Focus: shape differences across unimodal / deceptive / exponential problems
+
+\subsection{Suite 02: Extended Pseudo-Boolean Benchmark}
+\label{sec:results:suite02}
+
+\subsubsection{Aggregate Regret and Convergence}
+
+\subsubsection{Effect of Algorithm Overrides}
+% RLSExploration (eps=0.05, no decay) on Jump/Trap vs. default behaviour
+% SA d=6.0 on Jump-5 / Trap-5 vs. d=2.0
+
+\subsubsection{Trajectory Analysis}
+% Harder problems: HIFF-64, Petersen, Plateau-10 - convergence or saturation?
+
+\section{Verification Suite}
+\label{sec:results:verification}
+
+\subsection{Suite 08: Runtime Profile Verification}
+\label{sec:results:suite08}
+
+\subsubsection{Tail-Sum Identity: Direct vs.\ Profile-Derived
+\texorpdfstring{$\mathbb{E}[\mathrm{CR}(T)]$}{E[CR(T)]}}
+% cr_profile_verification for RLS and (1+1)-EA on OneMax and LeadingOnes
+% Quantify residual gap; attribute to discretisation or numerical error
+
+\subsubsection{Inverse Runtime Profile Surfaces and Curves}
+% inverse_runtime_profile_surface per algorithm
+% inverse_runtime_profile_curves at selected fitness levels
+
+\section{Exploratory Analysis}
+\label{sec:results:exploratory}
+
+\subsection{Barrier Structure and Mutation Rate}
+\label{sec:results:barrier}
+
+\subsubsection{Suite 04: Trap -- Deception Width and Mutation Rate}
+% Does cumulative regret shape change with k (not just final regret)?
+% Does SA escape deceptive basins where the EA cannot?
+
+\subsubsection{Suite 05: Jump -- Mutation Rate and Plateau Onset}
+% Instantaneous regret plateau as diagnostic of trapped phase
+% Adaptive k/n vs. fixed rates; comparison with TTFO when P(opt)~0
+
+\subsubsection{Suite 06: Plateau -- Neutral Walk and SA}
+% Jump vs. Plateau cumulative regret shape at shared k=2, k=5
+% Does SA benefit on neutral landscapes?
+
+\subsubsection{Suite 09: Jump -- Plateau Duration}
+% Extended horizon: plateau duration scales as Theta(n^k)?
+% Plateau exit at adaptive rate for small k
+
+\subsubsection{Suite 10: Barrier Archetype Comparison at k=5}
+% Trap vs. Jump vs. Plateau cumulative regret: early deception,
+% delayed crossing, neutral trapping
+% TTFO insufficiency at P(opt)~0 vs. regret trajectory informativeness
+
+\subsection{NK Ruggedness and SA Cooling}
+\label{sec:results:nk}
+
+\subsubsection{Suite 03: Cooling Schedule × Epistasis Grid}
+% 6x5 grid results: which d value performs best at each k?
+% Crossover levels in profile curves; saturation frontier in profile surface
+% RLS / (1+1)-EA baselines: does any SA variant improve on
+% hill-climbing at low k?
+
+\subsubsection{Suite 11: SA Cooling Schedule Diagnostics}
+% Instantaneous regret trajectory signatures by schedule family
+% Logarithmic (sustained positive T) vs. linear/exponential (collapse
+% to hill-climber)
+% Schedules underperforming RLS identified via pairwise annotations
+
+\subsubsection{Suite 12: NK Saturation}
+% Regret saturation floor vs. k; inverse runtime profile saturation frontier
+% Per-problem d tuning: does adequate temperature maintenance change
+% saturation outcome?
+
+\subsection{Hierarchical Structure and Scaling}
+\label{sec:results:scaling}
+
+\subsubsection{Suite 07: HIFF Scaling with Problem Size}
+% RLS saturation at first hierarchical level (n>=64)
+% EA mutation rate sensitivity at each n
+% SA trajectory on hierarchical sub-block barriers
+
+\subsubsection{Suite 13: Regret Scaling with n on OneMax}
+% E[CR(T)] scaling exponent: theoretical Theta(n) vs. empirical estimate
+% Log-log regret curves: rightward shift of ~log(2) per doubling of n
+
+\subsection{Population Dynamics}
+\label{sec:results:population}
+
+\subsubsection{Suite 14: (mu+lambda)-EA vs. (1+1)-EA}
+% (1+1)-EA vs. (1+1)-EA-framework: implementation consistency check
+% Population overhead on unimodal problems (OneMax, LeadingOnes)
+% Diversity benefit on multimodal problems (TwoMax, Jump-3)
+% Selection pressure ratio (mu/lambda) effect on cumulative regret shape
+
+\section{Cross-Suite Synthesis}
+\label{sec:results:synthesis}
+
+\subsection{Regret Trajectory Shapes as Landscape Diagnostics}
+% Summarise the diagnostic signatures identified across suites:
+% flat floor (saturation), linear ramp (barrier), smooth decay (unimodal)
+
+\subsection{When TTFO Fails and Cumulative Regret Succeeds}
+% Consolidate evidence from suites 05, 09, 10 where P(opt)~0 renders
+% TTFO uninformative but regret trajectories remain structured
+
+\subsection{Runtime Profiles and Regret: Complementary Views}
+% Connect suite 08 verification to suite 03/12 profile surfaces
+% Practical value of the identity E[CR(T)] = sum_v sum_t P(tau_v > t)
