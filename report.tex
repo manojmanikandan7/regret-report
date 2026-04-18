@@ -36,8 +36,8 @@
 \usepackage{nicefrac}
 \usepackage[numbers,square]{natbib}
 \lstset{
-columns=flexible,
-breaklines=true
+  columns=flexible,
+  breaklines=true
 }
 \hypersetup{
   colorlinks=true,
@@ -53,7 +53,7 @@ breaklines=true
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{definition}{Definition}
-\newtheorem{remark}{Remark} 
+\newtheorem{remark}{Remark}
 
 \usepackage{csquotes}
 \usepackage{rotating}
@@ -98,10 +98,16 @@ breaklines=true
 \afterabstract
 
 \prefacesection{Acknowledgements}
-I would like to express my sincere gratitude to my supervisor, Dr. Jonathan Shapiro, for his disproportionate support and guidance throughout this project. I also thank my second marker for taking their time to evaluate and assess my work. Moreover, Moreover, I am immensely grateful to my family and friends for their immeasurable support and for encouraging my ambitious pursuits throughout my degree.
+I would like to express my sincere gratitude to my supervisor, Dr.
+Jonathan Shapiro, for his disproportionate support and guidance
+throughout this project. I also thank my second marker for taking
+their time to evaluate and assess my work. Moreover, Moreover, I am
+immensely grateful to my family and friends for their immeasurable
+support and for encouraging my ambitious pursuits throughout my degree.
 \afterpreface
 
-\printglossary[type=\acronymtype, title=Abbreviations \& Acronyms, toctitle=Abbreviations \& Acronyms]
+\printnoidxglossary[type=\acronymtype, title=Abbreviations \& Acronyms,
+toctitle=Abbreviations \& Acronyms]
 
 % These include the actual text
 \include{chapters/chapter_introduction}
@@ -126,7 +132,8 @@ I would like to express my sincere gratitude to my supervisor, Dr. Jonathan Shap
 
 % Total                         8950-11300
 
-\bibliography{bibliography/refs, bibliography/software}    % this causes the references to be listed
+\bibliography{bibliography/refs, bibliography/software}    % this
+% causes the references to be listed
 
 \bibliographystyle{plainnat}
 %% the bibliography style determines the format  in which both citations and references are printed,

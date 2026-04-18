@@ -9,7 +9,8 @@ For mutation probability $p$, the exact expected optimization time on
 \[
   \mathbb{E}[T_p] = \frac{1}{2p^2}\bigl((1-p)^{-n+1} - (1-p)\bigr),
 \]
-minimized at $p \approx 1.59/n$, giving $\approx 0.77n^2$. For \textsc{OneMax}, the
+minimized at $p \approx 1.59/n$, giving $\approx 0.77n^2$. For
+\textsc{OneMax}, the
 sharp expansion at $p = 1/n$ is~\cite{hwang2018probabilistic}
 \[
   \mathbb{E}[T] = e\,n\ln n - 1.8925\ldots\, n + \tfrac{e}{2}\ln n + O(1).
@@ -20,10 +21,14 @@ $(1\pm o(1))\frac{e^c}{c}\,n\ln n$, minimized at $c = 1$~\cite{witt2013tight}.
 \section{Implementation-Aware Variants}
 \label{app:sec:impl-aware}
 
-A practical observation of Pinto and Doerr~\cite{pinto2018practice} is that roughly a
-$1/e$ fraction of all $(1+1)$~\acrshort{ea} iterations flip \emph{no} bit (the offspring equals
-the parent), yet standard analyses charge a full function evaluation for each such
-iteration. Real implementations avoid these wasted evaluations by one of two strategies.
+A practical observation of Pinto and Doerr~\cite{pinto2018practice}
+is that roughly a
+$1/e$ fraction of all $(1+1)$~\acrshort{ea} iterations flip \emph{no}
+bit (the offspring equals
+the parent), yet standard analyses charge a full function evaluation
+for each such
+iteration. Real implementations avoid these wasted evaluations by one
+of two strategies.
 
 \paragraph{Resampling variant -- $(1+1)$~\texorpdfstring{EA$_{>0}$}{EA>0}.}
 \label{app:par:resampea}
@@ -33,42 +38,53 @@ $\ell > 0$. This effectively skips any iteration that would flip nothing.
 
 \paragraph{Shift variant -- $(1+1)$~\texorpdfstring{EA$_{0\to1}$}{EA0to1}.}
 \label{app:par:shiftea}
-If $\ell = 0$ is sampled, it is replaced by $\ell = 1$, shifting all probability mass
+If $\ell = 0$ is sampled, it is replaced by $\ell = 1$, shifting all
+probability mass
 from zero flips to exactly one flip.
 
-Both variants are analyzed in full in~\cite{pinto2018practice,jansen2011analysis}. The key runtime
-consequences with $p = 1/n$ are summarized in Table~\ref{app:tab:variant-runtimes}.
+Both variants are analyzed in full
+in~\cite{pinto2018practice,jansen2011analysis}. The key runtime
+consequences with $p = 1/n$ are summarized in
+Table~\ref{app:tab:variant-runtimes}.
 
 \begin{table}[h]
-\centering
-\begin{tabular}{lccc}
-\hline
-\textbf{Algorithm} & \textbf{OneMax} & \textbf{LeadingOnes} \\
-\hline
-$(1+1)$~EA         & $e\,n\ln n + O(n) \approx 2.718\,n\ln n$ & $\approx 0.859\,n^2$ \\
-$(1+1)$~EA$_{>0}$  & $\approx 1.718\,n\ln n + O(n)$           & $\approx 0.543\,n^2$ \\
-$(1+1)$~EA$_{0\to1}$ & $\approx 1.359\,n\ln n + O(n)$         & $\approx 0.517\,n^2$ \\
-RLS                & $n H_n \approx n\ln n$                    & $\approx 0.5\,n^2$   \\
-\hline
-\end{tabular}
-\caption{Expected optimization times at $p = 1/n$ for the $(1+1)$~EA and its
-implementation-aware variants. RLS is included for reference.
-Bounds for the variants follow from~\cite{pinto2018practice,bottcher2010optimal,witt2013tight}.}
-\label{app:tab:variant-runtimes}
+  \centering
+  \begin{tabular}{lccc}
+    \hline
+    \textbf{Algorithm} & \textbf{OneMax} & \textbf{LeadingOnes} \\
+    \hline
+    $(1+1)$~EA         & $e\,n\ln n + O(n) \approx 2.718\,n\ln n$ &
+    $\approx 0.859\,n^2$ \\
+    $(1+1)$~EA$_{>0}$  & $\approx 1.718\,n\ln n + O(n)$           &
+    $\approx 0.543\,n^2$ \\
+    $(1+1)$~EA$_{0\to1}$ & $\approx 1.359\,n\ln n + O(n)$         &
+    $\approx 0.517\,n^2$ \\
+    RLS                & $n H_n \approx n\ln n$                    &
+    $\approx 0.5\,n^2$   \\
+    \hline
+  \end{tabular}
+  \caption{Expected optimization times at $p = 1/n$ for the $(1+1)$~EA and its
+    implementation-aware variants. RLS is included for reference.
+    Bounds for the variants follow
+  from~\cite{pinto2018practice,bottcher2010optimal,witt2013tight}.}
+  \label{app:tab:variant-runtimes}
 \end{table}
 
-\noindent Resampling or shifting yields a 35--47\% reduction in function evaluations on
+\noindent Resampling or shifting yields a 35--47\% reduction in
+function evaluations on
 \textsc{OneMax} and roughly 37--40\% on \textsc{LeadingOnes} at $n = 600$, as
 confirmed empirically in~\cite{pinto2018practice}. For the (1+1)~EA$_{>0}$, the
 expected runtime on any linear function with $p = c/n$ becomes
-$(1\pm o(1))\frac{e^{c-1}}{c}\,n\ln n$~\cite{pinto2018practice}, a multiplicative
+$(1\pm o(1))\frac{e^{c-1}}{c}\,n\ln n$~\cite{pinto2018practice}, a
+multiplicative
 $(1-e^{-c})$ improvement over the standard algorithm.
 
-\section[\texorpdfstring{General Form - `$(\mu + \lambda)$-EA'}{General Form - `(mu + lambda)-EA'}]{General Form - `$(\mu + \lambda)$-EA'}
+\section[\texorpdfstring{General Form - `$(\mu +
+\lambda)$-EA'}{General Form - `(mu + lambda)-EA'}]{General Form -
+`$(\mu + \lambda)$-EA'}
 \section{Genetic Algorithms}
 \subsection{Crossover}
 
 \section{Parameters \& Operators}
 \subsection{Adaptive Mutation \& crossover rates}
 \subsection{Selection pressure}
-
