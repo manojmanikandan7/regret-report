@@ -16,7 +16,7 @@ relevant to a particular
 occurrence of the problem. The \textit{problem class} describes the
 collection of all
 such problem instances together with the corresponding output
-requirements.~\cite{HOOS200513}
+requirements.~\cite{hoos2005intro}
 
 Problems are broadly categorized by the nature of their required output.
 \begin{itemize}
@@ -33,7 +33,7 @@ Problems are broadly categorized by the nature of their required output.
 The decision and search problem variants are closely related because
 algorithms solving the
 search variant can always be used to solve the decision
-variant.~\cite{HOOS200513}
+variant.~\cite{hoos2005intro}
 
 A further distinction concerns the role of randomness in the problem
 formulation. In a
@@ -48,15 +48,62 @@ arise naturally in
 simulation-based and real-world settings.
 
 \subsection{Algorithms}
+
+An \textit{algorithm} is a finite, unambiguous sequence of
+instructions that transforms a given input into a desired output
+within a bounded number of steps. More precisely, an algorithm
+defines a computational procedure that, for each instance drawn from
+a specified problem class, terminates and produces a result satisfying
+the output requirements of that class~\cite{hoos2005intro}. Three
+properties are central to this definition: \textit{finiteness}, in
+that the procedure halts after a finite number of steps;
+\textit{definiteness}, in that each step is precisely specified with
+no ambiguity; and \textit{effectiveness}, in that every operation is
+sufficiently basic to be carried out exactly. In the context of
+optimization, the input is a problem instance and the output is a
+candidate solution together with its objective value, with the
+algorithm's quality judged both by the solutions it returns and the
+computational resources it consumes in doing so.
+
 \subsubsection{Algorithm Properties}
 \paragraph{Deterministic and Randomized Algorithms. }
 % Definitions and differences.
+A \textit{deterministic} algorithm produces the same sequence of
+operations and the same output on every execution for a given input.
+A \textit{randomized} algorithm, by contrast, makes probabilistic
+choices during execution, so its behavior on a fixed input may vary
+across runs. In the black-box optimization setting, randomization is
+not merely a convenience but a necessity: the No-Free-Lunch theorems
+imply that no deterministic algorithm can perform well uniformly
+across all problem instances, and randomized search heuristics derive
+their practical value from their ability to escape local optima
+through stochastic perturbation~\cite{doerr2020theory,hoos2005intro}.
+The theoretical analysis of such algorithms therefore concerns
+expected quantities (expected runtime, expected solution quality)
+rather than worst-case deterministic guarantees.
 
 \paragraph{Adaptive vs. Non-Adaptive Algorithms}
 % Sequential decision processes.
 % Role of feedback.
+An algorithm is \textit{adaptive} if each action at step $t$ is
+chosen as a function of the history of prior queries and their
+responses, $(x_1, f(x_1)), \ldots, (x_{t-1}, f(x_{t-1}))$; a
+\textit{non-adaptive} algorithm such as pure random sampling fixes
+all query points in advance and serves as a natural complexity
+baseline~\cite{droste2006blackbox}. All algorithms studied in this
+project are fully adaptive. This sequential feedback structure is
+also the defining feature of online optimization frameworks such as
+the multi-armed bandit model (Section~\ref{sec:online}), where the
+learner's choice of arm at each round depends on all previously
+observed rewards. The regret-based performance measures developed in
+Section~\ref{sec:regret} are a direct consequence of this adaptive,
+sequential structure: they quantify the cumulative cost of not
+knowing the objective in advance, penalizing every step at which the
+algorithm has not yet identified the optimal region of the search
+space.
 
 \subsubsection{Oracle-Based Computation}
+\label{subsubsec:oraclecomp}
 % Definition of oracle access.
 % Query-response interaction model.
 
@@ -89,7 +136,7 @@ by an algorithm. Search spaces may be \textit{finite} or \textit{infinite}, and
 Discrete combinatorial search spaces, in particular the Boolean
 hypercube $\{0,1\}^n$, are central to the theoretical analysis of
 evolutionary algorithms (\acrshort{ea}) and other randomized search
-heuristics~\cite{droste2002analysis,HOOS200561} used in theoretical
+heuristics~\cite{droste2002analysis,hoos2005sls} used in theoretical
 \acrshort{bbo} analysis.
 Continuous spaces $\mathbb{R}^d$ arise in numerical
 optimization~\cite{nocedal2006numerical}, and mixed spaces containing
@@ -216,6 +263,7 @@ about what the oracle reveals, culminating in the black-box model
 where only function
 values are observable.
 
+% TODO: Make these appendices(?)
 \subsubsection{Landscape Properties}
 
 The following geometric properties of $f$ characterize which tier of analytical
@@ -248,14 +296,56 @@ gradient descent~!CITE: Nesterov 2004!.
 
 \subsection{Complexity Measures}
 \subsubsection{Classical Complexity: Time and Space}
-% Standard asymptotic measures.
+The classical measures of algorithmic efficiency are \textit{time
+complexity} (the number of elementary operations performed as a
+function of input size) and \textit{space complexity} (the amount
+of memory consumed). Both are typically expressed using asymptotic
+notation: $O(\cdot)$, $\Omega(\cdot)$, and $\Theta(\cdot)$ describe
+upper, lower, and tight bounds on resource usage as the input size
+$n$ grows. In the setting of combinatorial optimization over
+$\{0,1\}^n$, the input size is the bitstring length $n$, and
+complexity results are stated as functions of $n$.
 
 \subsubsection{Information Complexity: Query and Oracle Complexity}
 \label{subsubsec:infocomplexity}
 % Number of oracle calls as complexity measure.
 
-\subsubsection{Expected vs. Worst-Case Analysis}
+In black-box optimization the internal structure of $f$ is
+inaccessible, so the relevant measure of complexity is not the
+number of arithmetic operations but the number of oracle queries
+required to solve a problem. The \textit{query complexity} of an
+algorithm $\mathcal{A}$ on a problem class $\mathcal{F}$ is the
+number of calls to the function-evaluation oracle needed to identify
+a solution meeting the target criterion. The \textit{black-box
+complexity} of a problem class is the minimum query complexity over
+all algorithms, formalizing the information-theoretic difficulty of
+the problem when only objective values are
+observable~\cite{droste2006blackbox}. Lower bounds on black-box
+complexity establish that no algorithm can solve the problem in fewer
+queries, regardless of its computational power; upper bounds are
+witnessed by constructive algorithms. This duality mirrors the
+classical worst-case analysis of deterministic algorithms but is
+applied to the query-response model introduced in
+Section~\ref{subsubsec:oraclecomp}.
+
+\subsubsection{Expected vs.\ Worst-Case Analysis}
 % Runtime notions in randomized algorithms.
+
+For deterministic algorithms, worst-case analysis over all possible
+inputs is the standard framework. For randomized algorithms, and in
+particular for the randomized search heuristics studied in this
+project, the primary measure is the \textit{expected runtime}: the
+mean number of function evaluations until a target solution is first
+found, averaged over the internal randomness of the
+algorithm~\cite{droste2002analysis,doerr2020theory}. Expected
+runtime analysis is complemented by tail bounds (probabilistic
+  guarantees that the runtime does not greatly exceed its
+expectation) derived via tools such as Markov's inequality and
+concentration arguments~\cite{doerr2020theory}. Worst-case analysis
+over problem instances, by contrast, motivates the minimax framework
+and Yao's minimax principle, which lower-bounds the expected
+complexity of any randomized algorithm by exhibiting a hard
+distribution over instances~\cite{droste2006blackbox}.
 
 % \subsection{Probabilistic Tools for Algorithm Analysis}
 % \subsubsection{Expectation and Variance}
@@ -406,6 +496,75 @@ Appendix~\ref{app:ea}.
 
 \subsubsection{Simulated Annealing}
 
+\acrfull{sa} is a probabilistic local search
+algorithm that extends iterative improvement by occasionally accepting
+worsening moves, allowing escape from local optima that would otherwise
+trap a pure hill-climber. The method was introduced by
+\citet{kirkpatrick1983optimization}, who drew an
+explicit analogy with the physical process of annealing in solids:
+a material is first melted at high temperature, then cooled slowly
+so that atoms settle into a low-energy crystalline configuration
+rather than a disordered glassy state.
+
+In the optimization context, the algorithm maintains a current solution
+$x \in \mathcal{X}$ and at each step proposes a random neighbor
+$y \in \mathcal{N}(x)$. If $f(y) \geq f(x)$, the move is accepted
+unconditionally. If $f(y) < f(x)$, the move is accepted with
+probability
+\[
+  \exp\!\left(\frac{f(y) - f(x)}{T(t)}\right),
+\]
+where $T(t) > 0$ is the \textit{temperature} at step $t$, a control
+parameter that decreases over time according to a \textit{cooling
+schedule}~\cite{kirkpatrick1983optimization,bertsimas1993simulated}.
+At high temperatures the acceptance criterion is nearly uniform,
+permitting broad exploration; as $T(t) \to 0$ the algorithm collapses
+toward a greedy hill-climber that accepts only improvements.
+
+The theoretical behavior of \acrshort{sa} is governed by the cooling
+schedule. Modelling the process as a time-inhomogeneous Markov chain,
+Hajek~\cite{hajek1988cooling} established the sharp necessary and
+sufficient condition for convergence in probability to the global
+optimum: the schedule must satisfy
+\[
+  \sum_{t=1}^{\infty} \exp\!\left(\frac{-d^{*}}{T(t)}\right) = +\infty,
+\]
+where $d^{*}$ is the depth of the deepest local minimum that is not
+globally optimal. For the logarithmic schedule
+$T(t) = d / \log(t + 1)$, this condition reduces to the requirement
+$d \geq d^{*}$: the scaling constant must be at least as large as
+the hardest energy barrier in the
+landscape~\cite{hajek1988cooling,bertsimas1993simulated}. In practice,
+logarithmic cooling is theoretically optimal but often too slow;
+exponential and linear schedules cool faster at the cost of losing
+the convergence guarantee, reducing \acrshort{sa} to a stochastic
+hill-climber once the temperature reaches zero. The choice of cooling
+schedule therefore encodes a fundamental trade-off between solution
+quality and computational budget, and is the primary design decision
+when applying \acrshort{sa} to any combinatorial
+problem~\cite{kirkpatrick1983optimization,hajek1988cooling}.
+
+\paragraph{Cooling Schedules.}
+
+Three schedule families are studied in this project and are
+implemented in the experimental framework. \textit{Logarithmic
+cooling}, $T(t) = d/\log(t+1)$, maintains a strictly positive
+temperature for all finite $t$ and satisfies Haj\'{e}k's convergence
+condition when $d \geq d^{*}$~\cite{hajek1988cooling}. \textit{Exponential
+cooling}, $T(t) = T_0 \cdot \alpha^t$ for $\alpha \in (0,1)$, is the
+schedule used in the original simulated annealing
+experiments~\cite{kirkpatrick1983optimization}; it decays
+geometrically and effectively reaches zero within the evaluation
+budget, after which \acrshort{sa} reduces to a deterministic
+hill-climber. \textit{Linear cooling}, $T(t) = \max(T_f,\, T_0 -
+(T_0 - T_f)\,t/t_{\max})$, interpolates uniformly between an initial
+and final temperature over a fixed horizon; like the exponential
+schedule, it carries no convergence guarantee once the temperature
+floor $T_f$ is reached~\cite{bertsimas1993simulated}. The regret
+implications of each schedule, and in particular the point at which
+temperature collapse occurs, and instantaneous regret stabilizes, are
+examined empirically in Suite~11.
+
 \paragraph{Cooling Schedules}
 
 \subsubsection[\texorpdfstring{Randomized Local Search
@@ -498,7 +657,9 @@ expected running
 time of the $(1+1)$~\acrshort{ea} on $\textsc{Jump}_{k,n}$ is
 $\Theta(n^k + n\log n)$ for
 $k \in \{1, 2, \ldots, n\}$, which simplifies to $\Theta(n^k)$ for $k \geq 2$.
+
 \subsubsection{BinaryValue[BinVal]}
+
 The \textsc{BinaryValue} (\textsc{BinVal}) function interprets a bit
 string as a binary
 integer by weighting bits exponentially by position:
@@ -513,15 +674,68 @@ bits, making \textsc{BinVal} highly structured.
 
 \subsubsection{Trap}
 
+The \textsc{Trap} function is a piecewise-linear \textit{function of
+unitation} formally analyzed for deception
+conditions by \citet{deb1993analyzing}. Its value
+depends only on the number of ones $u = \sum_{i=1}^n x_i$, not on
+their positions, and with slope-change location $z = n - k$ it is
+defined as
+\[
+  \textsc{Trap}_{k}(x) =
+  \begin{cases}
+    \dfrac{n}{z}(z - u) & \text{if } u \leq z, \\[8pt]
+    \dfrac{n}{k}(u - z) & \text{otherwise.}
+  \end{cases}
+\]
+For $u \leq z$ the gradient points toward the all-zeros attractor
+$0^n$; only past the slope change does fitness increase toward the
+global optimum $1^n$. Every improving move for a hill-climber
+therefore moves \emph{away} from the optimum. Deb and Goldberg
+establish that the necessary and sufficient condition for full
+deception is that all schemata of order $n-1$ favor the local
+optimum, which requires $z \geq \lfloor n/2 \rfloor$~\cite{deb1993analyzing}.
+
 \subsubsection{Plateau}
+
+The \textsc{Plateau} function with parameter $k$ is defined as
+\textsc{OneMax} everywhere except in a ball of radius $k$ around the
+optimum, where fitness is held constant at the second-best value
+$n - k$~\cite{antipov2021precise}:
+\[
+  \textsc{Plateau}_k(x) =
+  \begin{cases}
+    n - k & \text{if } n - k < \textsc{OneMax}(x) < n, \\
+    \textsc{OneMax}(x) & \text{otherwise.}
+  \end{cases}
+\]
+The global optimum is $1^n$ with value $n$. Unlike \textsc{Jump},
+which penalizes solutions near the optimum with a \emph{reduced}
+fitness, \textsc{Plateau} assigns the plateau region the same
+fitness as the boundary level $n - k$, so there are no true local
+optima. Instead, the algorithm performs an unguided random walk
+across the $\Theta(n^k)$ plateau points, gaining no fitness signal
+until it reaches $1^n$ by flipping between one and $k$ zero-bits
+simultaneously.
+
+\citet{antipov2021precise} establish that for any
+unbiased mutation operator the expected runtime of the $(1+1)$~\acrshort{ea}
+is
+\[
+  \mathbb{E}[T] = \frac{n^k}{k!\,\Pr[1 \leq \alpha \leq k]}(1 + o(1)),
+\]
+where $\alpha$ is the number of bits flipped per step. This depends
+only on the probability to flip between one and $k$ bits, not on
+other properties of the operator. The optimal mutation rate under
+standard bit mutation is approximately $k/(en)$, a factor of
+$\Theta(k)$ above the canonical $1/n$ recommendation.
 
 \subsubsection{Hierarchical If-and-Only-If (HIFF)}
 
-The \acrfull{hiff} function,
-introduced by Watson, Hornby, and Pollack~\cite{watson1998modeling},
-is a benchmark designed to model \textit{hierarchical building-block
+The \textsc{\acrfull{hiff}} function is a benchmark designed to model
+\textit{hierarchical building-block
 interdependency}: a property absent from earlier \acrfull{ga} test
-problems, which treat sub-problems as separable. In \acrshort{hiff},
+problems, which treat sub-problems as
+separable~\cite{watson1998modeling}. In \acrshort{hiff},
 the optimal solution to a block of bits depends on how that block
 combines with its neighbors at the next level of the hierarchy,
 making sub-problems \textit{non-separable} in a consistent,
@@ -569,15 +783,39 @@ should produce a distinctive staircase signature in the cumulative
 regret trajectory.
 
 \subsubsection{MaxSAT}
-\textit{Maximum Satisfiability} (MaxSAT) is the optimization variant
-of the Boolean
-satisfiability problem (SAT). Given a propositional formula in
-conjunctive normal form (CNF) !TODO: Cite or explain CNF!
-with $m$ clauses over $n$ Boolean variables, the goal is to find a
-truth assignment that
-maximizes the number of satisfied clauses. MaxSAT is NP-hard in
-general~\cite{hutchison_search_2004}
-and serves as an important benchmark for combinatorial optimization algorithms.
+\textit{\acrfull{maxsat}} is the optimization variant
+of the Boolean \acrfull{sat}. A propositional formula
+in \acrfull{cnf} is a conjunction of
+\textit{clauses}, each of which is a disjunction of \textit{literals}
+(a Boolean variable or its negation). Given such a formula with $m$
+clauses over $n$ Boolean variables, the goal is to find a truth
+assignment that maximizes the number of satisfied clauses. \acrshort{maxsat} is
+NP-hard in general~\cite{hutchison_search_2004} and serves as an
+important benchmark for combinatorial optimization algorithms.
+
+\paragraph{Petersen Graph 3-Coloring.}
+\label{subsec:petersen}
+
+The \textit{Petersen graph}~\cite{weisstein_petersen_graph} is a
+well-known 3-regular graph on ten vertices and fifteen edges whose
+chromatic number is exactly three, meaning a valid 3-colouring exists
+and no 2-colouring does. This project encodes the 3-colouring problem
+as a \acrshort{maxsat} instance over $n = 30$ binary variables, with
+one variable per vertex-color pair: variable $x_{v,c}$ is $1$ if
+vertex $v$ is assigned color $c \in \{0,1,2\}$. Three families of
+soft clauses encode the coloring constraints: ten \textit{at-least-one}
+clauses (each vertex must receive at least one color), thirty
+\textit{at-most-one} clauses (each vertex must not hold two colors
+simultaneously), and forty-five \textit{edge-conflict} clauses (adjacent
+vertices must not share a color), giving $m = 85$ clauses in total.
+Because the Petersen graph is 3-colourable, all 85 clauses can be
+satisfied simultaneously, so the global optimum is $f^* = 85$ and is
+genuinely achievable~\cite{hutchison_search_2004}. This is the key
+advantage over random \acrshort{maxsat} instances, whose declared optima
+are rarely reachable in practice.
+The instance therefore provides a controlled combinatorial benchmark
+with a known, verifiable optimum, complementing the pseudo-Boolean
+problems studied in this project.
 
 \subsubsection{Tunable Landscapes: NK-Landscapes}
 
@@ -595,7 +833,7 @@ $x \in \{0,1\}^N$ is defined as
 where each local contribution $f_i : \{0,1\}^{K+1} \to [0,1]$ is
 drawn independently
 and uniformly at random, and $\pi(i, \cdot)$ denotes the $K$
-epistatic neighbours of
+epistatic neighbors of
 variable $i$.
 
 When $K = 0$ the contributions are independent, producing a smooth,
@@ -849,7 +1087,7 @@ standard pseudo-regret is
   \bar{R}_T = T\mu^* - \sum_{t=1}^{T} \mu_{A_t}
   = \sum_{i:\Delta_i>0} \Delta_i \, \mathbb{E}[N_i(T)],
 \]
-where $\Delta_i=\mu^*-\mu_i$ is the suboptimality gap and $N_i(T)$ is
+where $\Delta_i=\mu^*-\mu_i$ is the sub-optimality gap and $N_i(T)$ is
 the number of pulls of arm $i$ up to time
 $T$~\cite{bubeck2012regret,lattimore2020bandit}. Regret is therefore
 driven by how often the learner samples suboptimal actions.
@@ -860,12 +1098,22 @@ evaluations as arm pulls. For large or structured domains, however,
 this flat view breaks down, motivating more structured models such as
 Bayesian optimization.
 
-\subsection{Reinforcement Learning (Overview)}
-% - Value functions, policies, and the policy optimization perspective
-% - Regret in RL: exploration bonus methods, PAC-MDP bounds  [!CITE!]
-% - Note the separation from BBO: RL involves state transitions;
-%   BBO is stateless between queries (unless memory is used)
-% - Keep brief - RL is context, not a primary focus
+% TODO: add to intro (?)
+% \subsection{Reinforcement Learning (Overview)}
+% % - Value functions, policies, and the policy optimization perspective
+% % - Regret in RL: exploration bonus methods, PAC-MDP bounds  [!CITE!]
+% % - Note the separation from BBO: RL involves state transitions;
+% %   BBO is stateless between queries (unless memory is used)
+% % - Keep brief - RL is context, not a primary focus
+% Reinforcement learning (RL) is a sequential decision-making framework
+% in which an agent interacts with a stateful environment and receives
+% reward signals to guide policy improvement. Although regret-based
+% analysis has been developed extensively in the RL
+% literature~\cite{cesa2006prediction}, the RL setting differs
+% fundamentally from \acrshort{bbo}: RL involves state transitions
+% between rounds, whereas the algorithms studied here are stateless
+% between queries. RL is therefore noted for context but is not a
+% primary focus of this project.
 
 \subsection{Bayesian Optimization}
 % - Surrogate-model approach to expensive BBO  [!CITE Mockus / Shahriari!]
@@ -892,7 +1140,7 @@ RKHS\footnote{\textit{abbr.}~Reproducing kernel Hilbert space.
 assumptions~\cite{srinivas2009gaussian,chowdhury2017kernelized,scarlett2017lower}.
 At the same time, these guarantees rely on surrogate assumptions that
 are much more natural in low-dimensional continuous spaces than in
-pseudo-Boolean domains such as $\{0,1\}^n$. This makes regret an
+pseudo-Boolean domains such as $\{0,1\}^n$. These makes regret an
 established concept in black-box optimization, but not yet one that
 transfers directly to the combinatorial heuristics studied here.
 
@@ -911,7 +1159,6 @@ solutions. Regret
 quantifies the gap between the algorithm's performance and that of an
 oracle always
 querying the optimum~\cite{cesa2006prediction}.
-!TODO: add more context with reference to MAB \& rewards!
 
 \subsection{Types of Regret}
 
@@ -944,7 +1191,7 @@ The \textit{\acrfull{cr}} after $T$ rounds is~\cite{cesa2006prediction}
 \]
 This is the standard formulation from the online learning literature:
 it sums the
-instantaneous suboptimality of each individual query, regardless of
+instantaneous sub-optimality of each individual query, regardless of
 what the algorithm
 has previously observed. Minimizing $R_T$ corresponds to performing well
 \textit{throughout} the optimization process, penalizing every
@@ -1111,7 +1358,7 @@ replaces runtime analysis. Runtime asks when a target is first
 reached; regret asks how good the algorithm's queried or retained
 solutions are throughout the run. Fixed-budget analysis already moves
 in this direction, since expected simple regret is just the expected
-final suboptimality after a budget of $T$
+final sub-optimality after a budget of $T$
 evaluations~\cite{jansen2014fixed,bubeck2011pure}.
 
 The distinction matters operationally. Low simple regret is
