@@ -15,7 +15,7 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v4
         with:
-          pre_compile: "texcount -1 -sum -inc report.tex > word.count"
+          pre_compile: "texcount -1 -inc -template='{word}' report.tex > word.count"
           root_file: report.tex
           post_compile: "latexmk -c"
           texlive_version: latest
