@@ -39,20 +39,7 @@ trajectory plots show both approach and post-convergence behavior.
 All suites reported in this chapter were run in \texttt{full} mode with
 parallelism enabled. Full mode records complete per-evaluation trajectories,
 which are required for the instantaneous-regret, cumulative-regret, and
-\acrshort{ttfo} analyses, and for all runtime-profile computations. Although the
-framework also supports lighter execution modes, those are outside the scope of
-the present experiments because they do not preserve the trajectory-level data
-needed for the chapter's main measurements.
-
-% \subsection{Output}
-% Raw results are written as \acrshort{json} under
-% \texttt{results/raw/}, organized by suite,
-% problem, and algorithm. Figures are written under \texttt{results/figures/}
-% with a per-problem, per-size subdirectory
-% structure~\ref{subsec:resint}. These results can be regenerated
-% with for each configuration of the experiment via the \acrshort{cli}.
-% Plot types are described in Table~\ref{tab:plot-types}. (See
-% Subsection~\ref{subsec:resint})
+\acrshort{ttfo} analyses, and for all runtime-profile computations.
 
 \subsection{Visualization and Table Strategy}
 \label{subsec:exper:vis}
@@ -61,8 +48,6 @@ Each suite produces plots and summary tables from the stored JSON results.
 Table~\ref{tab:plot-types-cat} lists every plot type with its key, diagnostic
 purpose, and the suites or conditions that enable it.
 
-% \begin{table}[htbp]
-% \centering
 \small
 \begin{longtable}{@{}llp{4.6cm}l@{}}
   \toprule
@@ -118,124 +103,13 @@ purpose, and the suites or conditions that enable it.
   \label{tab:plot-types-cat}
 \end{longtable}
 
-% \end{table}
-
 For hill-climbing algorithms (RLS, $(1+1)$-EA) the current-solution and
-incumbent IR variants coincide because no worsening moves are accepted. For SA
-and \acrshort{rls}Exploration the two diverge during active
-exploration, making the
-current-solution variant a direct diagnostic of temperature-driven behaviour.
-Cumulative regret is always plotted on a linear $y$-axis: its slope during the
-trapped phase grows linearly with time, and a log axis would suppress that
-signal.
-
-% \subsection{Visualization and Table Strategy}
-
-% Each suite produces plots and summary tables from the stored \acrshort{json}
-% results. The reported outputs fall into four groups: aggregate plots,
-% budget-specific distribution plots, trajectory plots, and runtime-profile
-% plots.
-
-% \paragraph{Aggregate plots.}
-% Three plots summarize behaviour across all budgets. Mean simple-regret curves
-% (\texttt{regret\_curves}) show average regret against budget on log--log axes.
-% Convergence-probability plots (\texttt{convergence\_probability}) show the
-% fraction of runs reaching regret below $10^{-9}$. Comparison heatmaps
-% (\texttt{comparison\_heatmap}) provide a compact overview of mean
-% regret across
-% algorithm--budget pairs.
-
-% \paragraph{Budget-specific distribution plots.}
-% At \texttt{budget\_for\_plots}, regret box-plots
-% (\texttt{regret\_boxplots}) show the run-level distribution of simple regret,
-% while performance profiles (\texttt{performance\_profile}) plot the empirical
-% \acrfull{cdf} of regret on a log-scaled axis. These plots expose
-% variability that is not
-% visible from mean curves alone and may include pairwise statistical annotation
-% against a reference algorithm.
-
-% \paragraph{Trajectory plots.}
-% All trajectory plots are averaged across runs at \texttt{budget\_for\_plots},
-% with a standard-error band and optional \acrshort{ttfo} markers at the mean
-% time-to-first-optimum. The suite produces several complementary variants.
-
-% The \emph{best-value history} (\texttt{history\_best}) plots the
-% monotonically non-decreasing incumbent fitness against evaluation time,
-% providing an absolute fitness view with $f^{*}$ as a horizontal reference.
-
-% \emph{Instantaneous regret} is produced in two variants.
-% With \texttt{track\_incumbent: false} (\texttt{regret\_instantaneous}),
-% it is the gap between $f^{*}$ and the solution evaluated at each step,
-% which fluctuates whenever an algorithm accepts a worsening move.
-% With \texttt{track\_incumbent: true} (\texttt{regret\_instantaneous\_best}),
-% it is the gap from $f^{*}$ to the incumbent, which is monotonically
-% non-increasing and equivalent to simple regret measured at each $t$.
-% For hill-climbing algorithms (RLS, $(1+1)$-EA) the two variants coincide
-% because no worsening moves are accepted; for SA and
-% \acrshort{rls}Exploration they
-% diverge during phases of active exploration. Both are plotted on a log-$y$
-% axis. A flat non-zero floor in the incumbent variant on this axis is the
-% primary diagnostic signature of saturation at a local optimum.
-
-% \emph{Cumulative regret} (\texttt{regret\_cumulative} and
-% \texttt{regret\_cumulative\_best}) is the integral of the corresponding
-% instantaneous regret series over time. It penalises slow convergence: an
-% algorithm that reaches $f^{*}$ late has accumulated all preceding regret
-% regardless of final solution quality. The slope of the cumulative regret curve
-% during the trapped phase grows linearly with time and is the key signal for
-% barrier-crossing suites (05, 06, 09, 10); this slope is suppressed on a
-% log axis, so cumulative regret is plotted on a linear $y$-axis throughout.
-
-% The \textit{\acrshort{ttfo} distribution} plots individual
-% run-level times-to-first-optimum as jittered points per algorithm. This plot
-% is conditioned on convergence: runs that did not reach the optimum contribute
-% no point, so when $P(\text{opt}) \approx 0$ across the suite the scatter is
-% sparse and adds little beyond the convergence probability plot.
-
-% \paragraph{Runtime profile plots.}
-% These require \texttt{suite.profile:~true} and are produced only in suites
-% 03, 08, and 12. Their methodological basis is developed in
-% Chapter~\ref{cha:profiles}; here they are described only as outputs of the
-% experimental pipeline.
-
-% The inverse runtime profile
-% $P(\tau_v \leq T)$ (the probability that fitness level $v$ was first reached
-% by evaluation $T$) is the common basis.
-
-% The \emph{profile surface} (\texttt{inverse\_runtime\_profile\_surface})
-% plots this probability as a heat map over $(T, v)$ for each algorithm
-% separately, with iso-probability contours overlaid. A front that stalls at
-% some $v_{\text{local}} < f^{*}$ regardless of additional budget identifies
-% the saturation level of the algorithm on that landscape.
-
-% The \emph{profile curves} (\texttt{inverse\_runtime\_profile\_curves}) plot
-% $P(\tau_v \leq T)$ versus $T$ at four selected fitness levels
-% ($f^{*} \times \{0.25, 0.5, 0.75, 0.95\}$), overlaying all algorithms on
-% the same panel for direct comparison.
-
-% The \emph{profile verification} plot (\texttt{cr\_profile\_verification})
-% overlays two independent estimates of $\mathbb{E}[\text{CR}(T)]$:
-% the empirical
-% mean across runs, and the value derived from the inverse profile. Its role in
-% the experiments is implementation verification rather than theoretical
-% development.
-
-% \paragraph{Summary tables.}
-% Tables are exported per-suite in \LaTeX, CSV, or Markdown.
-% A \emph{per-problem table} is produced at each budget for each problem, with
-% one row per algorithm reporting mean, median, standard deviation,
-% interquartile
-% range, a 95\% bootstrap confidence interval, $P(\text{opt})$, and run count,
-% sorted by ascending mean regret. The mean--median gap is informative when
-% distributions are skewed by a minority of non-converging runs.
-% An \emph{aggregate cross-problem table} summarizes each algorithm's
-% across-problem mean regret, mean $P(\text{opt})$, and the count of problems
-% on which it achieved the lowest mean regret among all algorithms in the suite.
-
-% The framework also implements current-value history plots
-% (\texttt{history\_current}), but these are not part of the reported experiment
-% set because the regret trajectories already provide the more direct diagnostic
-% view used throughout this chapter.
+incumbent IR variants coincide because no worsening moves are accepted; for SA
+and \acrshort{rls}Exploration they diverge during phases of active exploration,
+making the current-solution variant a direct diagnostic of temperature-driven
+behaviour. Cumulative regret is always plotted on a linear $y$-axis: its slope
+during the trapped phase grows linearly with time, and a log axis would suppress
+that signal.
 
 \subsection{Suite Numbering and Roles}
 
@@ -243,7 +117,7 @@ Suites are numbered 01--14. Table~\ref{tab:suite-overview} gives a complete
 reference; the methodological context for runtime-profile suites (03, 08, 12)
 is developed in Chapter~\ref{cha:profiles}.
 
-\begin{table}[htbp]
+\begin{table}[hp]
   \centering
   \small
   \setlength{\tabcolsep}{4pt}
@@ -326,57 +200,40 @@ is developed in Chapter~\ref{cha:profiles}.
 \subsection{Suite 01: Algorithm-Family Comparison}
 
 Suite 01 establishes a reference comparison of four algorithm families across
-six pseudo-boolean problems of increasing structural difficulty. The four
-families are: \acrfull{rls}, \acrshort{rls}Exploration,
-the $(1+1)$-\acrshort{ea}, and \acrshort{sa} with logarithmic cooling at $d=2.0$
-(SA-Log-d\_2.0). SA is reduced to a single representative schedule to
-preserve a clean four-family distinction; the effect of varying the schedule
-parameter is deferred to suites 03 and 11. All algorithm entries carry empty
-\texttt{by\_problem} blocks, so the same configuration applies across all
-six problems.
+six pseudo-boolean problems of increasing structural difficulty: \acrfull{rls},
+\acrshort{rls}Exploration, the $(1+1)$-\acrshort{ea}, and \acrshort{sa} with
+logarithmic cooling at $d=2.0$. SA is reduced to a single representative
+schedule here; the effect of varying the schedule parameter is deferred to
+suites 03 and 11.
 
 The six problems are: OneMax ($n=100$), LeadingOnes ($n=100$), TwoMax
 ($n=100$), Jump-3 ($n=100$, $k=3$), Trap-10 ($n=100$, $k=10$), and BinVal
-($n=50$). BinVal uses $n=50$ rather than $n=100$: its exponential fitness
-structure ($f^{*}=2^{50}-1 \approx 10^{15}$) already produces large fitness
-gaps and rapid convergence at this size, and extending to $n=100$ would make
-the optimum value $2^{100}-1$ while adding no structural insight. The much
-smaller \texttt{budget\_for\_plots} value of 500 for BinVal, compared with
-2000--10\,000 for the other problems, reflects the expectation that
-convergence occurs early.
-
-% BinVal is included for its exponential fitness structure but is excluded from
-% profile analysis: with $f^{*}=2^{50}-1$, constructing an integer fitness-level
-% grid is computationally infeasible. Profile plots are disabled suite-wide.
-% Pairwise statistical annotations are enabled on box-plots,
-% performance profiles,
-% and \acrfull{ttfo} distributions, with \acrshort{rls} as the
-% reference algorithm.
-%
-
-The 50 runs per combination are evaluated at six budgets: \\ $\{200,
-500, 1000, 2000, 5000, 10000\}$. The upper budget of 10\,000 is
-chosen to include the regime where LeadingOnes and Jump-3 actually converge
-for some algorithms; the lower bound of 200 captures the very-early transient.
-Pairwise statistical annotations are enabled on regret box-plots, performance
-profiles, and \acrshort{ttfo} distributions, using \acrshort{rls} as
-the reference
-algorithm.
+($n=50$). BinVal uses $n=50$ rather than $n=100$ because its exponential
+fitness structure already produces large fitness gaps and rapid convergence at
+this size; the \texttt{budget\_for\_plots} of 500 reflects this. The 50 runs
+per combination are evaluated at six budgets: $\{200, 500, 1000, 2000, 5000,
+10000\}$. Pairwise statistical annotations use \acrshort{rls} as the reference
+algorithm on box-plots, performance profiles, and \acrshort{ttfo} distributions.
 
 \subsection{Suite 02: Extended Pseudo-Boolean Benchmark}
 
 Suite 02 extends the baseline to nine problems, adding Jump-5, Trap-5,
 Plateau-10, \acrshort{hiff}-64, and a combinatorial instance (Petersen-3-Color).
-The algorithm set is identical to suite 01 (the same four families).
-Budgets range from 500 to 20\,000 over 50 runs. Profile analysis is disabled.
+The algorithm set is identical to suite 01. Budgets range from 500 to 20\,000
+over 50 runs. Profile analysis is disabled.
 
-Table~\ref{tab:suite02-overrides} details the problem-specific hyperparameter
-overrides applied in this suite. The override problems --- Jump-3, Jump-5, and
-Trap-5 --- share the structural property of having barriers that require
-sustained exploration; the combinatorial instance and the unimodal and bimodal
-problems receive no overrides.
+Three problems receive problem-specific algorithm overrides (full parameter
+  values are listed in Table~\ref{tab:suite02-overrides} in the
+appendix). For \acrshort{rls}Exploration on Jump-3, Jump-5, and Trap-5, the
+exploration rate is raised to $\varepsilon=0.05$ with decay disabled,
+maintaining
+persistent non-improving moves on barrier problems. For SA, the cooling
+parameter is tripled to $d=6.0$ on Jump-5 and Trap-5, raising acceptance
+probability for worsening moves throughout the run. Both modifications target
+the same objective: improving escape from local or deceptive optima at moderate
+budget.
 
-\begin{table}[htbp]
+\begin{table}[H]
   \centering
   \caption{Problem-specific algorithm overrides in suite 02. For
     \acrshort{rls}Exploration the default is $\varepsilon=1/n=0.01$
@@ -402,15 +259,6 @@ problems receive no overrides.
   \end{tabular}
 \end{table}
 
-For \acrshort{rls}Exploration, fixing $\varepsilon=0.05$ and
-disabling decay holds
-the exploration rate constant at five times the default, maintaining persistent
-non-improving moves on problems where barrier crossing requires sustained
-exploration. For SA, tripling $d$ under logarithmic cooling $T(t)=d/\log(t+1)$
-triples the temperature at every evaluation index, raising acceptance
-probability for worsening moves throughout the run. Both modifications target
-the same function: improving escape from local or deceptive optima at moderate
-budget.
 \section{Verification Suite}
 
 \subsection{Suite 08: Runtime Profile Verification}
@@ -421,53 +269,23 @@ Suite 08 validates the tail-sum identity
   = \sum_{v=1}^{f^{*}} \sum_{t'=1}^{T}
   \bigl[1 - P(\tau_v \leq t')\bigr]
 \]
-on two problems with well-understood convergence behavior: OneMax and
-LeadingOnes ($n=100$), using only \acrshort{rls} and the $(1+1)$-EA.
-
-The suite is configured with 100 independent runs, more than any other suite.
-This is not for statistical power in the usual sense (the goal is not to
-detect a treatment effect) but to suppress Monte-Carlo variance in the
-empirical mean $\widehat{\mathbb{E}}[\text{CR}(T)]$ to the point where any
-visible gap between the trajectory-derived and profile-derived curves in the
-verification plot can be attributed to numerical discretization rather than
-sampling noise. With $R=100$ runs and the integer-grid profile implementation
-(exact for unit-increment fitness), any remaining discrepancy indicates a bug
-in trajectory recording, cumulative-regret computation, or profile
-construction.
-
-Profile analysis is enabled (\texttt{profile:~true}). The
-\texttt{cr\_profile\_verification} plot is the primary output: it overlays the
-two derivations of $\mathbb{E}[\text{CR}(T)]$ for each algorithm on a shared
-time axis. Inverse runtime profile surface and curve plots are also produced.
-The \texttt{budget\_for\_plots} for LeadingOnes is set to 10\,000, which is the
-largest available budget; this is set deliberately to capture the full
-cumulative regret ramp, which extends further than on OneMax due to the
-$\Theta(n^{2})$ expected convergence time.
-
-Pairwise annotations are enabled on box-plots and \acrshort{ttfo}
-distributions with
-\acrshort{rls} as the reference, though these are secondary outputs given the
-verification focus.
+on OneMax and LeadingOnes ($n=100$) using \acrshort{rls} and the $(1+1)$-EA.
+With $R=100$ independent runs (the highest run count in the study) Monte-Carlo
+variance in $\widehat{\mathbb{E}}[\text{CR}(T)]$ is suppressed to the point
+where any visible gap between trajectory-derived and profile-derived curves in
+the verification plot can be attributed to numerical discretization rather than
+sampling noise. The \texttt{budget\_for\_plots} for LeadingOnes is set to the
+maximum available (10\,000) to capture the full cumulative regret ramp, which
+extends further than on OneMax due to its $\Theta(n^{2})$ expected convergence
+time. Profile analysis is enabled; pairwise annotations use \acrshort{rls} as
+the reference.
 
 \section{Exploratory Analysis of Regret and Runtime}
 
 The exploratory suites address four themes: barrier structure and mutation rate
 (suites 04--06, 09--10), NK ruggedness and SA cooling (suites 03, 11--12),
 hierarchical structure and scaling (suites 07, 13), and population dynamics
-(suite 14). Their purpose is to examine how regret and convergence behaviour
-change with landscape structure, cooling schedule, problem size, and population
-configuration.
-
-% The exploratory suites address four thematic research questions:
-% \begin{enumerate}
-%     \item Algorithm-family ordering across problem classes.
-%     \item The effect of landscape barrier structure and mutation
-% rate on regret trajectory shape.
-%     \item The interaction between \acrshort{sa} cooling schedules
-% and landscape ruggedness.
-%     \item Regret and convergence scaling with problem size and
-% population structure.
-% \end{enumerate}
+(suite 14).
 
 \subsection{Suite 03: NK Landscape Ruggedness}
 
@@ -503,19 +321,18 @@ configuration.
 % $d$) may not reach their saturation floor until late in the run.
 
 Suite 03 crosses six logarithmic SA schedules ($d \in
-\{0.5,1.0,2.0,4.0,8.0,16.0\}$)
-with five NK instances ($k \in \{1,2,4,6,8\}$, $n=20$, seed 42). \acrshort{rls}
-and the $(1+1)$-\acrshort{ea} are included as zero-temperature baselines so that
-the effect of temperature-driven acceptance can be separated from plain
-hill-climbing.
+\{0.5,1.0,2.0,4.0,8.0,16.0\}$) with five NK instances ($k \in \{1,2,4,6,8\}$,
+$n=20$, seed 42). \acrshort{rls} and the $(1+1)$-\acrshort{ea} are included as
+zero-temperature baselines so that the effect of temperature-driven acceptance
+can be separated from plain hill-climbing; on low-epistasis instances SA may in
+fact underperform hill-climbing, which the baselines make visible.
 
-All SA entries use empty \texttt{by\_problem} blocks, so the suite forms a clean
+All SA entries carry empty \texttt{by\_problem} blocks, forming a clean
 $6 \times 5$ grid over cooling parameter and epistasis level without per-problem
 tuning. The restriction to $n=20$ is imposed by the exact-optimum computation
-used in the NK implementation. Profile analysis is enabled, producing inverse
-runtime profile surfaces, selected profile curves, and the profile verification
-plot. The extended budget to 50\,000 is needed because high-epistasis instances
-may approach saturation only late in the run.
+used in the NK implementation. Profile analysis is enabled, and the budget
+extends to 50\,000 because high-epistasis instances may approach saturation only
+late in the run.
 
 \subsection{Suite 04: Trap Function Mutation Rate}
 
@@ -549,16 +366,13 @@ may approach saturation only late in the run.
 % Profile analysis is disabled.
 
 Suite 04 evaluates Trap with four $(1+1)$-\acrshort{ea} mutation rates
-($0.5/n$, $1/n$, $2/n$, $5/n$) and one SA variant across four deception widths
-($k \in \{5,8,10,20\}$, $n=100$). The EA rates are fixed across all problems.
-SA-Log-d\_4.0 uses $d=4.0$ by default, with a single override to $d=8.0$ on
-Trap-k20.
-
-Trap-k1 is excluded because it yields uniformly uninformative behaviour: all
-algorithms are driven to the deceptive attractor, so the resulting plots are
-essentially flat. The chosen EA rates are shared with suites 05 and 06 to
-support cross-suite comparison of regret shape across barrier types. Profile
-analysis is disabled.
+($0.5/n$, $1/n$, $2/n$, $5/n$) and SA-Log-d\_4.0 across four deception widths
+($k \in \{5,8,10,20\}$, $n=100$). The EA rates are fixed across all problems;
+SA uses $d=4.0$ by default with a single override to $d=8.0$ on Trap-k20.
+Trap-k1 is excluded because all algorithms are uniformly driven to the deceptive
+attractor, producing uninformative flat results. The chosen EA rates are shared
+with suites 05 and 06 to support cross-suite comparison of regret shape across
+barrier types. Profile analysis is disabled.
 
 \subsection{Suite 05: Jump Function Mutation Rate}
 
@@ -590,13 +404,12 @@ analysis is disabled.
 %
 Suite 05 studies five Jump instances ($k \in \{2,3,5,7,10\}$, $n=100$) under
 three $(1+1)$-\acrshort{ea} variants: fixed rates $1/n$ and $2/n$, and a
-problem-adaptive rate $k/n$ implemented through per-problem overrides.
-
-The lower rate $0.5/n$ is omitted because it offers no advantage for crossing
-a $k$-bit gap relative to $1/n$. Budgets range from 500 to 20\,000.
-Instantaneous regret is plotted on a log scale, while cumulative regret is kept
-on a linear scale so that the trapped-phase slope remains visible. Profile
-analysis is disabled; the longer-horizon Jump study is deferred to suite 09.
+problem-adaptive rate $k/n$ set via per-problem overrides. The lower rate
+$0.5/n$ is omitted because it offers no advantage over $1/n$ for crossing a
+$k$-bit gap. Budgets range from 500 to 20\,000. Instantaneous regret is plotted
+on a log scale, while cumulative regret uses a linear scale so that the
+trapped-phase slope remains visible. Profile analysis is disabled; the
+longer-horizon Jump study is deferred to suite 09.
 
 \subsection{Suite 06: Plateau Function Mutation Rate}
 
@@ -625,22 +438,20 @@ analysis is disabled; the longer-horizon Jump study is deferred to suite 09.
 % longer plateau durations in the trajectory plots.
 
 % Profile analysis is disabled.
-
-Suite 06 mirrors suite 05 on Plateau instances ($k \in \{2,5,10,20\}$,
-$n=100$) to compare cumulative regret trajectory shape across barrier types at
-structurally equivalent widths. The algorithm set is three $(1+1)$-\acrshort{ea}
-variants at rates $1/n$, $2/n$, and $5/n$, plus SA-Log-d\_4.0 with no
-per-problem overrides.
+% 
+Suite 06 mirrors suite 05 on Plateau instances ($k \in \{2,5,10,20\}$, $n=100$)
+to compare cumulative regret trajectory shape across barrier types at
+structurally equivalent widths. The algorithm set is three
+$(1+1)$-\acrshort{ea} variants at rates $1/n$, $2/n$, and $5/n$, plus
+SA-Log-d\_4.0.
 
 The adaptive $k/n$ rate from suite 05 is omitted: it was motivated by the need
 to maximize the probability of exactly $k$ simultaneous flips for the Jump gap,
-a rationale that has no equivalent for the neutral walk on Plateau, which does
-not require any specific number of simultaneous flips. SA-Log-d\_4.0 is added
-instead as a third algorithm class to assess whether temperature-driven
-acceptance confers any advantage on a landscape where the neutral zone carries
-no fitness penalty. The shared values $k=2$ and $k=5$ support direct comparison
-with suite 05; $k=10$ and $k=20$ extend the plateau duration beyond what can
-converge within the 20\,000-evaluation budget. Profile analysis is disabled.
+a rationale that does not apply to the neutral walk on Plateau. SA is added to
+assess whether temperature-driven acceptance confers any advantage on
+a landscape
+where the neutral zone carries no fitness penalty. The shared values $k=2$ and
+$k=5$ support direct comparison with suite 05. Profile analysis is disabled.
 
 \subsection{Suite 07: Hierarchical IFF Scaling}
 
@@ -686,16 +497,17 @@ converge within the 20\,000-evaluation budget. Profile analysis is disabled.
 % Profile analysis is disabled.
 
 Suite 07 evaluates \acrshort{hiff} at $n \in \{32,64,128\}$ under
-\acrshort{rls}, four
-$(1+1)$-\acrshort{ea} variants, and SA-Log-d\_4.0 at a fixed $d=4.0$.
-\acrshort{rls}
-is included as a zero-temperature reference whose rapid saturation on large
-instances anchors the comparison: a single bit-flip disrupts any uniform
-sub-block, so \acrshort{rls} is expected to stagnate at the first hierarchical
-level for $n \geq 64$. Table~\ref{tab:suite07-rates} shows the exact mutation
-rate values used for each EA variant at each problem size.
+\acrshort{rls}, four $(1+1)$-\acrshort{ea} variants at rates
+$\{0.5/n,1/n,2/n,3/n\}$ (exact per-problem decimal values listed in
+Table~\ref{tab:suite07-rates}), and SA-Log-d\_4.0 at a fixed $d=4.0$.
+\acrshort{rls} is expected to stagnate at the first hierarchical level for
+$n \geq 64$ since a single bit-flip disrupts any uniform sub-block, anchoring
+the comparison. For $n=128$, \texttt{budget\_for\_plots} is set to the maximum
+available (50\,000); convergence is not expected, and the unsolved trajectory
+provides an informative contrast to the partially solved $n=32$ and $n=64$
+cases. Profile analysis is disabled.
 
-\begin{table}[htbp]
+\begin{table}[H]
   \centering
   \caption{Per-problem mutation rates in suite 07. Values are set via
     \texttt{by\_problem} overrides to exact decimal representations of
@@ -726,30 +538,15 @@ rate values used for each EA variant at each problem size.
   \end{tabular}
 \end{table}
 
-For $n=128$, \texttt{budget\_for\_plots} is set to 50\,000, the largest budget
-in the suite. Convergence is not expected within this budget; the setting is
-deliberate, making the unsolved $n=128$ trajectory an informative contrast to
-the partially or fully solved $n=32$ and $n=64$ cases on the same plot axes.
-Profile analysis is disabled.
-
 \subsection{Suite 09: Jump Plateau Duration}
 
-Suite 09 uses the same five Jump instances and the same two EA variants as
-suite 05 (rates $1/n$ and $k/n$ with identical per-problem overrides), but
-differs in its budget configuration. The budget list is
-$\{1000, 5000, 10000, 25000, 50000\}$, dropping the 500-evaluation point from
-suite 05 and extending the maximum to 50\,000. The \texttt{budget\_for\_plots}
-values are also extended: Jump-k2 uses 10\,000, Jump-k3 uses 25\,000, and
-Jump-k5, Jump-k7, Jump-k10 each use 50\,000. In suite 05, Jump-k5 through
-Jump-k10 used 20\,000.
-
-The difference between the two suites is therefore one of time horizon rather
-than algorithm or problem design. Suite 05 captures plateau onset (the
-transition from hill-climbing to the trapped phase) for the smaller $k$
-values; suite 09 extends the horizon to capture the plateau duration and, for
-small $k$ at the adaptive rate, potentially the plateau exit as well.
-
-Profile analysis is disabled.
+Suite 09 uses the same five Jump instances and two EA variants as suite 05
+(rates $1/n$ and $k/n$ with identical per-problem overrides), extending the
+budget list to $\{1000, 5000, 10000, 25000, 50000\}$ and raising
+\texttt{budget\_for\_plots} to 50\,000 for the larger $k$ values. Where suite 05
+captures plateau onset for small $k$, suite 09 captures plateau duration across
+all $k$ values and, for small $k$ at the adaptive rate, potentially the plateau
+exit. Profile analysis is disabled.
 
 \subsection{Suite 10: Barrier Structure Comparison}
 
@@ -781,15 +578,16 @@ Profile analysis is disabled.
 % Profile analysis is disabled.
 %
 Suite 10 compares Jump-k5, Trap-k5, and Plateau-k5 at $n=100$ under four
-$(1+1)$-\acrshort{ea} mutation rates: $0.5/n$, $1/n$, $2/n$, and $5/n$. The same
-rates are used on all three barrier types, and the budget extends to 50\,000.
-
-The suite is designed to compare how regret accumulates under barriers of equal
-nominal width but different structure. \acrshort{ttfo} alone is often too coarse
-in this regime, whereas cumulative regret can distinguish early deception,
-delayed barrier crossing, and neutral trapping. Pairwise annotations use
-\texttt{(1+1)-\acrshort{ea}-mu\_1-by-n} as the reference algorithm. Profile
-analysis is disabled.
+$(1+1)$-\acrshort{ea} mutation rates: $0.5/n$, $1/n$, $2/n$, and $5/n$, applied
+uniformly across all three barrier types with budgets to 50\,000. Since all
+three barriers share $\mathbb{E}[\text{\acrshort{ttfo}}] = \Theta(n^{k})$ at
+rate $1/n$, \acrshort{ttfo} distributions cannot separate them when
+$P(\text{opt}) \approx 0$; cumulative regret trajectories accumulate
+differently depending on the fitness gradient before and during the barrier, and
+testing whether this distinction is visible at $n=100$, $k=5$ is the suite's
+primary purpose. Pairwise annotations use
+\texttt{(1+1)-\acrshort{ea}-mu\_1-by-n} as the reference. Profile analysis is
+disabled.
 
 \subsection{Suite 11: SA Cooling Schedule Diagnostics}
 
@@ -821,47 +619,37 @@ analysis is disabled.
 % underperforms \acrshort{rls} is directly identifiable in the annotated plots.
 % Profile analysis is disabled.
 
-Suite 11 evaluates eight SA variants and one \acrshort{rls} baseline on OneMax
-and LeadingOnes ($n=100$). The SA set consists of six logarithmic schedules
-($d \in \{0.5,1.0,2.0,4.0,8.0,16.0\}$), one linear schedule (SA-Lin), and one
-exponential schedule (SA-Exp), all applied uniformly across both problems with
-no per-problem overrides.
-
-The linear and exponential variants use implementation defaults: linear cooling
-with $T_0=1.0$, $T_f=0.01$, $\text{max\_iter}=10\,000$; exponential cooling
-with $T_0=1.0$, $\alpha=0.95$. Both schedules reach their minimum temperature
-within the available budget (linear exactly at $t=10\,000$, exponential
-effectively by $t\approx 90$ since $0.95^{90}\approx 0.01$) after which SA
-reduces to a near-deterministic hill-climber. Logarithmic schedules, by
-contrast, remain strictly positive for all finite $t$. This structural
-distinction is the primary hypothesis the suite is designed to expose as a
-signature in the instantaneous regret trajectory. Pairwise annotations use
-\acrshort{rls} as the reference so that any SA configuration underperforming
-plain hill-climbing is directly identifiable in the annotated plots. Profile
-analysis is disabled.
+Suite 11 evaluates six logarithmic SA schedules ($d \in
+\{0.5,1.0,2.0,4.0,8.0,16.0\}$), one linear schedule (SA-Lin), one exponential
+schedule (SA-Exp), and \acrshort{rls} as a zero-temperature reference on OneMax
+and LeadingOnes ($n=100$). The linear and exponential variants use
+implementation defaults (linear: $T_0=1.0$, $T_f=0.01$,
+$\text{max\_iter}=10\,000$; exponential: $T_0=1.0$, $\alpha=0.95$); both reach
+their minimum temperature within the budget (exponential effectively by
+$t \approx 90$), after which SA reduces to a near-deterministic hill-climber.
+This structural distinction between collapsing and sustaining schedules is the
+primary hypothesis the suite is designed to expose via instantaneous regret
+trajectories. Pairwise annotations use \acrshort{rls} as the reference so that
+any SA configuration underperforming plain hill-climbing is directly
+identifiable. Profile analysis is disabled.
 
 \subsection{Suite 12: NK Saturation}
 
-Suite 12 examines five NK landscape instances ($k \in \{0,2,4,6,8\}$, $n=20$,
-seed 42) under three algorithms: \acrshort{rls}, the $(1+1)$-\acrshort{ea}, and
-SA-Log-d\_4.0. The NK instances use the same fixed seed as suite 03, making
-the landscape realisations identical across both suites for the shared $k$
-values.
+Suite 12 examines five NK instances ($k \in \{0,2,4,6,8\}$, $n=20$, seed 42)
+under \acrshort{rls}, the $(1+1)$-\acrshort{ea}, and SA-Log-d\_4.0 with
+per-$k$ cooling parameter escalation (values in
+Table~\ref{tab:suite12-d}). The landscape realizations at
+$k \in \{2,4,6,8\}$ are identical to suite 03, enabling direct comparison. The
+addition of $k=0$ (fully separable) provides a saturation baseline. Unlike
+suite 03, SA is calibrated per problem rather than forming a grid; suite 12
+therefore asks whether adequate temperature maintenance changes the saturation
+outcome rather than how the cooling--epistasis interaction behaves across a full
+parameter sweep. Profile analysis is enabled; the
+\texttt{cr\_profile\_verification} plot is omitted because the NK fitness
+function is continuous and the integer-grid profile identity does not apply
+exactly.
 
-Suite 12 differs from suite 03 in two structural ways. First, it includes
-NK-k0 ($k=0$, fully separable), absent from suite 03. At $k=0$ each locus
-contributes independently to fitness, providing a baseline against which
-saturation at higher $k$ can be measured. Second, the SA cooling parameter
-escalates with $k$ via \texttt{by\_problem} overrides
-(Table~\ref{tab:suite12-d}),
-reflecting that deeper local optima at higher epistasis require higher
-temperature to maintain non-trivial acceptance probability. This tuning means
-suite 12 does not form a clean grid design for studying the SA
-cooling--epistasis interaction (that role belongs to suite 03), but gives
-the SA variant a reasonable operating point at each $k$ to assess whether
-adequate temperature maintenance changes the saturation outcome.
-
-\begin{table}[htbp]
+\begin{table}[H]
   \centering
   \caption{SA-Log cooling parameter $d$ per NK instance in suite 12.
     Values increase monotonically with epistasis $k$ to compensate for
@@ -877,76 +665,36 @@ adequate temperature maintenance changes the saturation outcome.
   \end{tabular}
 \end{table}
 
-Profile analysis is enabled, producing inverse runtime profile surfaces and
-curves. The \texttt{cr\_profile\_verification} plot is not enabled in this
-suite: the NK landscape uses a continuous fitness function normalized to
-$[0,1]$, so the integer-grid profile implementation does not apply exactly.
-
 \subsection{Suite 13: Regret Scaling with Problem Size}
 
-Suite 13 runs a single algorithm, $(1+1)$-\acrshort{ea} at rate
-$1/n$, on four OneMax
-instances with $n \in \{25, 50, 100, 200\}$. The mutation rates are set via
-per-problem overrides to exact values $\{0.04, 0.02, 0.01, 0.005\}$
-corresponding to $1/n$ at each size; the \texttt{defaults} block carries 0.01
-as a fallback. Using a single algorithm removes algorithm-to-algorithm
-comparisons from the design and focuses the suite entirely on the scaling
-behavior of the regret metric across problem sizes. With 60 runs (the
-highest run count after suite 08) the empirical $\mathbb{E}[\text{CR}(T)]$
-estimates are suitable for fitting a scaling exponent.
-
-The \texttt{budget\_for\_plots} values are $\{1000, 2500, 5000, 10000\}$ for
-$n \in \{25, 50, 100, 200\}$ respectively. These are approximately consistent
-with $5n\log_2 n$ (giving roughly 580, 1411, 3322, and 7640), but set
-somewhat higher to ensure that the full post-convergence plateau is also
-visible in the trajectory plots. The budget list
-$\{100, 500, 1000, 2500, 5000, 10000\}$ includes a very short 100-evaluation
-point, reflecting the interest in early transient behavior at small $n$.
-
-Profile analysis is disabled.
+Suite 13 runs the $(1+1)$-\acrshort{ea} at rate $1/n$ on four OneMax instances
+($n \in \{25,50,100,200\}$) over 60 runs (the second-highest run count in the
+study) to produce empirical $\mathbb{E}[\text{CR}(T)]$ estimates suitable for
+fitting a scaling exponent. Using a single algorithm isolates the scaling
+behavior of the regret metric from algorithm-to-algorithm differences.
+\texttt{budget\_for\_plots} values are set somewhat above $5n\log_2 n$ so that
+the full post-convergence plateau is visible in trajectory plots. Profile
+analysis is disabled.
 
 \subsection{Suite 14: Population Dynamics}
 
-Suite 14 compares the standard $(1+1)$-\acrshort{ea} against four
-$(\mu+\lambda)$-\acrshort{ea}
-variants on four problems: OneMax, LeadingOnes, TwoMax, and Jump-3 ($n=100$).
-All five algorithm entries use mutation rate $1/n=0.01$ with no per-problem
-overrides, isolating the effect of population structure from mutation rate.
-
-The five configurations are: $(1+1)$-\acrshort{ea} (the standard
-  single-individual
-baseline via its own class); $(1+1)$-\acrshort{ea}-framework
-($\mu=1$, $\lambda=1$ via
-the MuPlusLambdaEA class); $(5+5)$-\acrshort{ea} ($\mu=5$,
-$\lambda=5$); $(10+20)$-\acrshort{ea}
-($\mu=10$, $\lambda=20$); and $(20+10)$-\acrshort{ea} ($\mu=20$, $\lambda=10$).
-Including both $(1+1)$-\acrshort{ea} and
-$(1+1)$-\acrshort{ea}-framework is deliberate: the two
-entries use different implementation classes but the same logical algorithm,
-so any difference in their results would indicate a framework overhead or
-implementation discrepancy rather than a population effect.
-
-The $(\mu+\lambda)$-\acrshort{ea} implementation records one history
-entry per offspring
-evaluation rather than per generation, which was the reason for its exclusion
-from suite 02. In suite 14 all algorithms are either the
-$(1+1)$-\acrshort{ea} or
-$(\mu+\lambda)$-\acrshort{ea} variants, so the recording granularity
-is consistent within
-the suite. The four problems span unimodal (OneMax), sequentially structured
-(LeadingOnes), bimodal (TwoMax), and gap-structured (Jump-3) fitness
-landscapes, providing a range of settings in which the cost and benefit of
-maintaining a population may differ.
-
-Profile analysis is disabled.
+Suite 14 compares the $(1+1)$-\acrshort{ea} against four
+$(\mu+\lambda)$-\acrshort{ea} variants ($(1+1)$ via framework, $(5+5)$,
+$(10+20)$, and $(20+10)$) on OneMax, LeadingOnes, TwoMax, and Jump-3
+($n=100$). All entries use mutation rate $1/n$ with no per-problem overrides,
+isolating the effect of population structure. Including both the standalone
+$(1+1)$-\acrshort{ea} and its framework equivalent ($\mu=1$, $\lambda=1$) acts
+as an implementation consistency check: any divergence between them indicates
+framework overhead rather than a population effect. Profile analysis is
+disabled.
 
 \section{Cross-Suite Design Relationships}
 
 Several structural relationships between suites affect which results can be
 meaningfully compared. Table~\ref{tab:cross-suite} summarizes the three
-principal links; the paragraphs below elaborate the design rationale.
+principal links.
 
-\begin{table}[htbp]
+\begin{table}[H]
   \centering
   \caption{Principal cross-suite design relationships.}
   \label{tab:cross-suite}
@@ -975,29 +723,12 @@ principal links; the paragraphs below elaborate the design rationale.
   \end{tabular}
 \end{table}
 
-\paragraph{Barrier types across suites 04--06 and 10.}
-Suites 04, 05, and 06 share the fixed rates $1/n$ and $2/n$. The full rate
-sets differ: suite 04 uses $\{0.5/n, 1/n, 2/n, 5/n\}$; suite 05 uses
-$\{1/n, 2/n\}$ plus the adaptive $k/n$ (with $0.5/n$ omitted as dominated
-and $5/n$ absent); suite 06 uses $\{1/n, 2/n, 5/n\}$ (with $0.5/n$ absent
-for the same reason). At the shared rates, results on Trap-$k$, Jump-$k$, and
-Plateau-$k$ at the same $k$ are directly comparable since the algorithm is
-otherwise identical. Suite 10 consolidates this comparison by running all four
-EA rates on all three barrier types simultaneously at $k=5$.
-
-\paragraph{Jump across suites 05 and 09.}
-Suites 05 and 09 are identical in problem and algorithm configuration; they
-differ only in budget list and \texttt{budget\_for\_plots}. Suite 05 is
-oriented toward observing plateau onset at small $k$; suite 09 extends the
-horizon to study plateau duration at all $k$ values, including those where
-convergence within budget is unlikely.
-
-\paragraph{NK across suites 03 and 12.}
-Both suites use $n=20$, seed 42. Suite 03 covers $k\in\{1,2,4,6,8\}$ and
-suite 12 covers $k\in\{0,2,4,6,8\}$; the shared values are
-$k\in\{2,4,6,8\}$, and the landscape realisations at those values are
-identical. Suite 03 forms a clean grid over $d$ values with no per-problem
-tuning, making any cooling--epistasis interaction attributable to problem
-structure rather than instance-specific calibration. Suite 12 uses per-$k$ $d$
-escalation and adds the $k=0$ separable baseline, providing a different
-perspective on the saturation phenomenon.
+Suites 04, 05, and 06 share the fixed rates $1/n$ and $2/n$, making Trap-$k$,
+Jump-$k$, and Plateau-$k$ results directly comparable at equal $k$; suite 10
+consolidates this at $k=5$ across all four EA rates simultaneously. Suites 05
+and 09 are identical in problem and algorithm design, differing only in budget
+horizon: suite 05 captures plateau onset, suite 09 captures plateau duration.
+Suites 03 and 12 share landscape realizations at $k \in \{2,4,6,8\}$ but
+differ in SA design: suite 03 provides the clean grid for studying the
+cooling--epistasis interaction, while suite 12 provides the per-$k$ calibrated
+view of saturation.
