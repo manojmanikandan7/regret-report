@@ -133,10 +133,12 @@ This is encoded by
 a \textit{neighborhood function} $\mathcal{N} : \mathcal{X} \to
 2^{\mathcal{X}}$,
 assigning to each candidate solution the set of solutions reachable
-in a single step!CITE: Hoos and Stützle - 2005 - INTRODUCTION!.
+in a single step~\cite{hoos2005intro}.
 For the Boolean hypercube, the standard neighborhood consists of all
 strings at Hamming
-distance one !CITE: a resource using hamming distance!.
+distance one\footnote{\textit{Hamming distance} between two
+  bitstrings of equal length is the number of positions at which the
+corresponding bits differ}.
 
 \begin{remark}[Problem domain of interest]
   This project is concerned with \emph{Pseudo-Boolean, Combinatorial
@@ -388,24 +390,35 @@ Appendix~\ref{app:bbc-extended}).
 
 \subsubsection{No-Free-Lunch Theorems}
 
-The \textit{No-Free-Lunch (NFL) theorems}~\cite{wolpert2002no} state that, for any two
-deterministic black-box algorithms, their performance averaged uniformly over all
-possible objective functions on a finite domain is identical. An immediate corollary is
-that no single algorithm can uniformly outperform all others across every problem class:
-gains on one subset of functions are exactly offset by losses on the complementary
+The \textit{No-Free-Lunch (NFL) theorems}~\cite{wolpert2002no} state
+that, for any two
+deterministic black-box algorithms, their performance averaged
+uniformly over all
+possible objective functions on a finite domain is identical. An
+immediate corollary is
+that no single algorithm can uniformly outperform all others across
+every problem class:
+gains on one subset of functions are exactly offset by losses on the
+complementary
 subset~\cite{wolpert2002no}. The NFL theorems underscore the necessity of
-problem-specific knowledge and motivate the study of algorithm performance on structured
+problem-specific knowledge and motivate the study of algorithm
+performance on structured
 problem families rather than over all conceivable instances.
 
-For the pseudo-Boolean domain $\{0,1\}^n$, the NFL result implies that any \acrshort{rsh}
+For the pseudo-Boolean domain $\{0,1\}^n$, the NFL result implies
+that any \acrshort{rsh}
 achieving strong performance on benchmark functions such as \textsc{OneMax} or
-\textsc{LeadingOnes} must, in principle, underperform on some complementary set of
+\textsc{LeadingOnes} must, in principle, underperform on some
+complementary set of
 functions. The practical consequence is that algorithm comparisons are always
 conditioned on a problem class, and complexity results such as
 $\mathbb{E}[\tau_{f^*}] = \Theta(n \log n)$ for the $(1+1)$~\acrshort{ea} on
-\textsc{OneMax} are meaningful precisely because \textsc{OneMax} represents a natural
-and practically relevant class of unimodal functions~\cite{droste2002analysis}. This
-project therefore restricts its attention to the structured benchmark suite defined in
+\textsc{OneMax} are meaningful precisely because \textsc{OneMax}
+represents a natural
+and practically relevant class of unimodal
+functions~\cite{droste2002analysis}. This
+project therefore restricts its attention to the structured benchmark
+suite defined in
 Section~\ref{subsec:bbo-perf}, where algorithm comparisons are well-posed and
 informative.
 
@@ -721,7 +734,7 @@ improving move increases the function value by exactly one, providing
 a clear gradient
 for local search methods. The expected runtime of the
 $(1+1)$~\acrfull{ea} on \textsc{OneMax} is
-$\Theta(n \log n)$. !CITE: Droste, Jansen, Wegener (2002)!
+$\Theta(n \log n)$.~\cite{droste2002analysis}
 
 \subsubsection{LeadingOnes}
 
@@ -738,8 +751,7 @@ progress requires the leading bit to be set before any subsequent bit
 can contribute,
 \textsc{LeadingOnes} is significantly harder than \textsc{OneMax}:
 the expected runtime
-of the $(1+1)$~\acrshort{ea} is $\Theta(n^2)$. !CITE: Droste, Jansen,
-Wegener (2002)!
+of the $(1+1)$~\acrshort{ea} is $\Theta(n^2)$.~\cite{droste2002analysis}
 
 \subsubsection{Jump}
 
@@ -1495,4 +1507,3 @@ interruption is the best-so-far solution.
 %     Formalizing this connection is a contribution of this project
 % - This subsection can be brief if the formal derivation belongs in
 %   Chapter 3 (Methodology / Theory); just sketch the intuition here
-

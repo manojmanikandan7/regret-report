@@ -1,44 +1,82 @@
 
-\documentclass[12pt,BSc,wordcount,twoside]{muthesis}
+\documentclass[11pt,BSc,wordcount,twoside]{muthesis}
 
 % The regulations say that 12pt should be used
 % Change the MSc option to MPhil, MRes or PhD if appropriate
 % Add 'anon' to the above options to replace your name with your student ID
 
 \usepackage{verbatim}
-
 \usepackage{graphicx}
 \usepackage{wrapfig}
-\graphicspath{{./assets/}}
-
 \usepackage{float}
-
 \usepackage{url} % typeset URL's reasonably
 \usepackage{hyperref} % typeset URL's reasonably
 \usepackage[dvipsnames]{xcolor}
 \usepackage{listings}
 \usepackage{algorithm,algpseudocode}
-
 \usepackage{pslatex} % Use Postscript fonts
 \usepackage{lmodern}
 \usepackage[T1]{fontenc} % for suppressing encoding errors
-
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-
 \usepackage{multirow}
-
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{longtable}
 \usepackage{booktabs}
 \usepackage{nicefrac}
 \usepackage[numbers,square]{natbib}
+% \usepackage{bera}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{csquotes}
+\usepackage{rotating}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric}
+\usepackage{abbreviations}
+
+\graphicspath{{./assets/}}
+
 \lstset{
   columns=flexible,
   breaklines=true
 }
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\lstdefinelanguage{json}{
+  basicstyle=\normalfont\ttfamily,
+  numbers=left,
+  numberstyle=\scriptsize,
+  stepnumber=1,
+  numbersep=8pt,
+  showstringspaces=false,
+  breaklines=true,
+  frame=lines,
+  backgroundcolor=\color{background},
+  literate=
+  *{0}{{{\color{numb}0}}}{1}
+  {1}{{{\color{numb}1}}}{1}
+  {2}{{{\color{numb}2}}}{1}
+  {3}{{{\color{numb}3}}}{1}
+  {4}{{{\color{numb}4}}}{1}
+  {5}{{{\color{numb}5}}}{1}
+  {6}{{{\color{numb}6}}}{1}
+  {7}{{{\color{numb}7}}}{1}
+  {8}{{{\color{numb}8}}}{1}
+  {9}{{{\color{numb}9}}}{1}
+  {:}{{{\color{punct}{:}}}}{1}
+  {,}{{{\color{punct}{,}}}}{1}
+  {\{}{{{\color{delim}{\{}}}}{1}
+  {\}}{{{\color{delim}{\}}}}}{1}
+  {[}{{{\color{delim}{[}}}}{1}
+  {]}{{{\color{delim}{]}}}}{1},
+}
+
 \hypersetup{
   colorlinks=true,
   linkcolor=darkgray,
@@ -47,18 +85,11 @@
   % urlcolor=blue
 }
 
-\usepackage{amsthm}
-\usepackage{mathtools}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{definition}{Definition}
 \newtheorem{remark}{Remark}
-
-\usepackage{csquotes}
-\usepackage{rotating}
-\usepackage{tikz}
-\usetikzlibrary{positioning, arrows.meta, shapes.geometric}
 
 % Uncomment the next line if you want subsubsections to be numbered
 \setcounter{secnumdepth}{3}
@@ -76,7 +107,6 @@
 % \cfoot{\thepage}
 % \rfoot{}
 
-\usepackage{abbreviations}
 \begin{document}
 % Uncomment the following lines to leave out list of figures, tables
 % and copyright until final printing
@@ -157,6 +187,7 @@ toctitle=Abbreviations \& Acronyms]
 \include{appendices/appendix2}
 \include{appendices/appendix3}
 \include{appendices/appendix4}
+\include{appendices/appendix5}
 %TC:endignore
 
 \end{document}
