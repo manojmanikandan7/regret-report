@@ -388,6 +388,27 @@ Appendix~\ref{app:bbc-extended}).
 
 \subsubsection{No-Free-Lunch Theorems}
 
+The \textit{No-Free-Lunch (NFL) theorems}~\cite{wolpert2002no} state that, for any two
+deterministic black-box algorithms, their performance averaged uniformly over all
+possible objective functions on a finite domain is identical. An immediate corollary is
+that no single algorithm can uniformly outperform all others across every problem class:
+gains on one subset of functions are exactly offset by losses on the complementary
+subset~\cite{wolpert2002no}. The NFL theorems underscore the necessity of
+problem-specific knowledge and motivate the study of algorithm performance on structured
+problem families rather than over all conceivable instances.
+
+For the pseudo-Boolean domain $\{0,1\}^n$, the NFL result implies that any \acrshort{rsh}
+achieving strong performance on benchmark functions such as \textsc{OneMax} or
+\textsc{LeadingOnes} must, in principle, underperform on some complementary set of
+functions. The practical consequence is that algorithm comparisons are always
+conditioned on a problem class, and complexity results such as
+$\mathbb{E}[\tau_{f^*}] = \Theta(n \log n)$ for the $(1+1)$~\acrshort{ea} on
+\textsc{OneMax} are meaningful precisely because \textsc{OneMax} represents a natural
+and practically relevant class of unimodal functions~\cite{droste2002analysis}. This
+project therefore restricts its attention to the structured benchmark suite defined in
+Section~\ref{subsec:bbo-perf}, where algorithm comparisons are well-posed and
+informative.
+
 % \subsubsection{Taxonomy of Derivative-Free Methods}
 % % Brief map of the full space; help the reader locate RSHs within it
 
@@ -1406,7 +1427,7 @@ Section~\ref{subsec:rw-bo-regret}.
 
 % \subsubsection{Instance-Dependent Bounds}
 
-\subsection{Connections to Runtime Analysis}
+% \subsection{Connections to Runtime Analysis}
 % Relationship between regret and optimization time.
 % Trade-offs between exploration and convergence.
 % Regret as a refined complexity notion.
@@ -1475,13 +1496,3 @@ interruption is the best-so-far solution.
 % - This subsection can be brief if the formal derivation belongs in
 %   Chapter 3 (Methodology / Theory); just sketch the intuition here
 
-\subsection{Open Questions and Project Scope}
-\label{subsec:open-questions}
-% - Summary of what is NOT yet known:
-%     Tight cumulative regret bounds for (1+1) EA / RLS on standard benchmarks
-%     How the exploration-exploitation tension manifests quantitatively
-%     Whether epsilon-greedy and SA schedules can be tuned to minimize regret
-%       rather than (only) expected runtime
-% - Research questions this project addresses:
-%     [enumerate your specific RQs here]
-% - Chapter roadmap: what follows from this background
