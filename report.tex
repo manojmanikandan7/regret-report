@@ -1,10 +1,11 @@
 
-\documentclass[11pt,BSc,wordcount,twoside]{muthesis}
+\documentclass[12pt,BSc,wordcount,twoside]{muthesis}
 
 % The regulations say that 12pt should be used
 % Change the MSc option to MPhil, MRes or PhD if appropriate
 % Add 'anon' to the above options to replace your name with your student ID
 
+\usepackage[a4paper,margin=2cm]{geometry}
 \usepackage{verbatim}
 \usepackage{graphicx}
 \usepackage{wrapfig}
@@ -26,7 +27,11 @@
 \usepackage{longtable}
 \usepackage{booktabs}
 \usepackage{nicefrac}
-\usepackage[numbers,square]{natbib}
+\usepackage[
+  backend=biber,
+  style=alphabetic,
+  natbib=true
+]{biblatex}
 % \usepackage{bera}
 \usepackage{amsthm}
 \usepackage{mathtools}
@@ -85,6 +90,9 @@
   % urlcolor=blue
 }
 
+\addbibresource{bibliography/refs.bib}
+\addbibresource{bibliography/software.bib}
+
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
@@ -141,7 +149,7 @@ toctitle=Abbreviations \& Acronyms]
 
 % These include the actual text
 \include{chapters/chapter_introduction}
-% Word count aim                1500-2000
+% Word count aim                0500-0750
 
 \include{chapters/chapter_background}
 % Word count aim                5000-6000
@@ -155,17 +163,16 @@ toctitle=Abbreviations \& Acronyms]
 % Word count aim                0000-0000
 
 \include{chapters/chapter_evaluation}
-% Word count aim                0000-0000
+% Word count aim                3500-4000
 
 \include{chapters/chapter_conclusion_future_work}
-% Word count aim                1750-2500
+% Word count aim                0600-750
 
 % Total                         8950-11300
 
-\bibliography{bibliography/refs, bibliography/software}    % this
+\printbibliography    % this
 % causes the references to be listed
 
-\bibliographystyle{plainnat}
 %% the bibliography style determines the format  in which both
 % citations and references are printed,
 %% other possible values are plain and abbrv
