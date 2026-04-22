@@ -1464,43 +1464,6 @@ heuristics considered in this project, the incumbent-based
 formulation is the natural one because the algorithm's output at
 interruption is the best-so-far solution.
 
-\subsection{Related Work: Regret in Bayesian and Surrogate-Based Optimization}
-\label{subsec:rw-bo-regret}
-% - BO is the domain with the most developed regret theory for BBO
-% - GP-UCB [Srinivas et al. 2010]: O(sqrt(T gamma_T)) cumulative regret
-%   where gamma_T is the information gain, first sublinear regret result
-%   for a continuous BBO algorithm
-% - Thompson Sampling for BO [Russo & Van Roy, Chowdhury & Srinavas]:
-%   Bayesian regret bounds
-% - Limitations of BO for the combinatorial setting:
-%     GP priors ill-suited to {0,1}^n without kernel engineering
-%     Acquisition function optimization is itself an NP-hard BBO problem
-%     Poor scaling to large n
-% - This motivates studying regret for simpler, combinatorial RSHs
-
-\subsection{Related Work: Regret-Inspired Analysis of Evolutionary Algorithms}
-\label{subsec:rw-ea-regret}
-% - Fixed-budget / anytime guarantees in EA theory
-%   [Jansen & Zarges; Doerr & Doerr - heavy-tailed mutations!CITE!]
-% - (1+lambda) EA and population diversity as implicit exploration strategies
-% - Algorithms explicitly designed with the exploration-exploitation trade-off
-%   in mind: parameter control, self-adaptation, hybrid methods
-% - Note: most EA theory is runtime-centric; regret framing is novel here
-% - What "regret-aware" EA design might look like:
-%     Reward-shaping analogies
-%     Budget-sensitive mutation rates
-%     Acceptance criteria derived from regret minimization objectives
-
-\subsection{Related Work: Bandit-Inspired Metaheuristics}
-\label{subsec:rw-bandit-meta}
-% - Algorithm selection / portfolio methods framed as MAB problems
-%   [!CITE Fialho, Maturana, Whitley, etc.!]
-% - Operator selection in EAs using UCB / EXP3-style rules
-%   [adaptive operator selection literature]
-% - Hyper-heuristics with bandit-based move selection
-% - Common thread: regret minimization used to select operators or algorithms,
-%   not to evaluate the optimizer itself - this project does the latter
-
 \subsection{Connections to Runtime Analysis via Drift Theory}
 \label{subsec:drift-regret}
 % - Drift theory  [lengler2019drift] is the primary tool for EA runtime proofs
