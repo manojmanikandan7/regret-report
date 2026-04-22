@@ -290,8 +290,6 @@ distribution over instances~\cite{droste2006blackbox}.
 % \paragraph{Chebyshev's Inequality. }
 % \paragraph{Chernoff Bounds. }
 
-\newpage
-
 \section{Black-Box Optimization}
 \label{sec:bbo}
 
@@ -1168,7 +1166,6 @@ in Sections~\ref{sec:online}--\ref{sec:regret}; their synthesis with
 \acrshort{bbo} performance
 analysis is the subject of Section~\ref{sec:regret-bbo}.
 
-\newpage
 \section{Sequential and Online Optimization Frameworks}
 \label{sec:online}
 
@@ -1272,7 +1269,6 @@ problem~\cite{shahriari2015taking}. This motivates studying regret
 for the simpler, surrogate-free randomized search heuristics
 that form the subject of this project.
 
-\newpage
 \section{Computational Regret}
 \label{sec:regret}
 
@@ -1444,7 +1440,6 @@ Section~\ref{subsec:rw-bo-regret}.
 % Trade-offs between exploration and convergence.
 % Regret as a refined complexity notion.
 
-\newpage
 \section{Regret-Aware Black-Box Optimization}
 \label{sec:regret-bbo}
 
@@ -1497,13 +1492,13 @@ heuristics considered in this project, the incumbent-based
 formulation is the natural one because the algorithm's output at
 interruption is the best-so-far solution.
 
-\subsection{Connections to Runtime Analysis via Drift Theory}
-\label{subsec:drift-regret}
-% - Drift theory  [lengler2019drift] is the primary tool for EA runtime proofs
-% - Additive, multiplicative, variable drift theorems
-% - How drift on the fitness function implies bounds on E[R_T^inc]:
-%     A lower-bounded drift implies the incumbent fitness increases quickly
-%     => the cumulative regret decreases quickly
-%     Formalizing this connection is a contribution of this project
-% - This subsection can be brief if the formal derivation belongs in
-%   Chapter 3 (Methodology / Theory); just sketch the intuition here
+% \subsection{Connections to Runtime Analysis via Drift Theory}
+% \label{subsec:drift-regret}
+% % - Drift theory  [lengler2019drift] is the primary tool for EA runtime proofs
+% % - Additive, multiplicative, variable drift theorems
+% % - How drift on the fitness function implies bounds on E[R_T^inc]:
+% %     A lower-bounded drift implies the incumbent fitness increases quickly
+% %     => the cumulative regret decreases quickly
+% %     Formalizing this connection is a contribution of this project
+% % - This subsection can be brief if the formal derivation belongs in
+% %   Chapter 3 (Methodology / Theory); just sketch the intuition here

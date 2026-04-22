@@ -235,12 +235,6 @@ budget.
 
 \begin{table}[H]
   \centering
-  \caption{Problem-specific algorithm overrides in suite 02. For
-    \acrshort{rls}Exploration the default is $\varepsilon=1/n=0.01$
-    with exponential
-    decay ($\varepsilon_t = \varepsilon/t$); for SA the default cooling
-  parameter is $d=2.0$.}
-  \label{tab:suite02-overrides}
   \small
   \begin{tabular}{@{}lllll@{}}
     \toprule
@@ -257,13 +251,19 @@ budget.
     & Trap-5  & $d$ & $2.0$ & $6.0$ \\
     \bottomrule
   \end{tabular}
+  \caption{Problem-specific algorithm overrides in suite 02. For
+    \acrshort{rls}Exploration the default is $\varepsilon=1/n=0.01$
+    with exponential
+    decay ($\varepsilon_t = \varepsilon/t$); for SA the default cooling
+  parameter is $d=2.0$.}
+  \label{tab:suite02-overrides}
 \end{table}
 
 \section{Verification Suite}
 
 \subsection{Suite 08: Runtime Profile Verification}
 
-Suite 08 validates the tail-sum identity
+Suite 08 validates the tail-sum identity (Chapter~\ref{cha:profiles})
 \[
   \mathbb{E}[\text{CR}(T)]
   = \sum_{v=1}^{f^{*}} \sum_{t'=1}^{T}
@@ -509,10 +509,6 @@ cases. Profile analysis is disabled.
 
 \begin{table}[H]
   \centering
-  \caption{Per-problem mutation rates in suite 07. Values are set via
-    \texttt{by\_problem} overrides to exact decimal representations of
-  $\{0.5/n,1/n,2/n,3/n\}$ at each problem size.}
-  \label{tab:suite07-rates}
   \small
   \begin{tabular}{@{}lrrr@{}}
     \toprule
@@ -536,6 +532,10 @@ cases. Profile analysis is disabled.
     & $\nicefrac{3}{128}\approx0.02344$ \\
     \bottomrule
   \end{tabular}
+  \caption{Per-problem mutation rates in suite 07. Values are set via
+    \texttt{by\_problem} overrides to exact decimal representations of
+  $\{0.5/n,1/n,2/n,3/n\}$ at each problem size.}
+  \label{tab:suite07-rates}
 \end{table}
 
 \subsection{Suite 09: Jump Plateau Duration}
@@ -652,10 +652,6 @@ exactly.
 
 \begin{table}[H]
   \centering
-  \caption{SA-Log cooling parameter $d$ per NK instance in suite 12.
-    Values increase monotonically with epistasis $k$ to compensate for
-  deeper local optima.}
-  \label{tab:suite12-d}
   \small
   \begin{tabular}{@{}lrrrrr@{}}
     \toprule
@@ -664,6 +660,10 @@ exactly.
     $d$ & 4.0 & 4.0 & 8.0 & 8.0 & 12.0 \\
     \bottomrule
   \end{tabular}
+  \caption{SA-Log cooling parameter $d$ per NK instance in suite 12.
+    Values increase monotonically with epistasis $k$ to compensate for
+  deeper local optima.}
+  \label{tab:suite12-d}
 \end{table}
 
 \subsection{Suite 13: Regret Scaling with Problem Size}
@@ -700,7 +700,7 @@ principal links.
   \caption{Principal cross-suite design relationships.}
   \label{tab:cross-suite}
   \small
-  \begin{tabular}{@{}p{2.5cm}p{2.6cm}p{4.0cm}p{3.5cm}@{}}
+  \begin{tabular}{@{}p{2.5cm}p{2cm}p{5.0cm}p{5.0cm}@{}}
     \toprule
     \textbf{Relationship} & \textbf{Suites} & \textbf{Shared} &
     \textbf{Differs} \\
@@ -722,6 +722,8 @@ principal links.
     escalation, adds $k=0$ \\
     \bottomrule
   \end{tabular}
+  \caption{Principal cross-suite design relationships.}
+  \label{tab:cross-suite}
 \end{table}
 
 Suites 04, 05, and 06 share the fixed rates $1/n$ and $2/n$, making Trap-$k$,

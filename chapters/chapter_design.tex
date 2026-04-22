@@ -57,36 +57,34 @@ The framework supports the full experimental life-cycle through a single
 \acrshort{yaml} configuration files and executes the appropriate sub-command.
 Table~\ref{tab:cli-commands} summarizes the available commands.
 
-\begin{table}[ht]
-  \centering
+\small
+\begin{longtable}{p{3.8cm}p{9.2cm}}
+  \hline
+  \textbf{Command} & \textbf{Description} \\
+  \hline
+  \texttt{validate} &
+  Parse and validate one or more \acrshort{yaml} configurations
+  against the \acrshort{json} Schema and
+  semantic registry checks without executing any computation. \\[4pt]
+  \texttt{plan} &
+  Print a dry-run summary: problem/algorithm combinations, total runs, and
+  evaluation budgets. \\[4pt]
+  \texttt{run [\texttt{-{}-no-plot}]} &
+  Execute one or more experiment configurations; optionally suppress plot
+  generation after completion. \\[4pt]
+  \texttt{analyze} &
+  Regenerate all plots from previously saved \acrshort{json} results without
+  re-running experiments. \\[4pt]
+  \texttt{table [\texttt{-{}-format}]} &
+  Generate summary tables from existing results in \texttt{latex},
+  \texttt{csv}, or \texttt{markdown} format. \\
+  \hline
   \caption{\acrshort{cli} sub-commands exposed by the
     \texttt{run\_experiment} entry
   point (equivalently \texttt{python -m regret}).}
   \label{tab:cli-commands}
-  \small
-  \begin{tabular}{p{3.8cm}p{9.2cm}}
-    \hline
-    \textbf{Command} & \textbf{Description} \\
-    \hline
-    \texttt{validate} &
-    Parse and validate one or more \acrshort{yaml} configurations
-    against the \acrshort{json} Schema and
-    semantic registry checks without executing any computation. \\[4pt]
-    \texttt{plan} &
-    Print a dry-run summary: problem/algorithm combinations, total runs, and
-    evaluation budgets. \\[4pt]
-    \texttt{run [\texttt{-{}-no-plot}]} &
-    Execute one or more experiment configurations; optionally suppress plot
-    generation after completion. \\[4pt]
-    \texttt{analyze} &
-    Regenerate all plots from previously saved \acrshort{json} results without
-    re-running experiments. \\[4pt]
-    \texttt{table [\texttt{-{}-format}]} &
-    Generate summary tables from existing results in \texttt{latex},
-    \texttt{csv}, or \texttt{markdown} format. \\
-    \hline
-  \end{tabular}
-\end{table}
+\end{longtable}
+% \end{table}
 
 \paragraph{Batch Experiment Execution.}
 All experiments are specified declaratively via \acrshort{yaml}
@@ -277,8 +275,9 @@ resolved at runtime. \texttt{ExperimentRunner} orchestrates individual runs
 and delegates result persistence, while the \texttt{CoolingSchedule} protocol
 is resolved from \acrshort{yaml} at parse time via a \textit{registry}.
 
-\begin{figure}[p]
+\begin{figure}[H]
   \centering
+  \includegraphics[width=\linewidth]{uml.png}
   \caption{Simplified UML class diagram of the \texttt{regret} framework.
     Solid triangle arrows ($\triangleright$) denote inheritance;
     dashed arrows denote dependency or instantiation.
@@ -287,122 +286,6 @@ is resolved from \acrshort{yaml} at parse time via a \textit{registry}.
       \texttt{\acrshort{rls}Exploration}, \texttt{NKLandscape},
   \texttt{LinearCooling}) are omitted for clarity.}
   \label{fig:uml}
-  \includegraphics[width=\linewidth]{uml.png}
-
-  % \begin{tikzpicture}[scale=0.80]
-  %
-  % %% Problem Hierarchy
-  %
-  % \umlclass[type=abstract]{Problem}{
-  %   + n : int\\
-  %   + f\_star : float\\
-  %   + f\_worst : float
-  % }{
-  %   \# evaluate(x)\\
-  %   \# get\_optimum\_value()
-  % }
-  %
-  % \umlclass[x=-4, y=-4]{PetersenColoring MaxSAT}{
-  %   + m : int
-  % }{
-  %   + evaluate(x) : float\\
-  %   + get\_optimum\_value()
-  % }
-  %
-  % \umlclass[y=-6]{OneMax}{}{
-  %   + evaluate(x) : float\\
-  %   + get\_optimum\_value()
-  % }
-  %
-  % \umlclass[x=4, y=-4]{Jump}{
-  %   + k : int
-  % }{
-  %   + evaluate(x) : float\\
-  %   + get\_optimum\_value()
-  % }
-  %
-  % \umlinherit{PetersenColoring MaxSAT}{Problem}
-  % \umlinherit{OneMax}{Problem}
-  % \umlinherit{Jump}{Problem}
-  %
-  % %% Algorithm Hierarchy
-  %
-  % \umlclass[type=abstract, x=12, y=0]{Algorithm}{
-  %   + problem : Problem\\
-  %   + rng : Generator\\
-  %   + evaluations : int\\
-  %   + best\_value : float\\
-  %   + history : list\\
-  %   + callback : Callable
-  % }{
-  %   \# reset()\\
-  %   \# step()\\
-  %   + run(budget) : tuple\\
-  %   \# \_record\_history(...)
-  % }
-  %
-  % \umlclass[x=6, y=-6]{OnePlusOneEA}{
-  %   + mutation\_rate : float
-  % }{
-  %   + reset()\\
-  %   + step()
-  % }
-  %
-  % \umlclass[x=10, y=-4]{RLS}{}{
-  %   + reset()\\
-  %   + step()
-  % }
-  %
-  % \umlclass[x=14, y=-4]{SimulatedAnnealing}{
-  %   + T\_func : CoolingSchedule\\
-  %   + min\_T : float
-  % }{
-  %   + reset()\\
-  %   + step()
-  % }
-  %
-  % \umlinherit{OnePlusOneEA}{Algorithm}
-  % \umlinherit{RLS}{Algorithm}
-  % \umlinherit{SimulatedAnnealing}{Algorithm}
-  %
-  % %% Experiment Runner
-  %
-  % \umlclass[x=10, y=-10]{ExperimentRunner}{
-  %   + output\_dir : Path
-  % }{
-  %   + run\_single(...) : dict\\
-  %   + run\_experiment(...) : list\\
-  %   + \_run\_parallel(...)\\
-  %   - \_save\_results(...)
-  % }
-  %
-  % \umldep{ExperimentRunner}{Problem}
-  % \umldep{ExperimentRunner}{Algorithm}
-  %
-  %
-  % %% Cooling Schedule
-  %
-  % \umlinterface[x=18, y=-2]{CoolingSchedule}{
-  %   + \_\_call\_\_(t) : float
-  % }
-  %
-  % \umlclass[x=16, y=-6]{LogarithmicCooling}{
-  %   + d : float
-  % }{}
-  %
-  % \umlclass[x=20, y=-6]{ExponentialCooling}{
-  %   + T0 : float\\
-  %   + alpha : float
-  % }{}
-  %
-  % \umlimpl{LogarithmicCooling}{CoolingSchedule}
-  % \umlimpl{ExponentialCooling}{CoolingSchedule}
-  %
-  % \umldep{SimulatedAnnealing}{CoolingSchedule}
-  %
-  %
-  % \end{tikzpicture}
-
 \end{figure}
 
 \subsection{Limitations}
@@ -432,10 +315,11 @@ verification plot.
 
 All experiment output is written under a structured directory hierarchy.
 Raw \acrshort{json} result files are stored at:
-\begin{center}
-  \texttt{results/raw/<suite>/<problem>/<algorithm>/n<N>/b<B>.json}
-\end{center}
-where \texttt{<suite>}, \texttt{<problem>}, and \texttt{<algorithm>} are
+
+\texttt{results/raw/<suite>/<problem>/<algorithm>/n<N>/b<B>.json}
+
+\noindent where \texttt{<suite>}, \texttt{<problem>}, and
+\texttt{<algorithm>} are
 normalized display names, \texttt{N}~is the problem dimension, and \texttt{B}
 is the evaluation budget. Each file contains three top-level keys:
 \texttt{metadata} (algorithm, problem class, dimension, budget, run count,
@@ -447,10 +331,11 @@ quartiles, and probability of optimum across all runs), and \texttt{results}
 
 Generated figures are written under \texttt{results/figures/} following an
 analogous hierarchy:
-\begin{center}
-  \texttt{results/figures/<suite>/<problem>/n<N>/<subdir>/<filename>.pdf}
-\end{center}
-Plot subdirectories are configurable via \texttt{layout.structure} in the YAML
+
+\texttt{results/figures/<suite>/<problem>/n<N>/<subdir>/<filename>.pdf}
+
+\noindent Plot subdirectories are configurable via
+\texttt{layout.structure} in the YAML
 configuration; the defaults are \texttt{aggregate/} for cross-budget plots,
 \texttt{history/} for trajectory and regret time-series plots, and
 \texttt{distributions/} for budget-specific box-plots and performance profiles.
@@ -458,83 +343,77 @@ Runtime profile plots are written to a \texttt{profiles/} subdirectory within
 the raw results tree. All figures are saved as PDF at 300\,DPI.
 Table~\ref{tab:output-structure} summarizes the full output organization.
 
-\begin{table}[H]
-  \centering
+\small
+\begin{longtable}{p{0.55\linewidth}p{0.45\linewidth}}
+  \hline
+  \textbf{Path pattern} & \textbf{Contents} \\
+  \hline
+  \multicolumn{2}{l}{\textit{Raw data (JSON)}} \\
+  \hline
+  \small\texttt{results/raw/\newline<suite>/<prob>/<algo>/n<N>/b<B>.json}
+  & Per-budget result file: metadata, aggregate statistics, per-run regrets,
+  and (in \texttt{full} mode) full evaluation trajectories. \\[4pt]
+  \small\texttt{results/raw/<suite>/<prob>/}\newline\texttt{profiles/n<N>/cr\_profile\_data\_<algo>.csv}
+  & Runtime profile CSV; columns: \texttt{evaluation},
+  \texttt{expected\_cumulative\_regret},
+  \texttt{mean\_cumulative\_regret}. \\
+  \hline
+  \multicolumn{2}{l}{\textit{Figures (PDF, 300\,DPI)}} \\
+  \hline
+  \texttt{.../n<N>/aggregate/}
+  & Cross-budget plots: regret curves, convergence probability,
+  comparison heatmap. \\[4pt]
+  \texttt{.../n<N>/history/}
+  & Trajectory plots: best/current value, instantaneous and cumulative
+  regret, \acrfull{ttfo} distribution. \\[4pt]
+  \texttt{.../n<N>/distributions/}
+  & Budget-specific plots: regret box-plots and performance profiles. \\[4pt]
+  \texttt{.../n<N>/profiles/}
+  & Runtime profile plots: inverse profile surface/curves,
+  $\mathbb{E}[\mathrm{CR}(T)]$ verification.
+  Requires \texttt{suite.profile: true}. \\
+  \hline
   \caption{Output file organization for a representative experiment.
     ``Normalization'' replaces spaces, parentheses, and special characters
   with underscores or removes them.}
   \label{tab:output-structure}
-  \small
-  \begin{tabular}{p{0.55\linewidth}p{0.45\linewidth}}
-    \hline
-    \textbf{Path pattern} & \textbf{Contents} \\
-    \hline
-    \multicolumn{2}{l}{\textit{Raw data (JSON)}} \\
-    \hline
-    \small\texttt{results/raw/\newline<suite>/<prob>/<algo>/n<N>/b<B>.json}
-    & Per-budget result file: metadata, aggregate statistics, per-run regrets,
-    and (in \texttt{full} mode) full evaluation trajectories. \\[4pt]
-    \small\texttt{results/raw/<suite>/<prob>/}\newline\texttt{profiles/n<N>/cr\_profile\_data\_<algo>.csv}
-    & Runtime profile CSV; columns: \texttt{evaluation},
-    \texttt{expected\_cumulative\_regret},
-    \texttt{mean\_cumulative\_regret}. \\
-    \hline
-    \multicolumn{2}{l}{\textit{Figures (PDF, 300\,DPI)}} \\
-    \hline
-    \texttt{.../n<N>/aggregate/}
-    & Cross-budget plots: regret curves, convergence probability,
-    comparison heatmap. \\[4pt]
-    \texttt{.../n<N>/history/}
-    & Trajectory plots: best/current value, instantaneous and cumulative
-    regret, \acrfull{ttfo} distribution. \\[4pt]
-    \texttt{.../n<N>/distributions/}
-    & Budget-specific plots: regret box-plots and performance profiles. \\[4pt]
-    \texttt{.../n<N>/profiles/}
-    & Runtime profile plots: inverse profile surface/curves,
-    $\mathbb{E}[\mathrm{CR}(T)]$ verification.
-    Requires \texttt{suite.profile: true}. \\
-    \hline
-  \end{tabular}
-\end{table}
+\end{longtable}
 
-\begin{table}[H]
-  \centering
+\small
+\begin{longtable}{p{4cm}p{8cm}p{2cm}}
+  \hline
+  \textbf{Plot} & \textbf{Output filename pattern - \texttt{pdf}
+  format} & \textbf{Profile required} \\
+  \hline
+  Regret curves            & \texttt{regret\_curves}
+  & No \\
+  Convergence probability  & \texttt{convergence\_probability}
+  & No \\
+  Comparison heatmap       & \texttt{comparison\_heatmap}
+  & No \\
+  Regret box-plots          & \texttt{regret\_boxplot\_b\{budget\}}
+  & No \\
+  Performance profile      &
+  \texttt{performance\_profile\_b\{budget\}}    & No \\
+  History (best-so-far)    & \texttt{history\_best}
+  & No \\
+  Instantaneous regret     &
+  \texttt{history\_regret\_instantaneous}       & No \\
+  Cumulative regret        & \texttt{history\_regret\_cumulative}
+  & No \\
+  \acrshort{ttfo} distribution        &
+  \texttt{history\_ttfo\_markers}               & No \\
+  Runtime profile surface  &
+  \texttt{inverse\_runtime\_profile\_surface\_\{alg\}} & Yes \\
+  Runtime profile curves   &
+  \texttt{inverse\_runtime\_profile\_curves}   & Yes \\
+  CR profile verification  & \texttt{cr\_profile\_verification}
+  & Yes \\
+  \hline
   \caption{Plot types generated across experiments. ``Profile required'' denotes
   plots that require \texttt{suite.profile:~true}}
   \label{tab:plot-types}
-  \small
-  \begin{tabular}{p{4cm}p{8cm}p{2cm}}
-    \hline
-    \textbf{Plot} & \textbf{Output filename pattern - \texttt{pdf}
-    format} & \textbf{Profile required} \\
-    \hline
-    Regret curves            & \texttt{regret\_curves}
-    & No \\
-    Convergence probability  & \texttt{convergence\_probability}
-    & No \\
-    Comparison heatmap       & \texttt{comparison\_heatmap}
-    & No \\
-    Regret box-plots          & \texttt{regret\_boxplot\_b\{budget\}}
-    & No \\
-    Performance profile      &
-    \texttt{performance\_profile\_b\{budget\}}    & No \\
-    History (best-so-far)    & \texttt{history\_best}
-    & No \\
-    Instantaneous regret     &
-    \texttt{history\_regret\_instantaneous}       & No \\
-    Cumulative regret        & \texttt{history\_regret\_cumulative}
-    & No \\
-    \acrshort{ttfo} distribution        &
-    \texttt{history\_ttfo\_markers}               & No \\
-    Runtime profile surface  &
-    \texttt{inverse\_runtime\_profile\_surface\_\{alg\}} & Yes \\
-    Runtime profile curves   &
-    \texttt{inverse\_runtime\_profile\_curves}   & Yes \\
-    CR profile verification  & \texttt{cr\_profile\_verification}
-    & Yes \\
-    \hline
-  \end{tabular}
-\end{table}
+\end{longtable}
 
 \section{Testing strategy}
 % Mention TDD, Red-Green Testing, selective coverage (weighted)
@@ -575,74 +454,70 @@ replaces the Python standard \texttt{pip}/\texttt{venv}.
 Runtime installation: \texttt{uv sync}; development installation:
 \texttt{uv sync -{}-group dev}.
 
-\begin{table}[h]
-  \centering
+\small
+\begin{longtable}{p{3cm}p{3cm}p{8cm}}
+  \hline
+  \textbf{Package} & \textbf{Min.\ version} & \textbf{Purpose} \\
+  \hline
+  \multicolumn{3}{l}{\textit{Scientific computing}} \\
+  \hline
+  \texttt{numpy}~\cite{numpy}      & 2.4.3  & Array operations,
+  random number generation \\
+  \texttt{scipy}~\cite{scipy}      & 1.16.3 & Statistics, drift
+  computations, profile integrals \\
+  \texttt{pandas}~\cite{pandas}    & 2.3.3  & Results aggregation,
+  tabulation, CSV export \\
+  \hline
+  \multicolumn{3}{l}{\textit{Visualisation}} \\
+  \hline
+  \texttt{matplotlib}~\cite{matplotlib} & 3.10.8 & All static plot
+  generation \\
+  \texttt{ipympl}                       & 0.10.0 & Interactive
+  Matplotlib in notebooks \\
+  \texttt{networkx}~\cite{networkx}& 3.6.1  & Graph problem
+  instances (e.g.\ Petersen colouring) \\
+  \hline
+  \multicolumn{3}{l}{\textit{Configuration and \acrshort{cli}}} \\
+  \hline
+  \texttt{pyyaml}~\cite{pyyaml}      & 6.0.3  & Experiment
+  configuration parsing \\
+  \texttt{jsonschema}~\cite{jsonschema}  & 4.26.0 & \acrshort{yaml}
+  schema validation \\
+  \texttt{typer}~\cite{typer}       & 0.24.1 &
+  \texttt{run\_experiment} \acrshort{cli} \\
+  \texttt{tqdm}~\cite{tqdm}        & 4.67.1 & Progress bars for
+  parallel runs \\
+  \hline
+  \multicolumn{3}{l}{\textit{Notebook and interactive demonstration}} \\
+  \hline
+  \texttt{jupyter}~\cite{jupyter}     & 1.1.1  & Notebook server \\
+  \texttt{ipykernel}   & 7.2.0  & Jupyter kernel support \\
+  \texttt{ipywidgets}  & 8.1.8  & Notebook UI widgets \\
+  \hline
+  \multicolumn{3}{l}{\textit{Development --- linting (optional)}} \\
+  \hline
+  \texttt{ruff}~\cite{ruff} & --- & Fast Rust-based linter and
+  formatter (E, W, F, I, B, UP rules) \\
+  \hline
+  \multicolumn{3}{l}{\textit{Development --- testing (optional)}} \\
+  \hline
+  \texttt{pytest}~\cite{pytest}    & --- & Unit and integration test runner \\
+  \texttt{coverage}~\cite{coverage}  & --- & Branch coverage
+  reporting ($\geq$50\% enforced) \\
+  \texttt{tabulate}  & --- & Tabular output in test fixtures \\
+  \hline
+  \multicolumn{3}{l}{\textit{Development --- type checking (optional)}} \\
+  \hline
+  \texttt{ty}~\cite{ty} & --- & Rust-based static type checker (Astral) \\
+  \hline
+  \multicolumn{3}{l}{\textit{Development --- documentation (optional)}} \\
+  \hline
+  \texttt{zensical}              & --- & Documentation site generator \\
+  \texttt{mkdocstrings-python}   & --- & Auto-generated API
+  reference from docstrings \\
+  \hline
   \caption[Table of software prerequisites]{%
     Package dependencies for the \texttt{regret} framework (Python~$\geq$~3.12).
   }
-
   \label{tab:dependencies}
-  \small
-  \begin{longtable}{p{3cm}p{3cm}p{8cm}}
-    \hline
-    \textbf{Package} & \textbf{Min.\ version} & \textbf{Purpose} \\
-    \hline
-    \multicolumn{3}{l}{\textit{Scientific computing}} \\
-    \hline
-    \texttt{numpy}~\cite{numpy}      & 2.4.3  & Array operations,
-    random number generation \\
-    \texttt{scipy}~\cite{scipy}      & 1.16.3 & Statistics, drift
-    computations, profile integrals \\
-    \texttt{pandas}~\cite{pandas}    & 2.3.3  & Results aggregation,
-    tabulation, CSV export \\
-    \hline
-    \multicolumn{3}{l}{\textit{Visualisation}} \\
-    \hline
-    \texttt{matplotlib}~\cite{matplotlib} & 3.10.8 & All static plot
-    generation \\
-    \texttt{ipympl}                       & 0.10.0 & Interactive
-    Matplotlib in notebooks \\
-    \texttt{networkx}~\cite{networkx}& 3.6.1  & Graph problem
-    instances (e.g.\ Petersen colouring) \\
-    \hline
-    \multicolumn{3}{l}{\textit{Configuration and \acrshort{cli}}} \\
-    \hline
-    \texttt{pyyaml}~\cite{pyyaml}      & 6.0.3  & Experiment
-    configuration parsing \\
-    \texttt{jsonschema}~\cite{jsonschema}  & 4.26.0 & \acrshort{yaml}
-    schema validation \\
-    \texttt{typer}~\cite{typer}       & 0.24.1 &
-    \texttt{run\_experiment} \acrshort{cli} \\
-    \texttt{tqdm}~\cite{tqdm}        & 4.67.1 & Progress bars for
-    parallel runs \\
-    \hline
-    \multicolumn{3}{l}{\textit{Notebook and interactive demonstration}} \\
-    \hline
-    \texttt{jupyter}~\cite{jupyter}     & 1.1.1  & Notebook server \\
-    \texttt{ipykernel}   & 7.2.0  & Jupyter kernel support \\
-    \texttt{ipywidgets}  & 8.1.8  & Notebook UI widgets \\
-    \hline
-    \multicolumn{3}{l}{\textit{Development --- linting (optional)}} \\
-    \hline
-    \texttt{ruff}~\cite{ruff} & --- & Fast Rust-based linter and
-    formatter (E, W, F, I, B, UP rules) \\
-    \hline
-    \multicolumn{3}{l}{\textit{Development --- testing (optional)}} \\
-    \hline
-    \texttt{pytest}~\cite{pytest}    & --- & Unit and integration test runner \\
-    \texttt{coverage}~\cite{coverage}  & --- & Branch coverage
-    reporting ($\geq$50\% enforced) \\
-    \texttt{tabulate}  & --- & Tabular output in test fixtures \\
-    \hline
-    \multicolumn{3}{l}{\textit{Development --- type checking (optional)}} \\
-    \hline
-    \texttt{ty}~\cite{ty} & --- & Rust-based static type checker (Astral) \\
-    \hline
-    \multicolumn{3}{l}{\textit{Development --- documentation (optional)}} \\
-    \hline
-    \texttt{zensical}              & --- & Documentation site generator \\
-    \texttt{mkdocstrings-python}   & --- & Auto-generated API
-    reference from docstrings \\
-    \hline
-  \end{longtable}
-\end{table}
+\end{longtable}
