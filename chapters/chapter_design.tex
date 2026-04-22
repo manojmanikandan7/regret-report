@@ -98,7 +98,7 @@ problem and algorithm specifications. Problems and algorithms are referenced
 by string keys resolved against internal registries, providing a clean
 separation between configuration and implementation.
 
-\paragraph{Parallelised execution.}
+\paragraph{Parallelized execution.}
 When \texttt{parallel: true} is set in the \acrshort{yaml} configuration,
 independent runs are initiated via
 Python's \texttt{ProcessPoolExecutor}, with per-run random seeds fixed to
@@ -259,8 +259,8 @@ and the experiment (job) dispatch pipeline.
 
 \subsubsection{Raw Output \acrshort{json} files}
 The output \acrshort{json} files are \textit{compacted} by replacing
-redundant stylistic whitespaces and newlines with other seperators.
-This reduced the raw file sizes by upto 50\%.
+redundant stylistic whitespaces and newlines with other separators.
+This reduced the raw file sizes by up to 50\%.
 \acrshort{json} files were preferred for storing the raw files since
 it included \textit{mixed} data, including metadata, general
 statistics for each run, along with the trajectories.
@@ -566,8 +566,7 @@ components (\texttt{test\_algorithms.py}, \texttt{test\_metrics.py},
 \texttt{test\_problems.py}) and integration paths
 (\texttt{test\_integration.py}) receive dense coverage, while infrastructure
 components such as CLI wiring and plot dispatch are covered at a coarser
-granularity. Shared fixtures in \texttt{conftest.py} provide canonical
-problem instances and bitstrings used across test suites.
+granularity.
 
 \section{Project Dependencies}
 The project is built with \texttt{hatchling}~\cite{hatchling} and managed
