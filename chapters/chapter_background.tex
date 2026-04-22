@@ -49,21 +49,12 @@ simulation-based and real-world settings.
 
 \subsection{Algorithms}
 
-An \textit{algorithm} is a finite, unambiguous sequence of
-instructions that transforms a given input into a desired output
-within a bounded number of steps. More precisely, an algorithm
-defines a computational procedure that, for each instance drawn from
-a specified problem class, terminates and produces a result satisfying
-the output requirements of that class~\cite{hoos2005intro}. Three
-properties are central to this definition: \textit{finiteness}, in
-that the procedure halts after a finite number of steps;
-\textit{definiteness}, in that each step is precisely specified with
-no ambiguity; and \textit{effectiveness}, in that every operation is
-sufficiently basic to be carried out exactly. In the context of
-optimization, the input is a problem instance and the output is a
-candidate solution together with its objective value, with the
-algorithm's quality judged both by the solutions it returns and the
-computational resources it consumes in doing so.
+An \textit{algorithm} is a finite, unambiguous sequence of instructions
+that transforms a given input into a desired output within a bounded
+number of steps~\cite{hoos2005intro}. In the context of optimization,
+the input is a problem instance and the output is a candidate solution
+together with its objective value; algorithm quality is judged both by
+the solutions returned and the computational resources consumed.
 
 \subsubsection{Algorithm Properties}
 \paragraph{Deterministic and Randomized Algorithms. }
@@ -82,25 +73,16 @@ The theoretical analysis of such algorithms therefore concerns
 expected quantities (expected runtime, expected solution quality)
 rather than worst-case deterministic guarantees.
 
-\paragraph{Adaptive vs. Non-Adaptive Algorithms}
+\paragraph{Adaptive \& Non-Adaptive Algorithms.}
 % Sequential decision processes.
 % Role of feedback.
-An algorithm is \textit{adaptive} if each action at step $t$ is
-chosen as a function of the history of prior queries and their
-responses, $(x_1, f(x_1)), \ldots, (x_{t-1}, f(x_{t-1}))$; a
-\textit{non-adaptive} algorithm such as pure random sampling fixes
-all query points in advance and serves as a natural complexity
+An algorithm is \textit{adaptive} if each action at step $t$ is chosen
+as a function of the history of prior queries and their responses,
+$(x_1,f(x_1)),\ldots,(x_{t-1},f(x_{t-1}))$; a \textit{non-adaptive}
+algorithm such as pure random sampling fixes all query points in
+advance and serves as a natural complexity
 baseline~\cite{droste2006blackbox}. All algorithms studied in this
-project are fully adaptive. This sequential feedback structure is
-also the defining feature of online optimization frameworks such as
-the multi-armed bandit model (Section~\ref{sec:online}), where the
-learner's choice of arm at each round depends on all previously
-observed rewards. The regret-based performance measures developed in
-Section~\ref{sec:regret} are a direct consequence of this adaptive,
-sequential structure: they quantify the cumulative cost of not
-knowing the objective in advance, penalizing every step at which the
-algorithm has not yet identified the optimal region of the search
-space.
+project are fully adaptive.
 
 \subsubsection{Oracle-Based Computation}
 \label{subsubsec:oraclecomp}
@@ -179,18 +161,11 @@ distance one !CITE: a resource using hamming distance!.
 % Feasible region definition.
 % Constrained vs. unconstrained problems.
 
-In a \textit{constrained} optimization problem, the \textit{feasible region}
-$\mathcal{F} \subseteq \mathcal{X}$ is defined by one or more
-constraints that a valid
-solution must satisfy~\cite{nocedal2006numerical, bertsekas2009convex}.
-An \textit{unconstrained} problem places no restriction beyond
-membership in $\mathcal{X}$. Constraints may be \textit{hard} (a
-  solution violating them
-is inadmissible) or \textit{soft} (violations are penalized in the
-objective). The
-boundary of the feasible region can significantly complicate
-optimization, particularly
-for local search methods that may generate infeasible intermediate solutions.
+In a \textit{constrained} problem the \textit{feasible region}
+$\mathcal{F} \subseteq \mathcal{X}$ is defined by conditions a valid
+solution must satisfy; an \textit{unconstrained} problem places no
+restriction beyond membership in $\mathcal{X}$~\cite{nocedal2006numerical}.
+All pseudo-Boolean problems studied in this project are unconstrained.
 
 \subsection{Objective Functions and Landscape Properties}
 
@@ -205,94 +180,53 @@ theoretical guarantees and more efficient algorithms; restricting this access,
 as in the black-box setting, correspondingly limits what can be guaranteed.
 
 \subsubsection{Zeroth-, First-, and Second-Order Methods}
-% Keep existing content; add forward reference to §2.2 (BBO =
-% zeroth-order world)
+\label{subsubsec:order-methods}
 
-Optimization algorithms can be classified by the order of analytical
-information they
-require from $f$. This \textit{information hierarchy} has three tiers.
+Optimization algorithms are classified by the order of analytical
+information they require. \textit{Zeroth-order} methods use only
+evaluations of $f(x)$; \textit{first-order} methods additionally
+access the gradient $\nabla f(x)$; \textit{second-order} methods
+further access the Hessian $\nabla^2 f(x)$. Access to higher-order
+information generally enables stronger convergence guarantees and more
+efficient algorithms~\cite{nocedal2006numerical}, but requires
+corresponding structural
+assumptions about $f$. Formal definitions
+and convergence rates for each tier are given in
+Appendix~\ref{app:oracle-tiers}.
 
-\textit{Zeroth-order} methods use only evaluations of $f(x)$, with no
-gradient or
-curvature information. The algorithm observes only the output of the
-function evaluation
-oracle at each queried point and must infer search directions from
-comparisons of
-objective values alone. This exactly describes the black-box model formalized in
-Section~\ref{sec:bbo}: when the internal structure of $f$ is inaccessible or
-analytically intractable, zeroth-order methods are the only option. Their weaker
-information access is the fundamental reason black-box optimization is harder in
-general than white-box optimization, and it is the regime in which
-all algorithms
-studied in this project operate.
+This project operates exclusively in the zeroth-order regime.
+When the internal structure of $f$ is inaccessible or analytically
+intractable. Function evaluations are the only information available,
+and this exactly describes the black-box model formalized in
+Section~\ref{sec:bbo}. All algorithms studied in this project operate
+in the zeroth-order regime.
 
-\textit{First-order} methods additionally access the gradient $\nabla f(x) \in
-\mathbb{R}^d$, which encodes the direction of steepest ascent at $x$. For a
-differentiable function $f : \mathbb{R}^d \to \mathbb{R}$,
-gradient-based methods
-exploit this to define descent directions and form the backbone of
-classical continuous
-optimization~\cite{nocedal2006numerical}. When $f$ is convex but
-non-differentiable,
-the gradient generalizes to the \textit{subdifferential} $\partial
-f(x)$, the set of
-all \textit{subgradients} $g$ satisfying
-\[
-  f(y) \geq f(x) + g^\top(y - x) \quad \forall\, y \in \mathbb{R}^d.
-\]
-Subgradient methods replace the gradient with any element of
-$\partial f(x)$, recovering
-convergence under convexity alone, albeit at rates slower than those
-attainable with
-smooth gradients~\cite{bertsekas2009convex}.
-
-\textit{Second-order} methods further access the Hessian $\nabla^2 f(x) \in
-\mathbb{R}^{d \times d}$, which captures local curvature. Methods
-that utilize or
-approximate the Hessian, such as Newton and quasi-Newton schemes, can achieve
-superlinear or quadratic convergence near a
-solution~\cite{nocedal2006numerical}, at the
-cost of maintaining a $d \times d$ matrix.
-
-Together, these three tiers define distinct levels of oracle access, and their
-availability directly governs the choice and efficiency of applicable
-algorithms. The
-move from second-order to zeroth-order corresponds to progressively
-weaker assumptions
-about what the oracle reveals, culminating in the black-box model
-where only function
-values are observable.
-
-% TODO: Make these appendices(?)
 \subsubsection{Landscape Properties}
 
-The following geometric properties of $f$ characterize which tier of analytical
-information is both available and useful.
-
-\paragraph{Convexity.}
-A function $f : \mathbb{R}^d \to \mathbb{R}$ is \textit{convex} if for all
-$x, y \in \mathbb{R}^d$ and $\lambda \in [0,1]$~\cite{bertsekas2009convex},
-\[
-  f\!\left(\lambda x + (1-\lambda)y\right) \leq \lambda f(x) + (1-\lambda)f(y).
-\]
-Convexity guarantees that every local minimum is global, rendering the landscape
-tractable for first-order methods. \textit{Strong convexity}
-additionally requires
-\[
-  f(y) \geq f(x) + \nabla f(x)^\top(y - x) + \tfrac{\mu}{2}\|y - x\|^2
-\]
-for some $\mu > 0$, implying a unique global minimum and linear
-convergence rates for
-gradient descent~!CITE: Nesterov 2004!.
-
-\paragraph{Smoothness and Lipschitz Continuity.}
-% TODO
+The geometric properties of $f$ determine which tier of analytical
+information is both available and useful. Convexity and Lipschitz
+smoothness, the properties that underpin first- and second-order
+guarantees, are defined in Appendix~\ref{app:landscape-props}.
 
 \paragraph{Ruggedness and Multimodality.}
 % - Multiple local optima, deceptive gradients, epistatic interactions
 % - Motivates heuristic / stochastic methods: no first-order
 % structure to exploit
 % - Forward reference to NK-landscapes as a tunable model of ruggedness
+A landscape is \textit{rugged} when it contains many local optima
+separated by fitness valleys. In such landscapes the gradient (where
+it exists) is deceptive: improving moves at the local scale lead away
+from the global optimum, and no first-order structure can be
+exploited. Ruggedness arises naturally from \textit{epistatic
+interactions}, where the contribution of one variable to the
+objective depends on the values of others, preventing any separable
+decomposition. As $K$ increases in the NK-landscape model
+(Section~\ref{subsubsec:nk}), epistasis intensifies and the number
+of local optima grows, providing a tunable axis of landscape
+difficulty. Ruggedness is the primary motivation for stochastic
+search heuristics: randomized perturbation and acceptance of
+worsening moves are the principal tools for escaping local optima
+that would permanently trap deterministic hill-climbers.
 
 \subsection{Complexity Measures}
 \subsubsection{Classical Complexity: Time and Space}
@@ -388,20 +322,46 @@ the algorithm. This enables algorithms usage of some computational
 tools such as gradients, supporting
 optimization convergence.
 
-\subsubsection{Variants of Black-Box Models}
-% Unrestricted model.
-% Ranking-based model.
-% Memory-restricted model.
-
 \subsection{Black-Box Complexity}
 \label{subsec:bb-complexity}
-% - Definition: minimum number of queries any algorithm requires in
-% the worst case
-%   to solve a given problem class  [droste2006blackbox]
-% - Yao's Minimax Principle: lower bounds via distributions over instances
-% - Upper bounds (algorithmic) and lower bounds (information-theoretic)
-% - Comparison-based lower bounds (sorting analogy)
-% - What these results say about the hardness of combinatorial BBO
+
+The \textit{black-box complexity} of a problem class $\mathcal{F}$ is
+the minimum query complexity over all algorithms in a given black-box
+model, capturing the information-theoretic hardness when only oracle
+queries are available~\cite{droste2006blackbox,doerr2015onemax}.
+
+\subsubsection{Black-Box Models}
+
+Three models are relevant to this project. In the
+\textbf{unrestricted model}, the algorithm has arbitrary memory and
+full access to function values, yielding the weakest restriction and
+smallest complexity~\cite{droste2006blackbox}. In the \textbf{unary
+unbiased model}, variation operators are invariant under permutations
+and bitwise complementations of the search
+space~\cite{lehre2010black}; both \acrshort{rls} and the
+$(1+1)$~\acrshort{ea} fall into this class, making its \acrshort{bbc}
+the tightest applicable lower bound for these algorithms.
+\acrshort{sa} fits neither model cleanly—it exploits absolute fitness
+differences rather than rankings—so its performance is studied empirically.
+
+\subsubsection{Yao's Minimax Principle}
+\label{subsubsec:yaomini}
+
+Lower bounds are proved via Yao's minimax
+principle~\cite{yao1977probabilistic}: for any distribution $p$ over
+instances and $q$ over deterministic algorithms,
+\[
+  \min_{A \in \mathcal{A}}\,\mathbb{E}_{I \sim p}[T(I,A)]
+  \;\leq\;
+  \max_{I \in \mathcal{I}}\,\mathbb{E}_{A \sim q}[T(I,A)].
+\]
+A lower bound follows by exhibiting a distribution over instances on
+which every deterministic algorithm is slow. This parallels the
+minimax regret framework (Section~\ref{subsubsec:cr}), replacing the
+hitting criterion with a trajectory-level measure. The principle
+extends to memory-restricted and elitist models via a suitable
+superset construction~\cite{doerr2015onemax} (see
+Appendix~\ref{app:bbc-extended}).
 
 \subsection{Purpose of Randomized Search Heuristics}
 % Explain why, given the BBO setting, one turns to general-purpose
@@ -428,8 +388,8 @@ optimization convergence.
 
 \subsubsection{No-Free-Lunch Theorems}
 
-\subsubsection{Taxonomy of Derivative-Free Methods}
-% Brief map of the full space; help the reader locate RSHs within it
+% \subsubsection{Taxonomy of Derivative-Free Methods}
+% % Brief map of the full space; help the reader locate RSHs within it
 
 \subsection{Randomized Search Heuristic Algorithms}
 
@@ -496,6 +456,28 @@ Appendix~\ref{app:ea}.
 
 \subsubsection{Simulated Annealing}
 
+\begin{algorithm}[H]
+  \caption{Simulated Annealing with cooling schedule $T(\cdot)$}
+  \label{alg:sa}
+  \begin{algorithmic}[1]
+    \State Sample $x \in \{0,1\}^n$ uniformly at random; evaluate $f(x)$
+    \State $t \gets 1$;\; $x^{*} \gets x$;\; $f^{*} \gets f(x)$
+    \Repeat
+    \State $y \gets x$;\; flip $y_i$ for a uniformly random $i \in
+    \{1,\ldots,n\}$
+    \State evaluate $f(y)$;\; $\delta \gets f(y) - f(x)$
+    \State $T \gets \max\!\bigl(T_{\min},\; T(t)\bigr)$
+    \Comment{clamp to avoid $T=0$}
+    \State $t \gets t + 1$
+    \If{$\delta \geq 0$ \textbf{or} $\mathrm{Uniform}(0,1) < \exp(\delta / T)$}
+    \State $x \gets y$;\; $f(x) \gets f(y)$ \Comment{Metropolis acceptance}
+    \EndIf
+    \If{$f(x) > f^{*}$} $x^{*} \gets x$;\; $f^{*} \gets f(x)$ \EndIf
+    \Until{termination criterion met}
+    \State \Return $x^{*}$
+  \end{algorithmic}
+\end{algorithm}
+
 \acrfull{sa} is a probabilistic local search
 algorithm that extends iterative improvement by occasionally accepting
 worsening moves, allowing escape from local optima that would otherwise
@@ -521,23 +503,16 @@ At high temperatures the acceptance criterion is nearly uniform,
 permitting broad exploration; as $T(t) \to 0$ the algorithm collapses
 toward a greedy hill-climber that accepts only improvements.
 
-The theoretical behavior of \acrshort{sa} is governed by the cooling
-schedule. Modelling the process as a time-inhomogeneous Markov chain,
-Hajek~\cite{hajek1988cooling} established the sharp necessary and
-sufficient condition for convergence in probability to the global
-optimum: the schedule must satisfy
-\[
-  \sum_{t=1}^{\infty} \exp\!\left(\frac{-d^{*}}{T(t)}\right) = +\infty,
-\]
-where $d^{*}$ is the depth of the deepest local minimum that is not
-globally optimal. For the logarithmic schedule
-$T(t) = d / \log(t + 1)$, this condition reduces to the requirement
-$d \geq d^{*}$: the scaling constant must be at least as large as
-the hardest energy barrier in the
-landscape~\cite{hajek1988cooling,bertsimas1993simulated}. In practice,
-logarithmic cooling is theoretically optimal but often too slow;
-exponential and linear schedules cool faster at the cost of losing
-the convergence guarantee, reducing \acrshort{sa} to a stochastic
+The theoretical behavior of \acrshort{sa} is governed by the \textit{cooling
+schedule}. Modelling the process as a time-inhomogeneous Markov chain,
+Hajek~\cite{hajek1988cooling} established a sharp necessary and
+sufficient condition on the schedule for convergence in probability to
+the global optimum; the condition relates the decay rate of $T(t)$ to
+the depth $d^{*}$ of the deepest non-global local minimum. The full
+statement and its implications are given in
+Appendix~\ref{app:hajek}. In practice, the schedule satisfying this
+condition cools logarithmically, which is theoretically optimal but
+often too slow; faster schedules reduce \acrshort{sa} to a stochastic
 hill-climber once the temperature reaches zero. The choice of cooling
 schedule therefore encodes a fundamental trade-off between solution
 quality and computational budget, and is the primary design decision
@@ -546,39 +521,162 @@ problem~\cite{kirkpatrick1983optimization,hajek1988cooling}.
 
 \paragraph{Cooling Schedules.}
 
-Three schedule families are studied in this project and are
-implemented in the experimental framework. \textit{Logarithmic
-cooling}, $T(t) = d/\log(t+1)$, maintains a strictly positive
-temperature for all finite $t$ and satisfies Haj\'{e}k's convergence
-condition when $d \geq d^{*}$~\cite{hajek1988cooling}. \textit{Exponential
-cooling}, $T(t) = T_0 \cdot \alpha^t$ for $\alpha \in (0,1)$, is the
-schedule used in the original simulated annealing
-experiments~\cite{kirkpatrick1983optimization}; it decays
-geometrically and effectively reaches zero within the evaluation
-budget, after which \acrshort{sa} reduces to a deterministic
-hill-climber. \textit{Linear cooling}, $T(t) = \max(T_f,\, T_0 -
-(T_0 - T_f)\,t/t_{\max})$, interpolates uniformly between an initial
-and final temperature over a fixed horizon; like the exponential
-schedule, it carries no convergence guarantee once the temperature
-floor $T_f$ is reached~\cite{bertsimas1993simulated}. The regret
-implications of each schedule, and in particular the point at which
-temperature collapse occurs, and instantaneous regret stabilizes, are
-examined empirically in Suite~11.
+Three cooling schedules were evaluated in this project.
+\subparagraph{Logarithmic cooling}
+It decreases very slowly and is the only schedule considered
+here with a classical asymptotic
+convergence guarantee: for schedules of this form, convergence is
+obtained when $d \geq d^{*}$, $d^{*}$ the depth (or height) of the
+largest local optima~\cite{hajek1988cooling}.
 
-\paragraph{Cooling Schedules}
+\begin{algorithm}[H]
+  \caption{Logarithmic cooling schedule}
+  \label{alg:cool-log}
+  \begin{algorithmic}[1]
+    \Require scaling constant $d > 0$, evaluation index $t \geq 1$
+    \State \Return $T(t) = \dfrac{d}{\ln(t + 1)}$
+    \Comment{$d \geq d^{*}$ guarantees asymptotic
+    convergence~\cite{hajek1988cooling}}
+  \end{algorithmic}
+\end{algorithm}
+
+\subparagraph{Exponential cooling}
+
+It follows the geometric pattern used in the original
+simulated annealing experiments~\cite{kirkpatrick1983optimization}
+and therefore reaches very low temperatures quickly under a finite
+evaluation budget.
+\begin{algorithm}[H]
+  \caption{Exponential cooling schedule}
+  \label{alg:cool-exp}
+  \begin{algorithmic}[1]
+    \Require initial temperature $T_0 > 0$, decay factor $\alpha \in (0,1)$,
+    evaluation index $t \geq 0$
+    \State \Return $T(t) = T_0 \cdot \alpha^{\,t}$
+  \end{algorithmic}
+\end{algorithm}
+
+\subparagraph{Linear cooling}
+
+It decreases uniformly to a prescribed floor and is used here as a
+practical fixed-horizon baseline in the experiments; unlike
+logarithmic cooling, it carries no classical asymptotic convergence
+guarantee in this setting~\cite{bertsimas1993simulated}.
+\begin{algorithm}[H]
+  \caption{Linear cooling schedule}
+  \label{alg:cool-lin}
+  \begin{algorithmic}[1]
+    \Require $T_0 > T_f \geq 0$, budget $t_{\max}$, evaluation index $t \geq 0$
+    \State \Return $T(t) = \max\!\Bigl(T_f,\; T_0 - (T_0 -
+    T_f)\,\tfrac{t}{t_{\max}}\Bigr)$
+  \end{algorithmic}
+\end{algorithm}
+
+Suite~11~(Subsection~\ref{subsec:suit11})
+compares the regret profiles of these schedules, focusing on when
+temperature collapse occurs and when instantaneous regret
+stabilizes.
 
 \subsubsection[\texorpdfstring{Randomized Local Search
 (RLS)}{Randomized Local Search (RLS)}]{\acrfull{rls}}
 
-\paragraph[\texorpdfstring{Stochastic Hill-Climber - Greedy
-RLS}{Stochastic Hill-Climber - Greedy RLS}]{Stochastic Hill-Climber -
+\acrfull{rls} is a single-solution local search heuristic that at
+each step selects a neighbor of the current solution uniformly at
+random and moves to it if the objective value does not decrease
+(\textit{elitist selection}). In the pseudo-Boolean setting, the
+standard neighborhood is the Hamming-1 ball: exactly one bit is
+chosen uniformly at random and flipped (`local`).~\cite{hoos2005sls}
+
+Three variants are studied in this project: greedy \acrshort{rls},
+$\varepsilon$-greedy \acrshort{rls}, and decaying
+$\varepsilon$-greedy \acrshort{rls}.
+
+\paragraph{Stochastic Hill-Climber -
 Greedy \acrshort{rls}}
 
-\paragraph[\texorpdfstring{$\epsilon$-greedy RLS}{epsilon-greedy
-RLS}]{$\epsilon-greedy$ \acrshort{rls}}
+The \textit{greedy} \acrshort{rls} variant accepts only improving or
+equal-quality moves, making it a pure hill-climber with no mechanism
+to escape local optima.
 
-\paragraph[\texorpdfstring{Decaying $\epsilon-greedy$ RLS}{Decaying
-epsilon-greedy RLS}]{Decaying $\epsilon-greedy$ \acrshort{rls}}
+\begin{algorithm}[H]
+  \caption{Greedy RLS (Stochastic Hill Climber)}
+  \label{alg:rls-greedy}
+  \begin{algorithmic}[1]
+    \State Sample $x \in \{0,1\}^n$ uniformly at random; evaluate $f(x)$
+    \State $t \gets 1$;\; $x^{*} \gets x$;\; $f^{*} \gets f(x)$
+    \Repeat
+    \State $y \gets x$;\; flip $y_i$ for a uniformly random $i \in
+    \{1,\ldots,n\}$
+    \State evaluate $f(y)$;\; $t \gets t + 1$
+    \If{$f(y) \geq f(x)$} $x \gets y$;\; $f(x) \gets f(y)$ \EndIf
+    \If{$f(x) > f^{*}$} $x^{*} \gets x$;\; $f^{*} \gets f(x)$ \EndIf
+    \Until{termination criterion met}
+    \State \Return $x^{*}$
+  \end{algorithmic}
+\end{algorithm}
+
+\paragraph[\texorpdfstring{$\varepsilon$-greedy RLS}{epsilon-greedy
+RLS}]{$\varepsilon$-greedy \acrshort{rls}}
+
+The \textit{$\varepsilon$-greedy} variant accepts a random Hamming-1
+neighbor unconditionally with probability $\varepsilon$ and otherwise
+applies elitist selection. This introduces a controlled exploration
+rate while still favoring improving moves most of the time.
+
+\begin{algorithm}[H]
+  \caption{$\varepsilon$-Greedy RLS}
+  \label{alg:rls-eps}
+  \begin{algorithmic}[1]
+    \Require exploration rate $\varepsilon \in (0,1)$
+    \State Sample $x \in \{0,1\}^n$ uniformly at random; evaluate $f(x)$
+    \State $t \gets 1$;\; $x^{*} \gets x$;\; $f^{*} \gets f(x)$
+    \Repeat
+    \State $y \gets x$;\; flip $y_i$ for a uniformly random $i \in
+    \{1,\ldots,n\}$
+    \State evaluate $f(y)$;\; $t \gets t + 1$
+    \If{$\mathrm{Uniform}(0,1) < \varepsilon$}
+    \State $x \gets y$;\; $f(x) \gets f(y)$ \Comment{explore unconditionally}
+    \ElsIf{$f(y) \geq f(x)$}
+    \State $x \gets y$;\; $f(x) \gets f(y)$ \Comment{exploit}
+    \EndIf
+    \If{$f(x) > f^{*}$} $x^{*} \gets x$;\; $f^{*} \gets f(x)$ \EndIf
+    \Until{termination criterion met}
+    \State \Return $x^{*}$
+  \end{algorithmic}
+\end{algorithm}
+
+\paragraph[\texorpdfstring{Decaying $\varepsilon$-greedy RLS}{Decaying
+epsilon-greedy RLS}]{Decaying $\varepsilon$-greedy \acrshort{rls}}
+
+The \textit{decaying $\varepsilon$-greedy} variant reduces the
+exploration probability over time according to
+$\varepsilon_t = \varepsilon_0 / t$. This concentrates exploration
+early in the search budget and gradually converges toward greedy
+behavior as the run progresses.
+
+\begin{algorithm}[H]
+  \caption{Decaying-$\varepsilon$-Greedy RLS}
+  \label{alg:rls-decay}
+  \begin{algorithmic}[1]
+    \Require initial exploration rate $\varepsilon_0 \in (0,1)$
+    \State Sample $x \in \{0,1\}^n$ uniformly at random; evaluate $f(x)$
+    \State $t \gets 1$;\; $x^{*} \gets x$;\; $f^{*} \gets f(x)$
+    \Repeat
+    \State $y \gets x$;\; flip $y_i$ for a uniformly random $i \in
+    \{1,\ldots,n\}$
+    \State evaluate $f(y)$;\; $\varepsilon_t \gets \varepsilon_0 /
+    t$;\; $t \gets t + 1$
+    \If{$\mathrm{Uniform}(0,1) < \varepsilon_t$}
+    \State $x \gets y$;\; $f(x) \gets f(y)$ \Comment{explore
+    (probability decays as $1/t$)}
+    \ElsIf{$f(y) \geq f(x)$}
+    \State $x \gets y$;\; $f(x) \gets f(y)$ \Comment{exploit}
+    \EndIf
+    \If{$f(x) > f^{*}$} $x^{*} \gets x$;\; $f^{*} \gets f(x)$ \EndIf
+    \Until{termination criterion met}
+    \State \Return $x^{*}$
+  \end{algorithmic}
+\end{algorithm}
 
 \subsection{Few Pseudo-Boolean Problems}
 
@@ -658,7 +756,7 @@ time of the $(1+1)$~\acrshort{ea} on $\textsc{Jump}_{k,n}$ is
 $\Theta(n^k + n\log n)$ for
 $k \in \{1, 2, \ldots, n\}$, which simplifies to $\Theta(n^k)$ for $k \geq 2$.
 
-\subsubsection{BinaryValue[BinVal]}
+\subsubsection{BinaryValue [BinVal]}
 
 The \textsc{BinaryValue} (\textsc{BinVal}) function interprets a bit
 string as a binary
@@ -717,17 +815,14 @@ across the $\Theta(n^k)$ plateau points, gaining no fitness signal
 until it reaches $1^n$ by flipping between one and $k$ zero-bits
 simultaneously.
 
-\citet{antipov2021precise} establish that for any
-unbiased mutation operator the expected runtime of the $(1+1)$~\acrshort{ea}
-is
-\[
-  \mathbb{E}[T] = \frac{n^k}{k!\,\Pr[1 \leq \alpha \leq k]}(1 + o(1)),
-\]
-where $\alpha$ is the number of bits flipped per step. This depends
-only on the probability to flip between one and $k$ bits, not on
-other properties of the operator. The optimal mutation rate under
-standard bit mutation is approximately $k/(en)$, a factor of
-$\Theta(k)$ above the canonical $1/n$ recommendation.
+\citet{antipov2021precise} establish that the expected runtime of the
+$(1+1)$~\acrshort{ea} on \textsc{Plateau}$_k$ depends only on the
+probability of flipping between one and $k$ bits per step, not on
+other properties of the mutation operator, and that the optimal
+mutation rate under standard bit mutation is approximately $k/(en)$,
+a factor of $\Theta(k)$ above the canonical $1/n$
+recommendation. The full runtime expression is given in
+Appendix~\ref{app:plateau-runtime}.
 
 \subsubsection{Hierarchical If-and-Only-If (HIFF)}
 
@@ -783,7 +878,7 @@ should produce a distinctive staircase signature in the cumulative
 regret trajectory.
 
 \subsubsection{MaxSAT}
-\textit{\acrfull{maxsat}} is the optimization variant
+\textsc{\acrfull{maxsat}} is the optimization variant
 of the Boolean \acrfull{sat}. A propositional formula
 in \acrfull{cnf} is a conjunction of
 \textit{clauses}, each of which is a disjunction of \textit{literals}
@@ -815,6 +910,7 @@ advantage over random \acrshort{maxsat} instances, whose declared optima
 are rarely reachable in practice.
 
 \subsubsection{Tunable Landscapes: NK-Landscapes}
+\label{subsubsec:nk}
 
 \textit{NK-landscapes}~\cite{kauffman1987towards} are a parametric
 family of pseudo-Boolean
@@ -1073,7 +1169,7 @@ slow identification of good regions and repeated evaluation of poor ones.
 %   at the end of the horizon, not cumulative regret  [bubeck2011pure]
 % - Connection to BBO: each candidate solution is an "arm"; the oracle
 %   is the reward; the algorithm decides which arm to pull
-The \acrshort{mab} model is the basic framework for sequential
+The \acrfull{mab} model is the basic framework for sequential
 decision-making under partial
 feedback~\cite{bubeck2012regret,lattimore2020bandit}. In the
 stochastic $K$-armed setting, an algorithm chooses an arm $A_t \in
@@ -1121,25 +1217,27 @@ Bayesian optimization.
 %   and BBO, and has the most mature regret theory outside the bandit literature
 % - Distinction from the RSH setting: BO uses a learned surrogate;
 %   RSHs are memoryless or use no probabilistic model
-\acrfull{bo} treats expensive black-box optimization as a sequential
-learning problem. The unknown objective is modelled by a
-probabilistic surrogate, typically a Gaussian process, and an
-acquisition function selects the next query by balancing predicted
-value against
-uncertainty~\cite{jones1998efficient,shahriari2015taking,frazier2018tutorial}.
 
-For this chapter, Bayesian optimization matters mainly because it is
-the clearest bridge between regret theory and black-box optimization.
-In particular, \textsc{GP-UCB} admits sublinear cumulative-regret
-guarantees under Gaussian-process or
-RKHS\footnote{\textit{abbr.}~Reproducing kernel Hilbert space.
-(Optionally see \cite{ghojogh2021reproducing})}
-assumptions~\cite{srinivas2009gaussian,chowdhury2017kernelized,scarlett2017lower}.
-At the same time, these guarantees rely on surrogate assumptions that
-are much more natural in low-dimensional continuous spaces than in
-pseudo-Boolean domains such as $\{0,1\}^n$. These makes regret an
-established concept in black-box optimization, but not yet one that
-transfers directly to the combinatorial heuristics studied here.
+\acrfull{bo} treats expensive black-box optimization as a sequential
+learning problem~\cite{jones1998efficient,shahriari2015taking,
+frazier2018tutorial}. A probabilistic surrogate (typically a Gaussian
+process) models the unknown objective, and an acquisition function
+selects the next query by balancing predicted value against
+uncertainty. \acrshort{bo} is relevant here primarily because it is
+the closest existing framework to have developed a mature regret
+theory for black-box settings: \textsc{GP-UCB} admits sublinear
+cumulative-regret guarantees under Gaussian-process or RKHS
+\footnote{\textit{abbr.}~Reproducing kernel Hilbert space.
+(Optionally, see \cite{ghojogh2021reproducing})}
+assumptions~\cite{srinivas2009gaussian,chowdhury2017kernelized,
+scarlett2017lower}. These guarantees rely on surrogate assumptions
+that are natural in low-dimensional continuous spaces but do not
+transfer directly to the pseudo-Boolean domains $\{0,1\}^n$ studied
+here, where kernel engineering is required and acquisition
+optimization is itself an NP-hard combinatorial
+problem~\cite{shahriari2015taking}. This motivates studying regret
+for the simpler, surrogate-free randomized search heuristics
+that form the subject of this project.
 
 \newpage
 \section{Computational Regret}
@@ -1285,23 +1383,22 @@ problem is trivially solved and normalized regret is defined as $0$.
 %     gaps Delta_i = f^* - f(arm_i) are large  [!CITE!]
 % - Sublinear regret as the benchmark: R_T = o(T) implies average per-round
 %     regret -> 0, i.e., the algorithm learns to behave near-optimally
-Regret analysis studies how regret grows with the budget $T$. The
-central benchmark is sublinear regret: if $R_T=o(T)$, then the
-average regret $R_T/T$ tends to zero, meaning that the algorithm
-asymptotically performs as well as an oracle with full
-information~\cite{cesa2006prediction,bubeck2012regret,lattimore2020bandit}.
 
-In finite stochastic bandits, classic upper bounds show that
-algorithms such as \textsc{UCB1} achieve logarithmic gap-dependent
-regret and sublinear worst-case regret~\cite{auer2002finite}.
-Matching lower-bound results show that logarithmic regret is, in
-general, unavoidable up to constants under standard
-assumptions~\cite{lai1985adaptive}. In Gaussian-process bandits, both
-upper and lower bounds depend on information gain and kernel
-structure rather than only on the number of
-actions~\cite{srinivas2009gaussian,chowdhury2017kernelized,scarlett2017lower}.
-These results are important here mainly as a template: regret can be
-treated as a complexity measure for sequential optimization.
+The central benchmark of regret analysis is \textit{sublinear regret}: if
+$R_T = o(T)$, then the average per-round regret $R_T/T \to 0$, meaning the
+algorithm asymptotically performs as well as an oracle with full
+information~\cite{cesa2006prediction,bubeck2012regret,lattimore2020bandit}.
+Classic results in finite stochastic bandits establish logarithmic gap-dependent
+upper bounds and matching lower bounds, showing that logarithmic regret is
+unavoidable up to constants under standard
+assumptions~\cite{auer2002finite,lai1985adaptive}. In Gaussian-process bandits,
+upper and lower bounds depend additionally on the information-gain structure of
+the kernel~\cite{srinivas2009gaussian,scarlett2017lower}. These results are
+important here primarily as a template: regret provides a well-grounded
+complexity measure for sequential optimization, and sublinear regret is the
+performance target against which any algorithm is judged. The per-algorithm
+bounds are discussed in the context of related work in
+Section~\ref{subsec:rw-bo-regret}.
 
 % \subsubsection{Upper Bounds}
 

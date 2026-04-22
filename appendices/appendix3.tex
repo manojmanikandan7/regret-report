@@ -1,0 +1,80 @@
+\chapter{Extended Black-Box Complexity Theory}
+\label{app:bbc-extended}
+
+\section{Las Vegas vs.\ Monte Carlo Black-Box Complexity}
+\label{app:lv-mc}
+
+In the standard (unrestricted, unbiased) black-box models, the
+\textit{Las Vegas} complexity — the expected number of queries until
+an optimal solution is first found — and the \textit{Monte Carlo}
+complexity — the minimum budget $T$ such that the optimum is found
+with probability at least $1 - p$ for a given $p > 0$ — are
+essentially equivalent up to constant factors via Markov's inequality:
+any Las Vegas algorithm with expected runtime $T$ finds the optimum
+within $T/p$ queries with probability at least $1 - p$.
+
+In elitist models, however, this equivalence breaks down severely.
+\citet{doerr2015onemax} show that the $(1+1)$ elitist Las Vegas and
+Monte Carlo complexities of \textsc{OneMax} can be exponentially far
+apart. The reason is structural: an elitist algorithm cannot perform
+restarts, because a fresh random starting point will almost surely
+have lower fitness than the current incumbent and will therefore be
+rejected. Without restarts, a run that fails to find the optimum is
+trapped, and there is no mechanism to recover. Consequently, failure
+probabilities do not decay geometrically with additional budget in the
+same way as for non-elitist algorithms.
+
+Formally, the $p$-\textit{Monte Carlo black-box complexity} of a
+problem class $\mathcal{F}$ with respect to an algorithm class
+$\mathcal{A}$ is
+\[
+  \min_{A \in \mathcal{A}}\;
+  \min\bigl\{T \in \mathbb{N} :
+    \forall f \in \mathcal{F},\;
+  \mathbb{P}(\tau_{f^*} \leq T) \geq 1 - p\bigr\}.
+\]
+The Las Vegas complexity is recovered in the limit by Markov's
+inequality when the two notions coincide, but for the $(1+1)$ elitist
+Las Vegas complexity of \textsc{OneMax}, \citeauthor{doerr2015onemax}
+establish only that it is $O(n \log n)$ (matching the unary unbiased
+lower bound) while leaving the exact constant open; the Monte Carlo
+complexity is $\Theta(n)$, a separation of a full $\log n$
+factor~\cite{doerr2015onemax}.
+
+For the algorithms studied in this project, this distinction does not
+affect the experimental results directly: all runtime and regret
+analyses use expected quantities over independent runs, which
+corresponds to the Las Vegas framework. The Monte Carlo / Las Vegas
+distinction becomes relevant if one wishes to derive high-probability
+tail bounds on cumulative regret, a direction noted as future work in
+Section~\ref{subsec:open-questions}.
+
+\section{Yao's Principle in Restricted Models}
+\label{app:yao-restricted}
+
+Yao's Minimax principle in \ref{subsubsec:yaomini} applies directly only to
+algorithm classes whose convex hull contains the randomized algorithm
+of interest. For memory-restricted and elitist models this containment
+fails because some randomized algorithms in these classes are not
+convex combinations of deterministic ones. The canonical example is
+\acrshort{rls} itself: every deterministic $(1+1)$ memory-restricted
+ranking-based algorithm that ever rejects a search point will enter an
+infinite loop on \textsc{OneMax} with positive probability when the
+input is chosen uniformly at random, giving infinite expected runtime,
+whereas \acrshort{rls} optimizes \textsc{OneMax} in $\Theta(n \log n)$
+expected queries~\cite{doerr2015onemax}.
+
+\citet{doerr2015onemax} resolve this by applying Yao's principle to
+the strictly larger class $\mathcal{A}'$ of all comparison-based
+$(1+1)$ algorithms with access to their complete search history.
+Every memory-restricted ranking-based algorithm can be simulated in
+$\mathcal{A}'$, so a lower bound on the $\mathcal{A}'$-complexity
+implies the same lower bound for the original class. The information-
+theoretic argument then proceeds as in the unrestricted case: after
+$i - 1$ queries the oracle has revealed at most one bit of information
+per query, so at most $2^{i-1}$ candidate optima have been eliminated,
+giving
+\[
+  \mathbb{P}(\text{optimum found by query } i) \leq 2^{i - n},
+\]
+and summing yields $\mathbb{E}[\tau_{f^*}] \geq n - 1$.

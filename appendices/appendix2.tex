@@ -1,0 +1,133 @@
+\chapter{Supplementary Optimization Background}
+
+\section{Oracle Tiers: First- and Second-Order Methods}
+\label{app:oracle-tiers}
+
+The three tiers of oracle access form an information hierarchy that
+governs both the choice and the efficiency of applicable algorithms.
+
+\paragraph{First-Order Methods.}
+First-order methods additionally access the gradient
+$\nabla f(x) \in \mathbb{R}^d$, which encodes the direction of
+steepest ascent at $x$. For a differentiable function
+$f : \mathbb{R}^d \to \mathbb{R}$, gradient-based methods exploit
+this to define descent directions and form the backbone of classical
+continuous optimization~\cite{nocedal2006numerical}. When $f$ is
+convex but non-differentiable, the gradient generalizes to the
+\textit{subdifferential} $\partial f(x)$, the set of all
+\textit{subgradients} $g$ satisfying
+\[
+  f(y) \geq f(x) + g^\top(y - x) \quad \forall\, y \in \mathbb{R}^d.
+\]
+Subgradient methods replace the gradient with any element of
+$\partial f(x)$, recovering convergence under convexity alone, albeit
+at rates slower than those attainable with smooth
+gradients~\cite{bertsekas2009convex}.
+
+\paragraph{Second-Order Methods.}
+Second-order methods further access the Hessian
+$\nabla^2 f(x) \in \mathbb{R}^{d \times d}$, which captures local
+curvature. Methods that utilize or approximate the Hessian, such as
+Newton and quasi-Newton schemes, can achieve super-linear or quadratic
+convergence near a solution~\cite{nocedal2006numerical}, at the cost
+of maintaining a $d \times d$ matrix. Together, the three tiers
+define distinct levels of oracle access; restricting access
+progressively from second-order to zeroth-order culminates in the
+black-box model where only function values are observable.
+
+\section{Landscape Properties: Convexity and Smoothness}
+\label{app:landscape-props}
+
+\paragraph{Convexity.}
+A function $f : \mathbb{R}^d \to \mathbb{R}$ is \textit{convex} if, for all
+$x,y \in \mathbb{R}^d$ and $\lambda \in [0,1]$,
+\[
+  f\!\left(\lambda x + (1-\lambda)y\right)
+  \leq \lambda f(x) + (1-\lambda)f(y)
+\]
+\cite[Def.~1.1.1]{bertsekas2009convex}. For a convex function over a convex
+domain, every local minimum is also a global minimum
+\cite[Prop.~1.3.2]{bertsekas2009convex}. A differentiable function is
+\textit{strongly convex} with parameter $\mu>0$ if
+\[
+  f(y) \geq f(x) + \nabla f(x)^\top (y-x)
+  + \tfrac{\mu}{2}\|y-x\|^2,
+\]
+which is one of the standard equivalent characterizations of strong convexity
+\cite[Thm.~2.1.9]{nesterov2018lectures}. Strong convexity implies a unique
+global minimizer \cite[Thm.~2.1.8]{nesterov2018lectures}. Moreover, if $f$
+is also $L$-smooth, then gradient descent with a suitable fixed step size
+converges linearly \cite[Thm.~2.1.15]{nesterov2018lectures}.
+
+\paragraph{Smoothness and Lipschitz Continuity.}
+A differentiable function $f$ is \textit{$L$-smooth} if its gradient
+is Lipschitz continuous with constant $L > 0$:
+\[
+  \|\nabla f(x) - \nabla f(y)\| \leq L\|x - y\|
+  \quad \forall\, x, y \in \mathbb{R}^d.
+\]
+Smoothness bounds the curvature of $f$ from above and is the standard
+assumption under which gradient descent achieves an $O(1/T)$
+convergence rate for convex objectives~\cite{nocedal2006numerical}.
+The objective $f$ itself is \textit{Lipschitz continuous} with
+constant $G$ if $|f(x) - f(y)| \leq G\|x - y\|$, a weaker condition
+that enables subgradient convergence without differentiability.
+Neither property is assumed in the black-box pseudo-Boolean setting
+studied in this project.
+
+\section{Haj\'{e}k's Convergence Condition for Simulated Annealing}
+\label{app:hajek}
+
+Modelling simulated annealing as a time-inhomogeneous Markov chain
+on the state space $\mathcal{X}$, Haj\'{e}k~\cite{hajek1988cooling}
+established the following sharp necessary and sufficient condition for
+convergence in probability to the global optimum.
+
+\begin{theorem}[Haj\'{e}k 1988]
+  Let $d^{*}$ denote the \emph{depth} of the deepest local minimum
+  that is not globally optimal, defined as the minimum energy that
+  must be crossed to escape it. A cooling schedule $T(t) > 0$
+  guarantees that the distribution of the current state converges to
+  a distribution supported on the global optima if and only if
+  \[
+    \sum_{t=1}^{\infty}
+    \exp\!\left(\frac{-d^{*}}{T(t)}\right) = +\infty.
+  \]
+\end{theorem}
+
+For the logarithmic schedule $T(t) = d / \log(t + 1)$, the condition
+reduces to the requirement $d \geq d^{*}$: the scaling constant must
+be at least as large as the hardest energy barrier in the
+landscape~\cite{hajek1988cooling,bertsimas1993simulated}. Logarithmic
+cooling is therefore theoretically optimal in the sense that it is
+the fastest schedule satisfying the convergence condition.
+
+In practice, $d^{*}$ is unknown for general combinatorial problems,
+and logarithmic cooling is often too slow to be useful within a
+finite evaluation budget. Exponential cooling
+$T(t) = T_0 \cdot \alpha^t$ ($\alpha \in (0,1)$) and linear cooling
+$T(t) = \max(T_f,\, T_0 - (T_0 - T_f)\,t/t_{\max})$ cool faster but
+violate the condition once the temperature reaches zero, at which
+point \acrshort{sa} reduces to a deterministic hill-climber. The
+choice of schedule therefore encodes an explicit trade-off between
+the convergence guarantee and the practical computational budget.
+
+\section{Plateau Function: Runtime Analysis}
+\label{app:plateau-runtime}
+
+\citet{antipov2021precise} establish that for any unbiased mutation
+operator the expected runtime of the $(1+1)$~\acrshort{ea} on
+\textsc{Plateau}$_k$ is
+\[
+  \mathbb{E}[T]
+  = \frac{n^k}{k!\,\Pr[1 \leq \alpha \leq k]}\,(1 + o(1)),
+\]
+where $\alpha$ is the number of bits flipped per step. This
+expression depends only on the probability of flipping between one
+and $k$ bits, not on any other property of the operator. The optimal
+mutation rate under standard bit mutation is approximately $k/(en)$,
+a factor of $\Theta(k)$ above the canonical $1/n$ recommendation,
+mirroring the intuition that wider plateaus require more aggressive
+perturbation to exit. This result is directly relevant to the suite
+06 and suite 10 experimental analyses, where the contrast between
+Jump and Plateau regret trajectories is examined at shared $k$ values.
