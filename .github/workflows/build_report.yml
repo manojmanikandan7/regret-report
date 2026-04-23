@@ -24,11 +24,7 @@ jobs:
         with:
           pre_compile: "texcount -1 -inc -template='{word}' report.tex > word.count"
           root_file: report.tex
-          post_compile: "latexmk -C"
+          post_compile: "latexmk -c"
           texlive_version: latest
-
-      - name: Clean auxiliary files
-        run: |
-          rm -rf aux/*
 
       - uses: stefanzweifel/git-auto-commit-action@v7
