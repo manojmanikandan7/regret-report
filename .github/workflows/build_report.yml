@@ -12,6 +12,10 @@ jobs:
           ref: ${{ github.head_ref }}
           # Value already defaults to true, but `persist-credentials` is required to push new commits to the repository.
           persist-credentials: true
+          
+      - name: Ensure aux directory exists
+        run: mkdir -p aux
+        
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v4
         with:
@@ -19,5 +23,9 @@ jobs:
           root_file: report.tex
           post_compile: "latexmk -C"
           texlive_version: latest
+
+      - name: Clean auxiliary files
+        run: |
+          rm -rf aux/*
 
       - uses: stefanzweifel/git-auto-commit-action@v7
