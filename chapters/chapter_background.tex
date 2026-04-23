@@ -1,6 +1,7 @@
 % Word count aim: 4000-4500
 % current: 3293
 \chapter{Background}
+\label{cha:bg}
 
 \section{Computational Problems}
 
@@ -141,7 +142,7 @@ distance one\footnote{\textit{Hamming distance} between two
 corresponding bits differ}.
 
 \begin{remark}[Problem domain of interest]
-  This project is concerned with \emph{Pseudo-Boolean, Combinatorial
+  This project is concerned with \emph{Pseudo-Boolean, Discrete
   Optimization problems}, with solution space $\mathcal{X} \subseteq
   \{0,1\}^n$. A candidate solution can be represented as a
   \emph{bitstring}: a sequence of alphabets $a \in \{0,1\}$. The
@@ -163,10 +164,11 @@ corresponding bits differ}.
 % Feasible region definition.
 % Constrained vs. unconstrained problems.
 
-In a \textit{constrained} problem the \textit{feasible region}
+In a \textit{constrained} problem, the \textit{feasible region}
 $\mathcal{F} \subseteq \mathcal{X}$ is defined by conditions a valid
 solution must satisfy; an \textit{unconstrained} problem places no
 restriction beyond membership in $\mathcal{X}$~\cite{nocedal2006numerical}.
+At times, the constraints themselves can be black-box.
 All pseudo-Boolean problems studied in this project are unconstrained.
 
 \subsection{Objective Functions and Landscape Properties}
@@ -198,10 +200,9 @@ Appendix~\ref{app:oracle-tiers}.
 
 This project operates exclusively in the zeroth-order regime.
 When the internal structure of $f$ is inaccessible or analytically
-intractable. Function evaluations are the only information available,
-and this exactly describes the black-box model formalized in
-Section~\ref{sec:bbo}. All algorithms studied in this project operate
-in the zeroth-order regime.
+intractable, function evaluations are the only information available.
+Hence, these problems are often referred to as \textit{\acrfull{dfo}} problems. These conditions lay ground for the black-box model formalized in
+Section~\ref{sec:bbo}.
 
 \subsubsection{Landscape Properties}
 
@@ -237,7 +238,7 @@ complexity} (the number of elementary operations performed as a
 function of input size) and \textit{space complexity} (the amount
 of memory consumed). Both are typically expressed using asymptotic
 notation: $O(\cdot)$, $\Omega(\cdot)$, and $\Theta(\cdot)$ describe
-upper, lower, and tight bounds on resource usage as the input size
+upper, lower, and tight bounds, respectively, on resource usage as the input size
 $n$ grows. In the setting of combinatorial optimization over
 $\{0,1\}^n$, the input size is the bitstring length $n$, and
 complexity results are stated as functions of $n$.
@@ -246,7 +247,7 @@ complexity results are stated as functions of $n$.
 \label{subsubsec:infocomplexity}
 % Number of oracle calls as complexity measure.
 
-In black-box optimization the internal structure of $f$ is
+In \acrshort{bbo}, the internal structure of $f$ is
 inaccessible, so the relevant measure of complexity is not the
 number of arithmetic operations but the number of oracle queries
 required to solve a problem. The \textit{query complexity} of an
@@ -308,27 +309,15 @@ through an oracle that, upon receiving a query $x \in \mathcal{X}$,
 returns $f(x)$ (or
   a noisy estimate
 thereof)~\cite{droste2006blackbox,doerr2020theory,lengler2019drift}.
-This constitutes \textit{zeroth-order} information: no gradient or
-higher-order information is available.
 The black-box model is appropriate whenever the objective arises from
 a simulation,
 physical experiment, or any process whose internal structure is
 inaccessible or too
 complex to exploit analytically.
 
-In contrast, in \textit{white-box optimization}, information about
-the problem instance is make available to
-the algorithm. This enables algorithms usage of some computational
-tools such as gradients, supporting
-optimization convergence.
-
-\subsection{Black-Box Complexity}
-\label{subsec:bb-complexity}
-
-The \textit{black-box complexity} of a problem class $\mathcal{F}$ is
-the minimum query complexity over all algorithms in a given black-box
-model, capturing the information-theoretic hardness when only oracle
-queries are available~\cite{droste2006blackbox,doerr2015onemax}.
+In contrast, in \textit{white-box optimization}, some information about
+the problem instance is made available to
+the algorithm. 
 
 \subsubsection{Black-Box Models}
 
@@ -385,40 +374,36 @@ Appendix~\ref{app:bbc-extended}).
 %     Simulated Annealing and other acceptance-criterion methods
 % - Scope of this project: randomized single- and population-based heuristics
 %   on combinatorial / pseudo-Boolean domains
+Devising tailored, exact algorithms for arbitrary \acrshort{bbo} problems is, in general,
+intractable. Without structural information about the objective function, there is no
+principled basis on which to prefer one search strategy over another, and even when
+some structure is known, the cost of exploiting it may be prohibitive. This
+motivates turning to \acrfull{rsh}s and other metaheuristics\footnote{\textit{Metaheuristics}
+are search techniques that generalise heuristics observed in natural processes
+(e.g.\ \acrshort{ea}s, Particle Swarm Optimisation)~\cite{abdel2018metaheuristic}} as
+general-purpose black-box methods.
 
 \subsubsection{No-Free-Lunch Theorems}
 
-The \textit{No-Free-Lunch (NFL) theorems}~\cite{wolpert2002no} state
-that, for any two
-deterministic black-box algorithms, their performance averaged
-uniformly over all
-possible objective functions on a finite domain is identical. An
-immediate corollary is
-that no single algorithm can uniformly outperform all others across
-every problem class:
-gains on one subset of functions are exactly offset by losses on the
-complementary
-subset~\cite{wolpert2002no}. The NFL theorems underscore the necessity of
-problem-specific knowledge and motivate the study of algorithm
-performance on structured
-problem families rather than over all conceivable instances.
+This motivation is placed on theoretical footing by the
+\textit{\acrfull{nfl} theorems}~\cite{wolpert2002no}, which formalize the
+impossibility of a universally superior algorithm. The theorems state that, for any two
+black-box optimization algorithms, their performance averaged uniformly over all
+possible objective functions on a finite domain is identical; any gain achieved on one
+subset of functions is offset by a corresponding loss on the complementary
+subset~\cite{wolpert2002no}. No single algorithm can therefore outperform all others
+across every problem class: the choice of algorithm implicitly encodes assumptions about
+problem structure, and those assumptions can always be violated.
 
-For the pseudo-Boolean domain $\{0,1\}^n$, the NFL result implies
-that any \acrshort{rsh}
-achieving strong performance on benchmark functions such as \textsc{OneMax} or
-\textsc{LeadingOnes} must, in principle, underperform on some
-complementary set of
-functions. The practical consequence is that algorithm comparisons are always
-conditioned on a problem class, and complexity results such as
+For the pseudo-Boolean domain $\{0,1\}^n$, any \acrshort{rsh} that performs strongly
+on benchmarks such as \textsc{OneMax} or \textsc{LeadingOnes} must underperform on some
+complementary class of functions. Complexity results such as
 $\mathbb{E}[\tau_{f^*}] = \Theta(n \log n)$ for the $(1+1)$~\acrshort{ea} on
-\textsc{OneMax} are meaningful precisely because \textsc{OneMax}
-represents a natural
-and practically relevant class of unimodal
-functions~\cite{droste2002analysis}. This
-project therefore restricts its attention to the structured benchmark
-suite defined in
-Section~\ref{subsec:bbo-perf}, where algorithm comparisons are well-posed and
-informative.
+\textsc{OneMax}~\cite{droste2002analysis} are meaningful purely because
+\textsc{OneMax} is a natural representative of unimodal functions. The \acrshort{nfl}
+theorems therefore make conditioning comparisons on a structured problem class a theoretical necessity not a
+practical convenience, which motivates the benchmark suite
+defined in Section~\ref{subsec:bbo-perf}.
 
 % \subsubsection{Taxonomy of Derivative-Free Methods}
 % % Brief map of the full space; help the reader locate RSHs within it
@@ -428,10 +413,15 @@ informative.
 \subsubsection[\texorpdfstring{Evolutionary Algorithms
 (EA)}{Evolutionary Algorithms (EA)}]{Evolutionary Algorithms (\acrshort{ea})}
 \label{subsubsec:ea}
+\begin{wrapfigure}{i}{0.7\textwidth}
+    \includegraphics[width=0.7\textwidth]{metaheuristics_taxonomy.pdf}
+    \caption[Taxonomy of Metaheuristics based on source of inspiration]{Taxonomy of Metaheuristics based on source of inspiration. \acrshort{ea}s and \acrshort{sa} are examples. Adopted from \cite[Figure 5]{rajwar2023exhaustive}}
+    \label{fig:mettax}
+\end{wrapfigure}
 
 Evolutionary algorithms are a broad family of population-based,
 randomized search
-heuristics inspired by biological evolution. In discrete
+heuristics inspired by biological evolution. It belongs to the family of \textit{metaphor-based} metaheuristics, as shown in Figure~\ref{fig:mettax}. In discrete
 optimization, the canonical
 paradigm maintains one or more \emph{candidate solutions} (bit
 strings) and iterates
@@ -517,8 +507,7 @@ trap a pure hill-climber. The method was introduced by
 \citet{kirkpatrick1983optimization}, who drew an
 explicit analogy with the physical process of annealing in solids:
 a material is first melted at high temperature, then cooled slowly
-so that atoms settle into a low-energy crystalline configuration
-rather than a disordered glassy state.
+so that atoms settle into a stable, low-energy crystalline configuration.
 
 In the optimization context, the algorithm maintains a current solution
 $x \in \mathcal{X}$ and at each step proposes a random neighbor
@@ -921,6 +910,10 @@ important benchmark for combinatorial optimization algorithms.
 
 \paragraph{Petersen Graph 3-Coloring.}
 \label{subsec:petersen}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{petersen_graph.pdf}
+\end{figure}
 
 The \textit{Petersen graph}~\cite{weisstein_petersen_graph} is a
 well-known 3-regular graph on ten vertices and fifteen edges whose

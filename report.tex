@@ -1,5 +1,5 @@
 
-\documentclass[12pt,BSc,wordcount,twoside]{muthesis}
+\documentclass[11pt,BSc,wordcount,twoside]{muthesis}
 
 % The regulations say that 12pt should be used
 % Change the MSc option to MPhil, MRes or PhD if appropriate
@@ -25,8 +25,10 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{longtable}
+\usepackage{tabularx}
 \usepackage{booktabs}
 \usepackage{nicefrac}
+\usepackage{svg}
 \usepackage[
   backend=biber,
   style=alphabetic,
@@ -154,10 +156,10 @@ toctitle=Abbreviations and Acronyms]
 \include{chapters/chapter_background}
 % Word count aim                5000-6000
 
+\include{chapters/chapter_profiles}
+
 \include{chapters/chapter_design}
 % Word count aim                0700-0800
-
-\include{chapters/chapter_profiles}
 
 \include{chapters/chapter_experiments}
 % Word count aim                0000-0000
