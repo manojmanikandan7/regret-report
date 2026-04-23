@@ -117,13 +117,13 @@ execution of logically grouped experiment suites from a single invocation.
 \subsection{Design Decisions}
 % Max 150 words
 % Why the dispatching framework? Why the
-The software was intended to be extensive \& configurable for other
+The software was intended to be extensive and configurable for other
 developers and users to interact with quickly, with options for
 modularity when required.
 This was enabled by the adoption of configuration-first, job dispatch
 policy for independent and declarative experimentation. Problems and
 Algorithms to test against can easily be defined by extending
-abstract classes \texttt{Problem} \& \texttt{Algorithm}, ensuring a
+abstract classes \texttt{Problem} and \texttt{Algorithm}, ensuring a
 common interface for consistent interactions.
 
 % \begin{figure}[h]
@@ -180,7 +180,7 @@ common interface for consistent interactions.
 The \acrshort{cli} is implemented using \textbf{Typer}~\cite{typer}, which maps
 sub-commands to typed Python functions with automatic argument parsing. The
 ``orchestration'' layer coordinates
-problem \& algorithm instantiation, result persistence, and plot
+problem and algorithm instantiation, result persistence, and plot
 generation, delegating individual runs to \texttt{ExperimentRunner}. Parallel
 execution uses \texttt{ProcessPoolExecutor} from Python's standard
 \texttt{concurrent.futures} module; results are collected via
