@@ -14,7 +14,10 @@ jobs:
           persist-credentials: true
           
       - name: Ensure aux directory exists
-        run: mkdir -p aux
+        run: |
+          mkdir -p aux
+          mkdir -p aux/chapters
+          mkdir -p aux/appendices
         
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v4
