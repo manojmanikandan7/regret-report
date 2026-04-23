@@ -983,18 +983,11 @@ spectrum of problem difficulties.
 %     Ignore the trajectory of quality improvement
 %     Do not penalise "wasteful" queries on already-known-poor regions
 % - This gap motivates regret as a more informative measure
-The theoretical analysis of \acrshort{bbo} algorithms has developed
-several complementary
-frameworks for quantifying performance. Each framework fixes one
-dimension of the
-problem, either the evaluation budget or the target solution quality,
-and asks what
-can be guaranteed along the other. Together they form the standard
-vocabulary for
-comparing randomized search heuristics, yet all share a common limitation that
-motivates the regret-based view developed in Section~\ref{sec:regret}.
+The theoretical analysis of \acrshort{bbo} algorithms rests on three
+complementary frameworks, each fixing one dimension of the problem and
+analyzing what can be guaranteed along the other.
 
-\subsubsection{Expected Runtime (Hitting Time)}
+\paragraph{Expected runtime.}
 % - The canonical measure: E[tau_{f*}], expected evaluations to first
 % reach the optimum
 % - Equivalent to the expected first hitting time of the target level f*
@@ -1005,30 +998,20 @@ motivates the regret-based view developed in Section~\ref{sec:regret}.
 % - Well-suited for establishing complexity hierarchies and ranking algorithms
 %   on a given benchmark
 
-The predominant performance measure in the runtime analysis of
-evolutionary algorithms
-is the \textit{expected optimization time}: the expected number of
-function evaluations
-until an optimal solution is queried for the first
-time~\cite{droste2002analysis,
-doerr2020theory}. Formally, for a black-box algorithm producing query sequence
-$x_1, x_2, \ldots$, the \textit{first hitting time} of the global optimum is
+The canonical measure is the \textit{expected optimization time}:
+the expected number of evaluations until an optimal solution is first
+queried~\cite{droste2002analysis,doerr2020theory}. Formally, the
+\textit{first hitting time} of the global optimum is
 \[
   \tau_{f^*} \;:=\; \min\bigl\{t \in \mathbb{N} : f(x_t) = f^*\bigr\},
 \]
-and the expected runtime is $\mathbb{E}[\tau_{f^*}]$. This quantity has proved
-immensely useful for establishing complexity hierarchies and ranking
-algorithms; the
-results $\Theta(n \log n)$ for the $(1+1)$~\acrshort{ea} on \textsc{OneMax},
+and performance is summarized by $\mathbb{E}[\tau_{f^*}]$. Canonical results are
+$\Theta(n \log n)$ for the $(1+1)$~\acrshort{ea} on \textsc{OneMax},
 $\Theta(n^2)$ on \textsc{LeadingOnes}, and $\Theta(n^k)$ on
-$\textsc{Jump}_k$ are
-canonical examples~\cite{droste2002analysis}. The primary analytical
-tools for deriving
-such bounds are drift theory~\cite{lengler2019drift}, the
-fitness-level method, and
-Markov chain arguments~\cite{doerr2020theory}.
+$\textsc{Jump}_k$~\cite{droste2002analysis}, derived via drift
+theory~\cite{lengler2019drift} and Markov chain arguments~\cite{doerr2020theory}.
 
-\subsubsection{Fixed-Budget Analysis}
+\paragraph{Fixed-budget analysis.}
 \label{subsubsec:fixed-budget}
 % - Orthogonal view: fix T, characterize E[f*_T(A)] = expected
 % quality within budget
@@ -1043,31 +1026,15 @@ Markov chain arguments~\cite{doerr2020theory}.
 % - Forward ref: this is the fixed-budget view of performance;
 %   §\ref{sec:regret} generalises it to the entire trajectory
 
-In \textit{fixed-budget analysis}~\cite{jansen2014fixed}, the
-evaluation budget $T$ is
-fixed in advance and the quantity of interest is the expected quality
-of the best
-solution found within that budget. Denoting by $f^{*}_T(\mathcal{A})$ the best
-objective value achieved by algorithm $\mathcal{A}$ within $T$ evaluations, the
-fixed-budget framework characterizes
-$\mathbb{E}[f^{*}_T(\mathcal{A})]$ as a function
-of $T$~\cite{jansen2014fixed}. This perspective is practically
-motivated: in almost all
-realistic settings a user cannot detect when the global optimum has
-been found, and the
-algorithm must simply return the best solution found when the budget is
-exhausted~\cite{pinto2018practice}. As a consequence, comparing two
-algorithms under a
-fixed budget may reverse the conclusions drawn from comparing their
-expected runtimes:
-an algorithm with a larger $\mathbb{E}[\tau_{f^*}]$ may still produce superior
-intermediate solutions within a given budget~\cite{jansen2014fixed}.
-This framework
-connects directly to the simple regret defined in
-Section~\ref{subsubsec:sr}: maximizing $\mathbb{E}[f^{*}_T(\mathcal{A})]$ is
-equivalent to minimizing expected simple regret at budget $T$.
+In \textit{fixed-budget analysis}~\cite{jansen2014fixed} the budget $T$ is fixed
+and the quantity of interest is $\mathbb{E}[f^{*}_T(\mathcal{A})]$, the expected
+quality of the best solution found within $T$ evaluations. This is practically
+motivated: a user typically cannot detect optimality and the run terminates at
+budget exhaustion regardless. Budget-based rankings can reverse those from
+$\mathbb{E}[\tau_{f^*}]$, and maximizing $\mathbb{E}[f^{*}_T]$ is equivalent
+to minimizing expected simple regret at budget $T$ (Section~\ref{subsubsec:sr}).
 
-\subsubsection{Fixed-Target Analysis and Runtime Profiles}
+\paragraph{Fixed-Target Analysis and Runtime Profiles.}
 \label{subsubsec:fixed-target}
 % - Fixed-target: for a quality threshold v, characterise the
 % distribution of tau_v
@@ -1084,40 +1051,18 @@ equivalent to minimizing expected simple regret at budget $T$.
 %   another, guiding adaptive strategy design  [pinto2018practice]
 % - Pinto & Doerr's open question: a combined anytime measure is needed
 
-\textit{Fixed-target analysis} generalizes the expected runtime by
-considering not only
-the global optimum but every intermediate fitness level. For a target
-quality $v$, the
-\textit{first hitting time} is
+\textit{Fixed-target analysis} extends the single hitting time to every
+intermediate fitness level $v$, characterizing the distribution of
 \[
-  \tau_v \;:=\; \min\bigl\{t \in \mathbb{N} : f(x_t) \geq v\bigr\},
+  \tau_v \;:=\; \min\bigl\{t \in \mathbb{N} : f(x_t) \geq v\bigr\}.
 \]
-and the goal is to characterize the distribution of $\tau_v$ for all
-relevant $v$.
-This viewpoint appears in the analysis of restricted black-box
-models; for example,
-Doerr and Lengler~\cite{doerr2015onemax} derive hitting-time bounds across all
-fitness levels for \textsc{OneMax} under several
-information-theoretic restrictions,
-revealing how model constraints shift the difficulty at each tier of
-the landscape.
+Pinto and Doerr~\cite{pinto2018practice} show that reporting the full
+collection $(\mathbb{E}[\tau_v])_v$ reveals crossover fitness levels where
+one algorithm overtakes another, behavior invisible to $\mathbb{E}[\tau_{f^*}]$
+alone. Chapter~\ref{cha:profiles} develops this further.
 
-Pinto and Doerr~\cite{pinto2018practice} formalize this into the \textit{runtime
-profile} framework: the \textit{expectation-based runtime profile}
-$\bigl(\mathbb{E}[\tau_v]\bigr)_v$ and the strictly finer \textit{distributional
-runtime profile} $\mathcal{P}(v,t) := \mathbb{P}(\tau_v > t)$ together capture
-the full anytime behavior of an algorithm rather than only its
-behavior at the endpoint.
-Crucially, runtime profiles can identify \textit{crossover fitness
-levels} where one
-algorithm overtakes another in the quality trajectory, behavior
-invisible to the single
-expected optimization time. The formal development, including the
-connection between
-distributional runtime profiles and cumulative regret, is given in
-Section~\ref{subsec:regret-profiles}.
 
-\subsubsection{Limitations and the Case for a Continuous Performance Measure}
+\paragraph{Shared limitation.}
 \label{subsubsec:perf-limitations}
 % - Expected runtime is binary: found / not found at a single threshold
 % - Fixed-budget gives one scalar per budget T, ignores the trajectory
@@ -1132,39 +1077,16 @@ Section~\ref{subsec:regret-profiles}.
 % - Transition: §2.5 (Sequential Decision-Making) and §2.6 (Regret Formalism)
 %   develop this measure from first principles; §2.7 brings it back to BBO
 
-Despite their individual strengths, all three frameworks above share
-a structural
-limitation: they measure algorithm performance at isolated thresholds
-rather than over
-the entire quality trajectory. The expected runtime reduces the run
-to a single hitting
-event; fixed-budget analysis reduces it to a single scalar per budget
-value; and even
-the runtime profile, while richer, is a collection of per-level
-summaries rather than
-a unified measure of trajectory quality. Crucially, none of these
-measures penalizes an
-algorithm for spending many evaluations at low fitness values: a
-strategy that stagnates
-near the starting fitness and then discovers the optimum in a single
-lucky step is
-indistinguishable from one that makes steady, monotone progress, as far as
-$\mathbb{E}[\tau_{f^*}]$ is concerned.
-
-Pinto and Doerr~\cite{pinto2018practice} identify this gap
-explicitly, calling for
-\textit{combined measures} capable of describing the anytime behavior
-of an evolutionary
-algorithm within a unified framework, and naming regret-based
-measures from machine
-learning as a natural candidate, while noting that a fully satisfying
-formulation
-remains an open problem. This project takes that call as its starting point. The
-sequential decision-making framework and the formal vocabulary of
-regret are developed
-in Sections~\ref{sec:online}--\ref{sec:regret}; their synthesis with
-\acrshort{bbo} performance
-analysis is the subject of Section~\ref{sec:regret-bbo}.
+All three frameworks measure performance at isolated thresholds rather than
+over the entire quality trajectory, and none penalizes an algorithm for spending
+many evaluations at low fitness. A strategy that stagnates and then finds the
+optimum in a single lucky step is indistinguishable from one making steady
+progress under $\mathbb{E}[\tau_{f^*}]$ alone. Pinto and
+Doerr~\cite{pinto2018practice} call explicitly for \textit{combined anytime
+measures} from machine learning, naming regret as a natural candidate while
+noting that a satisfying formulation remains open. This project takes that call
+as its starting point; the regret vocabulary is developed in
+Sections~\ref{sec:online}--\ref{sec:regret}.
 
 \section{Sequential and Online Optimization Frameworks}
 \label{sec:online}
