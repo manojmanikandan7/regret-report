@@ -6,10 +6,13 @@
 \section{Motivation}
 Many aspects of our day-to-day lives revolves around finding
 optimality in problems that we can have no comprehensible insight
-about. It can be observed in industrial processes of ! TODO!. These
+about. This abstraction could be due to several factors. For
+instance, optimizing a design value in many large-scale and complex
+systems proves computationally or materially expensive. It can be
+observed in industrial processes of !TODO!. These
 types of problems are said to be \acrfull{bbo} problems.
 
-We do not get much tools to interact with them save from a
+We do not possess many tools to interact with them save from a
 cost/objective function $\mathbf{f}: \mathcal{X} \mapsto \mathcal{S}$
 (the `oracle') that provides an abstract representation of the
 problem, where $\mathcal{X}$ is the search space, $\mathcal{S}$ the
@@ -22,6 +25,12 @@ convexity (these methods warrant the oracle to return additional
   information, such as gradients, apart from the evaluation value of an
 input \cite{liu_primer_2020}).
 
+While this approach secures the bounds on the first sampling of the
+optimum, it presents no clues on the solution quality produced by the
+algorithm. Consider the case when the algorithm samples the optimum
+at time $t$, then in the next step $t+1$, moves completely away from
+the vicinity. This algorithm might then produce worse answers, asymptotically.
+
 \subsection{Conventional Solutions}
 % A brief history of how this problem came to be
 Classical analysis of solving \acrshort{bbo} problems are concerned
@@ -31,11 +40,12 @@ on the problem size $\mathbf{n}$. The reasoning behind this is
 palpable; the \textit{computational} complexity of evaluating the
 objective function for such \acrshort{bbo} systems are usually expensive.
 
-A trivial example is Hyperparameter Tuning in \acrfull{ml} models
-!CITE!. The optimal hyperparameters could be thought of as the
-\textit{optima} for the \acrfull{bbo} problem of the tuning that maximizes
-their validation loss\footnote{`how well the model fits the
-underlying probability distribution of the data inputs and outputs'}.
+A trivial example is Hyperparameter Tuning in \acrfull{ml}
+models~\cite{bischl2017mlrmbo}. Searching for optimal hyperparameters
+is a \acrfull{bbo} problem that
+optimizes a single or multiple objectives on the provided (training
+and validation) data.
+(e.g., accuracy, F1-score, $R^2$ score.).
 
 \newpage
 % Give context to the reader about the objectives
@@ -49,91 +59,108 @@ underlying probability distribution of the data inputs and outputs'}.
 % \subsection{Experimental Analysis} % State hypotheses here
 % % TODO
 \begin{longtable}{||p{0.5\textwidth}|p{0.5\textwidth}||}
-\hline
-\textbf{Broader Aims} & \textbf{Specific Aims} \\
-\hline
-\hline
-\endhead
-\hline
-\textbf{Aim 1. } Derive a viable relationship between the canonical measure of \acrshort{bbo} algorithms and regret.
-&  
-\begin{enumerate}
-    \item \textit{Aim 1.1. } Seek out the standard measures used in \acrshort{bbo} theory. 
+  \hline
+  \textbf{Broader Aims} & \textbf{Specific Aims} \\
+  \hline
+  \hline
+  \endhead
+  \hline
+  \textbf{Aim 1. } Aggregate the necessary knowledge and tools used
+  in canonical \acrfull{bbo} theory.
+  &
+  \begin{enumerate}
+    \item \textit{Aim 1.1. } Seek out the standard measures used in
+      \acrshort{bbo} theory.
     \item \textit{Aim 1.2. }
     \item \textit{Aim 1.2. }
     \item \textit{Aim 1.2. }
     \item \textit{Aim 1.2. }
-\end{enumerate}
-\\
-\hline
-\textbf{Aim 2. } Derive a viable relationship between the canonical measure of \acrshort{bbo} algorithms and regret.
-&  
-\begin{enumerate}
-    \item \textit{Aim 2.1. } Seek out the standard measures used in \acrshort{bbo} theory. 
+  \end{enumerate}
+  \\
+  \hline
+  \textbf{Aim 2. } Explore a viable relationship between the
+  canonical measure of \acrshort{bbo} algorithms and regret.
+  &
+  \begin{enumerate}
+    \item \textit{Aim 2.1. } Seek out the standard measures used in
+      \acrshort{bbo} theory.
     \item \textit{Aim 2.2. }
     \item \textit{Aim 2.2. }
     \item \textit{Aim 2.2. }
     \item \textit{Aim 2.2. }
-\end{enumerate}
-\\
-\hline
-\textbf{Aim 3. } Derive a viable relationship between the canonical measure of \acrshort{bbo} algorithms and regret.
-&  
-\begin{enumerate}
-    \item \textit{Aim 3.1. } Seek out the standard measures used in \acrshort{bbo} theory. 
+  \end{enumerate}
+  \\
+  \hline
+  \textbf{Aim 3. } Develop a novel, extensive software framework
+  highly relevant to the analysis in this project
+  &
+  \begin{enumerate}
+    \item \textit{Aim 3.1. } Seek out the standard measures used in
+      \acrshort{bbo} theory.
     \item \textit{Aim 3.2. }
     \item \textit{Aim 3.2. }
     \item \textit{Aim 3.2. }
     \item \textit{Aim 3.2. }
-\end{enumerate}
-\\
-\hline
-\textbf{Aim 4. } Derive a viable relationship between the canonical measure of \acrshort{bbo} algorithms and regret.
-&  
-\begin{enumerate}
-    \item \textit{Aim 4.1. } Seek out the standard measures used in \acrshort{bbo} theory. 
+  \end{enumerate}
+  \\
+  \hline
+  \textbf{Aim 4. } Formulate experiments pertinent and highly
+  appropriate to this project's concepts
+  &
+  \begin{enumerate}
+    \item \textit{Aim 4.1. } Seek out the standard measures used in
+      \acrshort{bbo} theory.
     \item \textit{Aim 4.2. }
     \item \textit{Aim 4.2. }
     \item \textit{Aim 4.2. }
     \item \textit{Aim 4.2. }
-\end{enumerate}
-\\
-\hline
-\textbf{Aim 5. } Derive a viable relationship between the canonical measure of \acrshort{bbo} algorithms and regret.
-&  
-\begin{enumerate}
-    \item \textit{Aim 5.1. } Seek out the standard measures used in \acrshort{bbo} theory. 
-    \item \textit{Aim 5.2. }
-    \item \textit{Aim 5.2. }
-    \item \textit{Aim 5.2. }
-    \item \textit{Aim 5.2. }
-\end{enumerate}
-\\
-\hline
+  \end{enumerate}
+  \\
+  \hline
 \end{longtable}
-
 
 \subsection{Success Criteria}
 
 \newpage
-\section{Project Outline}
+\section{Report Structure}
+This report is structured as follows:
+\paragraph{Background [Chapter~\ref{cha:bg}]} compiles the necessary
+knowledge sufficient to grasp the intent and work presented in the later texts.
+\paragraph{Runtime Profiles and Anytime Performance
+[Chapter~\ref{cha:profiles}]} delves into the core theory developed
+this project, coupling a measure of regret with the metric of
+`Runtime Profiles'.
+\paragraph{Supplementary Software Design [Chapter~\ref{cha:design}]}
+documents the novel, supplementary experimental frameworks developed
+for this project. This software facilitated the experimentation and
+exploratory analysis of various standard \acrshort{bbo} problems
+\paragraph{Methodology [Chapter~\ref{cha:exper}]} inscribes the
+exploratory and verification (based on concepts in
+Chapter~\ref{cha:profiles}) experiments coordinated in this project;
+emphasis is provided on specific rationale and decisions taken for
+motivating the exploration.
+\paragraph{Evaluation and Discussion of Results
+[Chapter~\ref{cha:results}]} confers the results gathered from the
+experiments conducted. Pointwise regret metrics extracted from the
+experiments (against known optimums) are analyzed qualitatively and
+quantitatively (especially for the verification experiments mentioned earlier).
+\paragraph{Conclusion and Future Work [Chapter~\ref{cha:bg}]}
+collates the substance, contributions, and achievements of the
+project. Reflections and potential future directions beyond the
+seminal work in this project are mapped out.
+
+
+% \newpage
+% \section{Project Outline}
 % TODO: Maybe include Gantt Chart...?
 % Sem 1
 %
-\subsection{Literature Study}
+% \subsection{Literature Study}
 
-\subsection{Isolating Relevant Benchmarks}
+% \subsection{Isolating Relevant Benchmarks}
 
-\subsection{Development of Experiment framework}
+% \subsection{Development of Experiment framework}
 
-\subsection{Orchestrating Experiments}
+% \subsection{Orchestrating Experiments}
 
-\subsection{Evaluating Results}
-
-\newpage
-\section{Report Structure}
-\subsection{Background}% \& Literature Review}
-\subsection{Software Design}
-\subsection{Experiment Structure}
-\subsection{Evaluation \& Discussion of Results}
-\subsection{Conclusion \& Future Work}
+% \subsection{Evaluating Results}
