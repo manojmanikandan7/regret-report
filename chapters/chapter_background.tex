@@ -67,7 +67,8 @@ choices during execution, so its behavior on a fixed input may vary
 across runs. In the black-box optimization setting, randomization is
 not merely a convenience but a necessity: the No-Free-Lunch theorems
 imply that no deterministic algorithm can perform well uniformly
-across all problem instances, and randomized search heuristics derive
+across all problem instances (See~\ref{subsubsec:nfl},
+\citet{wolpert2002no}), and randomized search heuristics derive
 their practical value from their ability to escape local optima
 through stochastic perturbation~\cite{doerr2020theory,hoos2005intro}.
 The theoretical analysis of such algorithms therefore concerns
@@ -201,7 +202,8 @@ Appendix~\ref{app:oracle-tiers}.
 This project operates exclusively in the zeroth-order regime.
 When the internal structure of $f$ is inaccessible or analytically
 intractable, function evaluations are the only information available.
-Hence, these problems are often referred to as \textit{\acrfull{dfo}} problems. These conditions lay ground for the black-box model formalized in
+Hence, these problems are often referred to as \textit{\acrfull{dfo}}
+problems. These conditions lay ground for the black-box model formalized in
 Section~\ref{sec:bbo}.
 
 \subsubsection{Landscape Properties}
@@ -238,7 +240,8 @@ complexity} (the number of elementary operations performed as a
 function of input size) and \textit{space complexity} (the amount
 of memory consumed). Both are typically expressed using asymptotic
 notation: $O(\cdot)$, $\Omega(\cdot)$, and $\Theta(\cdot)$ describe
-upper, lower, and tight bounds, respectively, on resource usage as the input size
+upper, lower, and tight bounds, respectively, on resource usage as
+the input size
 $n$ grows. In the setting of combinatorial optimization over
 $\{0,1\}^n$, the input size is the bitstring length $n$, and
 complexity results are stated as functions of $n$.
@@ -282,7 +285,8 @@ concentration arguments~\cite{doerr2020theory}. Worst-case analysis
 over problem instances, by contrast, motivates the minimax framework
 and Yao's minimax principle, which lower-bounds the expected
 complexity of any randomized algorithm by exhibiting a hard
-distribution over instances~\cite{droste2006blackbox}.
+distribution over instances~\cite{droste2006blackbox}
+(Subsubsection~\ref{subsubsec:yaomini}).
 
 % \subsection{Probabilistic Tools for Algorithm Analysis}
 % \subsubsection{Expectation and Variance}
@@ -317,7 +321,7 @@ complex to exploit analytically.
 
 In contrast, in \textit{white-box optimization}, some information about
 the problem instance is made available to
-the algorithm. 
+the algorithm.
 
 \subsubsection{Black-Box Models}
 
@@ -330,15 +334,19 @@ and bitwise complementations of the search
 space~\cite{lehre2010black}; both \acrshort{rls} and the
 $(1+1)$~\acrshort{ea} fall into this class, making its \acrshort{bbc}
 the tightest applicable lower bound for these algorithms.
-\acrshort{sa} fits neither model cleanly—it exploits absolute fitness
-differences rather than rankings—so its performance is studied empirically.
+\acrshort{sa} fits neither model cleanly (it exploits absolute fitness
+differences rather than rankings) so its performance is studied empirically.
 
 \subsubsection{Yao's Minimax Principle}
 \label{subsubsec:yaomini}
 
 Lower bounds are proved via Yao's minimax
-principle~\cite{yao1977probabilistic}: for any distribution $p$ over
-instances and $q$ over deterministic algorithms,
+principle~\cite{yao1977probabilistic}. Let $\mathcal{I}$ be the set
+of problem instances, $\mathcal{A}$ the set of deterministic
+algorithms, and $T(I,A)$ the query cost (number of oracle calls) of
+algorithm $A \in \mathcal{A}$ on instance $I \in \mathcal{I}$. For
+any distribution $p$ over instances and $q$ over deterministic
+algorithms,
 \[
   \min_{A \in \mathcal{A}}\,\mathbb{E}_{I \sim p}[T(I,A)]
   \;\leq\;
@@ -351,6 +359,270 @@ hitting criterion with a trajectory-level measure. The principle
 extends to memory-restricted and elitist models via a suitable
 superset construction~\cite{doerr2015onemax} (see
 Appendix~\ref{app:bbc-extended}).
+
+\subsection{A Few Pseudo-Boolean Problems}
+
+The \textit{pseudo-Boolean} setting considers functions $f :
+\{0,1\}^n \to \mathbb{R}$
+defined on binary strings of length $n$. Several benchmark functions
+are widely used to
+study and compare the behavior of randomized search heuristics, each encoding a
+different type of difficulty.~\cite{lengler2019drift,droste2006blackbox}
+
+\subsubsection{OneMax}
+
+The \textsc{OneMax} function counts the number of one-bits in a bit string:
+\[
+  \textsc{OneMax}(x) = \sum_{i=1}^{n} x_i, \qquad x \in \{0,1\}^n.
+\]
+The unique global maximum is $x^{*} = 1^n$ with $\textsc{OneMax}(1^n) = n$.
+\textsc{OneMax} is the canonical baseline benchmark: the landscape is
+unimodal and every
+improving move increases the function value by exactly one, providing
+a clear gradient
+for local search methods. The expected runtime of the
+$(1+1)$~\acrfull{ea} on \textsc{OneMax} is
+$\Theta(n \log n)$.~\cite{droste2002analysis}
+
+\subsubsection{LeadingOnes}
+
+The \textsc{LeadingOnes} function counts the length of the maximal
+leading prefix of
+ones:
+\[
+  \textsc{LeadingOnes}(x) = \sum_{i=1}^{n} \prod_{j=1}^{i} x_j.
+\]
+Equivalently, $\textsc{LeadingOnes}(x)$ equals the index of the first
+zero bit minus
+one, or $n$ if no zero exists. The unique global optimum is again $1^n$. Because
+progress requires the leading bit to be set before any subsequent bit
+can contribute,
+\textsc{LeadingOnes} is significantly harder than \textsc{OneMax}:
+the expected runtime
+of the $(1+1)$~\acrshort{ea} is $\Theta(n^2)$.~\cite{droste2002analysis}
+
+\subsubsection{Jump}
+
+The \textsc{Jump} function with parameter $k \in \{1, \ldots, n\}$
+coincides with
+\textsc{OneMax} on bit strings with at most $n - k$ ones and on the
+global optimum
+$1^n$, but introduces a region of reduced fitness for strings with
+between $n-k+1$ and
+$n-1$ ones. This creates a ``gap'' of width $k$ that algorithms
+relying on single-bit
+improvements cannot cross: the set of strings with exactly $n-k$ ones
+constitutes a
+local optimum of standard local search, and reaching the global
+optimum $1^n$ requires
+flipping all $k$ remaining zero bits simultaneously. For the
+$(1+1)$~\acrshort{ea} with standard
+bit mutation at rate $1/n$, the probability of a specific $k$-bit flip is
+$\Theta(n^{-k})$, giving an expected runtime of $\Theta(n^k)$ on
+$\textsc{Jump}_k$.
+
+Formally, \textsc{Jump}$_{k,n} \colon \{0,1\}^n \to \mathbb{R}$ is defined as
+\[
+  \textsc{Jump}_{k,n}(x) \;=\;
+  \begin{cases}
+    k + \displaystyle\sum_{i=1}^{n} x_i & \text{if }
+    \displaystyle\sum_{i=1}^{n} x_i \leq n - k
+    \text{ or } \displaystyle\sum_{i=1}^{n} x_i = n, \\[8pt]
+    n - \displaystyle\sum_{i=1}^{n} x_i & \text{otherwise.}
+  \end{cases}
+\]
+Droste, Jansen, and Wegener~\cite{droste2002analysis} proved that the
+expected running
+time of the $(1+1)$~\acrshort{ea} on $\textsc{Jump}_{k,n}$ is
+$\Theta(n^k + n\log n)$ for
+$k \in \{1, 2, \ldots, n\}$, which simplifies to $\Theta(n^k)$ for $k \geq 2$.
+
+\subsubsection{BinaryValue [BinVal]}
+
+The \textsc{BinaryValue} (\textsc{BinVal}) function interprets a bit
+string as a binary
+integer by weighting bits exponentially by position:
+\[
+  \textsc{BinVal}(x) = \sum_{i=1}^{n} 2^{i-1}\, x_i.
+\]
+The global optimum is $1^n$ with value $2^n - 1$. The exponential
+weighting means that
+the most significant bit contributes more than the combined value of
+all less significant
+bits, making \textsc{BinVal} highly structured.
+
+\subsubsection{Trap}
+
+The \textsc{Trap} function is a piecewise-linear \textit{function of
+unitation} formally analyzed for deception
+conditions by \citet{deb1993analyzing}. Its value
+depends only on the number of ones $u = \sum_{i=1}^n x_i$, not on
+their positions, and with slope-change location $z = n - k$ it is
+defined as
+\[
+  \textsc{Trap}_{k}(x) =
+  \begin{cases}
+    \dfrac{n}{z}(z - u) & \text{if } u \leq z, \\[8pt]
+    \dfrac{n}{k}(u - z) & \text{otherwise.}
+  \end{cases}
+\]
+For $u \leq z$ the gradient points toward the all-zeros attractor
+$0^n$; only past the slope change does fitness increase toward the
+global optimum $1^n$. Every improving move for a hill-climber
+therefore moves \emph{away} from the optimum. Deb and Goldberg
+establish that the necessary and sufficient condition for full
+deception is that all schemata of order $n-1$ favor the local
+optimum, which requires $z \geq \lfloor n/2 \rfloor$~\cite{deb1993analyzing}.
+
+\subsubsection{Plateau}
+
+The \textsc{Plateau} function with parameter $k$ is defined as
+\textsc{OneMax} everywhere except in a ball of radius $k$ around the
+optimum, where fitness is held constant at the second-best value
+$n - k$~\cite{antipov2021precise}:
+\[
+  \textsc{Plateau}_k(x) =
+  \begin{cases}
+    n - k & \text{if } n - k < \textsc{OneMax}(x) < n, \\
+    \textsc{OneMax}(x) & \text{otherwise.}
+  \end{cases}
+\]
+The global optimum is $1^n$ with value $n$. Unlike \textsc{Jump},
+which penalizes solutions near the optimum with a \emph{reduced}
+fitness, \textsc{Plateau} assigns the plateau region the same
+fitness as the boundary level $n - k$, so there are no true local
+optima. Instead, the algorithm performs an unguided random walk
+across the $\Theta(n^k)$ plateau points, gaining no fitness signal
+until it reaches $1^n$ by flipping between one and $k$ zero-bits
+simultaneously.
+
+\citet{antipov2021precise} establish that the expected runtime of the
+$(1+1)$~\acrshort{ea} on \textsc{Plateau}$_k$ depends only on the
+probability of flipping between one and $k$ bits per step, not on
+other properties of the mutation operator, and that the optimal
+mutation rate under standard bit mutation is approximately $k/(en)$,
+a factor of $\Theta(k)$ above the canonical $1/n$
+recommendation. The full runtime expression is given in
+Appendix~\ref{app:plateau-runtime}.
+
+\subsubsection{Hierarchical If-and-Only-If (HIFF)}
+
+The \textsc{\acrfull{hiff}} function is a benchmark designed to model
+\textit{hierarchical building-block
+interdependency}: a property absent from earlier \acrfull{ga} test
+problems, which treat sub-problems as
+separable~\cite{watson1998modeling}. In \acrshort{hiff},
+the optimal solution to a block of bits depends on how that block
+combines with its neighbors at the next level of the hierarchy,
+making sub-problems \textit{non-separable} in a consistent,
+multi-level sense.
+
+The fitness of a bitstring $x \in \{0,1\}^n$, where $n$ must be a
+power of two, is defined recursively. A block $B$ of length one
+always contributes a fitness of one. For any longer block, if all
+bits in $B$ are identical (all zeros or all ones), the block
+contributes $|B|$ to fitness and its two halves are recursively
+evaluated; otherwise only the recursive evaluation of the two halves
+contributes. Formally,
+\[
+  f(B) =
+  \begin{cases}
+    1 & \text{if } |B| = 1, \\
+    |B| + f(B_L) + f(B_R) & \text{if } |B| > 1 \text{ and all bits
+    in } B \text{ are equal,} \\
+    f(B_L) + f(B_R) & \text{otherwise,}
+  \end{cases}
+\]
+where $B_L$ and $B_R$ denote the left and right halves of $B$.
+The global optimum is achieved by the all-zeros or all-ones
+bitstring, giving a maximum fitness of $n(\log_2 n + 1)$. Two
+global optima exist and are maximally distant from one another,
+a structural feature that makes \acrshort{hiff} acutely challenging
+for hill-climbing algorithms: a single bit-flip from either optimum
+disrupts the top-level block uniformity and causes a sharp fitness
+drop, so local search stagnates at intermediate solutions in which
+only lower-level blocks are uniform~\cite{watson1998modeling}.
+
+The landscape is highly multimodal. Secondary optima consist of
+strings with contiguous blocks of zeros and ones at each
+hierarchical level (for example, the first $n/2$ bits all zero and
+the remaining $n/2$ all one for a length-$n$ string), and these
+local optima are maximally distant from both global optima.
+Oates et al.~\cite{oates2000triphase} demonstrate empirically that
+this structure induces a characteristic tri-modal performance profile
+in evolutionary search: progress occurs in discrete phases
+corresponding to the successive exploitation of one-bit, two-bit,
+and higher-order mutations needed to escape each tier of local
+optima. This property makes \acrshort{hiff} a useful diagnostic
+benchmark for regret analysis, as the hierarchical barrier structure
+should produce a distinctive staircase signature in the cumulative
+regret trajectory.
+
+\subsubsection{MaxSAT}
+\textsc{\acrfull{maxsat}} is the optimization variant
+of the Boolean \acrfull{sat}. A propositional formula
+in \acrfull{cnf} is a conjunction of
+\textit{clauses}, each of which is a disjunction of \textit{literals}
+(a Boolean variable or its negation). Given such a formula with $m$
+clauses over $n$ Boolean variables, the goal is to find a truth
+assignment that maximizes the number of satisfied clauses. \acrshort{maxsat} is
+NP-hard in general~\cite{hutchison_search_2004} and serves as an
+important benchmark for combinatorial optimization algorithms.
+
+\paragraph{Petersen Graph 3-Coloring.}
+\label{subsec:petersen}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{petersen_graph.pdf}
+\end{figure}
+
+The \textit{Petersen graph}~\cite{weisstein_petersen_graph} is a
+well-known 3-regular graph on ten vertices and fifteen edges whose
+chromatic number is exactly three, meaning a valid 3-colouring exists
+and no 2-colouring does. This project encodes the 3-colouring problem
+as a \acrshort{maxsat} instance over $n = 30$ binary variables, with
+one variable per vertex-color pair: variable $x_{v,c}$ is $1$ if
+vertex $v$ is assigned color $c \in \{0,1,2\}$. Three families of
+soft clauses encode the coloring constraints: ten \textit{at-least-one}
+clauses (each vertex must receive at least one color), thirty
+\textit{at-most-one} clauses (each vertex must not hold two colors
+simultaneously), and forty-five \textit{edge-conflict} clauses (adjacent
+vertices must not share a color), giving $m = 85$ clauses in total.
+Because the Petersen graph is 3-colourable, all 85 clauses can be
+satisfied simultaneously, so the global optimum is $f^* = 85$ and is
+genuinely achievable~\cite{hutchison_search_2004}. This is the key
+advantage over random \acrshort{maxsat} instances, whose declared optima
+are rarely reachable in practice.
+
+\subsubsection{Tunable Landscapes: NK-Landscapes}
+\label{subsubsec:nk}
+
+\textit{NK-landscapes}~\cite{kauffman1987towards} are a parametric
+family of pseudo-Boolean
+functions controlled by two integers: $N$ (the number of variables)
+and $K$ (the number
+of epistatic interactions per variable, $0 \leq K \leq N-1$). The
+fitness of a string
+$x \in \{0,1\}^N$ is defined as
+\[
+  f(x) = \frac{1}{N} \sum_{i=1}^{N} f_i\!\left(x_i,\, x_{\pi(i,1)},
+  \ldots,\, x_{\pi(i,K)}\right),
+\]
+where each local contribution $f_i : \{0,1\}^{K+1} \to [0,1]$ is
+drawn independently
+and uniformly at random, and $\pi(i, \cdot)$ denotes the $K$
+epistatic neighbors of
+variable $i$.
+
+When $K = 0$ the contributions are independent, producing a smooth,
+additively separable
+landscape analogous to \textsc{OneMax}. As $K$ increases toward $N-1$, epistatic
+interactions intensify and the landscape becomes increasingly rugged,
+with the number of
+local optima growing in the limit. NK-landscapes thus provide a tunable model of
+ruggedness and are widely used to study algorithmic scalability and
+robustness across a
+spectrum of problem difficulties.
 
 \subsection{Purpose of Randomized Search Heuristics}
 % Explain why, given the BBO setting, one turns to general-purpose
@@ -374,34 +646,48 @@ Appendix~\ref{app:bbc-extended}).
 %     Simulated Annealing and other acceptance-criterion methods
 % - Scope of this project: randomized single- and population-based heuristics
 %   on combinatorial / pseudo-Boolean domains
-Devising tailored, exact algorithms for arbitrary \acrshort{bbo} problems is, in general,
-intractable. Without structural information about the objective function, there is no
-principled basis on which to prefer one search strategy over another, and even when
+Devising tailored, exact algorithms for arbitrary \acrshort{bbo}
+problems is, in general,
+intractable. Without structural information about the objective
+function, there is no
+principled basis on which to prefer one search strategy over another,
+and even when
 some structure is known, the cost of exploiting it may be prohibitive. This
-motivates turning to \acrfull{rsh}s and other metaheuristics\footnote{\textit{Metaheuristics}
-are search techniques that generalise heuristics observed in natural processes
-(e.g.\ \acrshort{ea}s, Particle Swarm Optimisation)~\cite{abdel2018metaheuristic}} as
+motivates turning to \acrfull{rsh}s and other
+metaheuristics\footnote{\textit{Metaheuristics}
+  are search techniques that generalise heuristics observed in natural processes
+  (e.g.\ \acrshort{ea}s, Particle Swarm
+Optimization)~\cite{abdel2018metaheuristic}} as
 general-purpose black-box methods.
 
 \subsubsection{No-Free-Lunch Theorems}
+\label{subsubsec:nfl}
 
 This motivation is placed on theoretical footing by the
 \textit{\acrfull{nfl} theorems}~\cite{wolpert2002no}, which formalize the
-impossibility of a universally superior algorithm. The theorems state that, for any two
+impossibility of a universally superior algorithm. The theorems state
+that, for any two
 black-box optimization algorithms, their performance averaged uniformly over all
-possible objective functions on a finite domain is identical; any gain achieved on one
+possible objective functions on a finite domain is identical; any
+gain achieved on one
 subset of functions is offset by a corresponding loss on the complementary
-subset~\cite{wolpert2002no}. No single algorithm can therefore outperform all others
-across every problem class: the choice of algorithm implicitly encodes assumptions about
+subset~\cite{wolpert2002no}. No single algorithm can therefore
+outperform all others
+across every problem class: the choice of algorithm implicitly
+encodes assumptions about
 problem structure, and those assumptions can always be violated.
 
-For the pseudo-Boolean domain $\{0,1\}^n$, any \acrshort{rsh} that performs strongly
-on benchmarks such as \textsc{OneMax} or \textsc{LeadingOnes} must underperform on some
+For the pseudo-Boolean domain $\{0,1\}^n$, any \acrshort{rsh} that
+performs strongly
+on benchmarks such as \textsc{OneMax} or \textsc{LeadingOnes} must
+underperform on some
 complementary class of functions. Complexity results such as
 $\mathbb{E}[\tau_{f^*}] = \Theta(n \log n)$ for the $(1+1)$~\acrshort{ea} on
 \textsc{OneMax}~\cite{droste2002analysis} are meaningful purely because
-\textsc{OneMax} is a natural representative of unimodal functions. The \acrshort{nfl}
-theorems therefore make conditioning comparisons on a structured problem class a theoretical necessity not a
+\textsc{OneMax} is a natural representative of unimodal functions.
+The \acrshort{nfl}
+theorems therefore make conditioning comparisons on a structured
+problem class a theoretical necessity not a
 practical convenience, which motivates the benchmark suite
 defined in Section~\ref{subsec:bbo-perf}.
 
@@ -414,14 +700,19 @@ defined in Section~\ref{subsec:bbo-perf}.
 (EA)}{Evolutionary Algorithms (EA)}]{Evolutionary Algorithms (\acrshort{ea})}
 \label{subsubsec:ea}
 \begin{wrapfigure}{i}{0.7\textwidth}
-    \includegraphics[width=0.7\textwidth]{metaheuristics_taxonomy.pdf}
-    \caption[Taxonomy of Metaheuristics based on source of inspiration]{Taxonomy of Metaheuristics based on source of inspiration. \acrshort{ea}s and \acrshort{sa} are examples. Adopted from \cite[Figure 5]{rajwar2023exhaustive}}
-    \label{fig:mettax}
+  \includegraphics[width=0.7\textwidth]{metaheuristics_taxonomy.pdf}
+  \caption[Taxonomy of Metaheuristics based on source of
+  inspiration]{Taxonomy of Metaheuristics based on source of
+    inspiration. \acrshort{ea}s and \acrshort{sa} are examples. Adopted
+  from \cite[Figure 5]{rajwar2023exhaustive}}
+  \label{fig:mettax}
 \end{wrapfigure}
 
 Evolutionary algorithms are a broad family of population-based,
 randomized search
-heuristics inspired by biological evolution. It belongs to the family of \textit{metaphor-based} metaheuristics, as shown in Figure~\ref{fig:mettax}. In discrete
+heuristics inspired by biological evolution. It belongs to the family
+of \textit{metaphor-based} metaheuristics, as shown in
+Figure~\ref{fig:mettax}. In discrete
 optimization, the canonical
 paradigm maintains one or more \emph{candidate solutions} (bit
 strings) and iterates
@@ -699,270 +990,6 @@ behavior as the run progresses.
   \end{algorithmic}
 \end{algorithm}
 
-\subsection{Few Pseudo-Boolean Problems}
-
-The \textit{pseudo-Boolean} setting considers functions $f :
-\{0,1\}^n \to \mathbb{R}$
-defined on binary strings of length $n$. Several benchmark functions
-are widely used to
-study and compare the behavior of randomized search heuristics, each encoding a
-different type of difficulty.~\cite{lengler2019drift,droste2006blackbox}
-
-\subsubsection{OneMax}
-
-The \textsc{OneMax} function counts the number of one-bits in a bit string:
-\[
-  \textsc{OneMax}(x) = \sum_{i=1}^{n} x_i, \qquad x \in \{0,1\}^n.
-\]
-The unique global maximum is $x^{*} = 1^n$ with $\textsc{OneMax}(1^n) = n$.
-\textsc{OneMax} is the canonical baseline benchmark: the landscape is
-unimodal and every
-improving move increases the function value by exactly one, providing
-a clear gradient
-for local search methods. The expected runtime of the
-$(1+1)$~\acrfull{ea} on \textsc{OneMax} is
-$\Theta(n \log n)$.~\cite{droste2002analysis}
-
-\subsubsection{LeadingOnes}
-
-The \textsc{LeadingOnes} function counts the length of the maximal
-leading prefix of
-ones:
-\[
-  \textsc{LeadingOnes}(x) = \sum_{i=1}^{n} \prod_{j=1}^{i} x_j.
-\]
-Equivalently, $\textsc{LeadingOnes}(x)$ equals the index of the first
-zero bit minus
-one, or $n$ if no zero exists. The unique global optimum is again $1^n$. Because
-progress requires the leading bit to be set before any subsequent bit
-can contribute,
-\textsc{LeadingOnes} is significantly harder than \textsc{OneMax}:
-the expected runtime
-of the $(1+1)$~\acrshort{ea} is $\Theta(n^2)$.~\cite{droste2002analysis}
-
-\subsubsection{Jump}
-
-The \textsc{Jump} function with parameter $k \in \{1, \ldots, n\}$
-coincides with
-\textsc{OneMax} on bit strings with at most $n - k$ ones and on the
-global optimum
-$1^n$, but introduces a region of reduced fitness for strings with
-between $n-k+1$ and
-$n-1$ ones. This creates a ``gap'' of width $k$ that algorithms
-relying on single-bit
-improvements cannot cross: the set of strings with exactly $n-k$ ones
-constitutes a
-local optimum of standard local search, and reaching the global
-optimum $1^n$ requires
-flipping all $k$ remaining zero bits simultaneously. For the
-$(1+1)$~\acrshort{ea} with standard
-bit mutation at rate $1/n$, the probability of a specific $k$-bit flip is
-$\Theta(n^{-k})$, giving an expected runtime of $\Theta(n^k)$ on
-$\textsc{Jump}_k$.
-
-Formally, \textsc{Jump}$_{k,n} \colon \{0,1\}^n \to \mathbb{R}$ is defined as
-\[
-  \textsc{Jump}_{k,n}(x) \;=\;
-  \begin{cases}
-    k + \displaystyle\sum_{i=1}^{n} x_i & \text{if }
-    \displaystyle\sum_{i=1}^{n} x_i \leq n - k
-    \text{ or } \displaystyle\sum_{i=1}^{n} x_i = n, \\[8pt]
-    n - \displaystyle\sum_{i=1}^{n} x_i & \text{otherwise.}
-  \end{cases}
-\]
-Droste, Jansen, and Wegener~\cite{droste2002analysis} proved that the
-expected running
-time of the $(1+1)$~\acrshort{ea} on $\textsc{Jump}_{k,n}$ is
-$\Theta(n^k + n\log n)$ for
-$k \in \{1, 2, \ldots, n\}$, which simplifies to $\Theta(n^k)$ for $k \geq 2$.
-
-\subsubsection{BinaryValue [BinVal]}
-
-The \textsc{BinaryValue} (\textsc{BinVal}) function interprets a bit
-string as a binary
-integer by weighting bits exponentially by position:
-\[
-  \textsc{BinVal}(x) = \sum_{i=1}^{n} 2^{i-1}\, x_i.
-\]
-The global optimum is $1^n$ with value $2^n - 1$. The exponential
-weighting means that
-the most significant bit contributes more than the combined value of
-all less significant
-bits, making \textsc{BinVal} highly structured.
-
-\subsubsection{Trap}
-
-The \textsc{Trap} function is a piecewise-linear \textit{function of
-unitation} formally analyzed for deception
-conditions by \citet{deb1993analyzing}. Its value
-depends only on the number of ones $u = \sum_{i=1}^n x_i$, not on
-their positions, and with slope-change location $z = n - k$ it is
-defined as
-\[
-  \textsc{Trap}_{k}(x) =
-  \begin{cases}
-    \dfrac{n}{z}(z - u) & \text{if } u \leq z, \\[8pt]
-    \dfrac{n}{k}(u - z) & \text{otherwise.}
-  \end{cases}
-\]
-For $u \leq z$ the gradient points toward the all-zeros attractor
-$0^n$; only past the slope change does fitness increase toward the
-global optimum $1^n$. Every improving move for a hill-climber
-therefore moves \emph{away} from the optimum. Deb and Goldberg
-establish that the necessary and sufficient condition for full
-deception is that all schemata of order $n-1$ favor the local
-optimum, which requires $z \geq \lfloor n/2 \rfloor$~\cite{deb1993analyzing}.
-
-\subsubsection{Plateau}
-
-The \textsc{Plateau} function with parameter $k$ is defined as
-\textsc{OneMax} everywhere except in a ball of radius $k$ around the
-optimum, where fitness is held constant at the second-best value
-$n - k$~\cite{antipov2021precise}:
-\[
-  \textsc{Plateau}_k(x) =
-  \begin{cases}
-    n - k & \text{if } n - k < \textsc{OneMax}(x) < n, \\
-    \textsc{OneMax}(x) & \text{otherwise.}
-  \end{cases}
-\]
-The global optimum is $1^n$ with value $n$. Unlike \textsc{Jump},
-which penalizes solutions near the optimum with a \emph{reduced}
-fitness, \textsc{Plateau} assigns the plateau region the same
-fitness as the boundary level $n - k$, so there are no true local
-optima. Instead, the algorithm performs an unguided random walk
-across the $\Theta(n^k)$ plateau points, gaining no fitness signal
-until it reaches $1^n$ by flipping between one and $k$ zero-bits
-simultaneously.
-
-\citet{antipov2021precise} establish that the expected runtime of the
-$(1+1)$~\acrshort{ea} on \textsc{Plateau}$_k$ depends only on the
-probability of flipping between one and $k$ bits per step, not on
-other properties of the mutation operator, and that the optimal
-mutation rate under standard bit mutation is approximately $k/(en)$,
-a factor of $\Theta(k)$ above the canonical $1/n$
-recommendation. The full runtime expression is given in
-Appendix~\ref{app:plateau-runtime}.
-
-\subsubsection{Hierarchical If-and-Only-If (HIFF)}
-
-The \textsc{\acrfull{hiff}} function is a benchmark designed to model
-\textit{hierarchical building-block
-interdependency}: a property absent from earlier \acrfull{ga} test
-problems, which treat sub-problems as
-separable~\cite{watson1998modeling}. In \acrshort{hiff},
-the optimal solution to a block of bits depends on how that block
-combines with its neighbors at the next level of the hierarchy,
-making sub-problems \textit{non-separable} in a consistent,
-multi-level sense.
-
-The fitness of a bitstring $x \in \{0,1\}^n$, where $n$ must be a
-power of two, is defined recursively. A block $B$ of length one
-always contributes a fitness of one. For any longer block, if all
-bits in $B$ are identical (all zeros or all ones), the block
-contributes $|B|$ to fitness and its two halves are recursively
-evaluated; otherwise only the recursive evaluation of the two halves
-contributes. Formally,
-\[
-  f(B) =
-  \begin{cases}
-    1 & \text{if } |B| = 1, \\
-    |B| + f(B_L) + f(B_R) & \text{if } |B| > 1 \text{ and all bits
-    in } B \text{ are equal,} \\
-    f(B_L) + f(B_R) & \text{otherwise,}
-  \end{cases}
-\]
-where $B_L$ and $B_R$ denote the left and right halves of $B$.
-The global optimum is achieved by the all-zeros or all-ones
-bitstring, giving a maximum fitness of $n(\log_2 n + 1)$. Two
-global optima exist and are maximally distant from one another,
-a structural feature that makes \acrshort{hiff} acutely challenging
-for hill-climbing algorithms: a single bit-flip from either optimum
-disrupts the top-level block uniformity and causes a sharp fitness
-drop, so local search stagnates at intermediate solutions in which
-only lower-level blocks are uniform~\cite{watson1998modeling}.
-
-The landscape is highly multimodal. Secondary optima consist of
-strings with contiguous blocks of zeros and ones at each
-hierarchical level (for example, the first $n/2$ bits all zero and
-the remaining $n/2$ all one for a length-$n$ string), and these
-local optima are maximally distant from both global optima.
-Oates et al.~\cite{oates2000triphase} demonstrate empirically that
-this structure induces a characteristic tri-modal performance profile
-in evolutionary search: progress occurs in discrete phases
-corresponding to the successive exploitation of one-bit, two-bit,
-and higher-order mutations needed to escape each tier of local
-optima. This property makes \acrshort{hiff} a useful diagnostic
-benchmark for regret analysis, as the hierarchical barrier structure
-should produce a distinctive staircase signature in the cumulative
-regret trajectory.
-
-\subsubsection{MaxSAT}
-\textsc{\acrfull{maxsat}} is the optimization variant
-of the Boolean \acrfull{sat}. A propositional formula
-in \acrfull{cnf} is a conjunction of
-\textit{clauses}, each of which is a disjunction of \textit{literals}
-(a Boolean variable or its negation). Given such a formula with $m$
-clauses over $n$ Boolean variables, the goal is to find a truth
-assignment that maximizes the number of satisfied clauses. \acrshort{maxsat} is
-NP-hard in general~\cite{hutchison_search_2004} and serves as an
-important benchmark for combinatorial optimization algorithms.
-
-\paragraph{Petersen Graph 3-Coloring.}
-\label{subsec:petersen}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\textwidth]{petersen_graph.pdf}
-\end{figure}
-
-The \textit{Petersen graph}~\cite{weisstein_petersen_graph} is a
-well-known 3-regular graph on ten vertices and fifteen edges whose
-chromatic number is exactly three, meaning a valid 3-colouring exists
-and no 2-colouring does. This project encodes the 3-colouring problem
-as a \acrshort{maxsat} instance over $n = 30$ binary variables, with
-one variable per vertex-color pair: variable $x_{v,c}$ is $1$ if
-vertex $v$ is assigned color $c \in \{0,1,2\}$. Three families of
-soft clauses encode the coloring constraints: ten \textit{at-least-one}
-clauses (each vertex must receive at least one color), thirty
-\textit{at-most-one} clauses (each vertex must not hold two colors
-simultaneously), and forty-five \textit{edge-conflict} clauses (adjacent
-vertices must not share a color), giving $m = 85$ clauses in total.
-Because the Petersen graph is 3-colourable, all 85 clauses can be
-satisfied simultaneously, so the global optimum is $f^* = 85$ and is
-genuinely achievable~\cite{hutchison_search_2004}. This is the key
-advantage over random \acrshort{maxsat} instances, whose declared optima
-are rarely reachable in practice.
-
-\subsubsection{Tunable Landscapes: NK-Landscapes}
-\label{subsubsec:nk}
-
-\textit{NK-landscapes}~\cite{kauffman1987towards} are a parametric
-family of pseudo-Boolean
-functions controlled by two integers: $N$ (the number of variables)
-and $K$ (the number
-of epistatic interactions per variable, $0 \leq K \leq N-1$). The
-fitness of a string
-$x \in \{0,1\}^N$ is defined as
-\[
-  f(x) = \frac{1}{N} \sum_{i=1}^{N} f_i\!\left(x_i,\, x_{\pi(i,1)},
-  \ldots,\, x_{\pi(i,K)}\right),
-\]
-where each local contribution $f_i : \{0,1\}^{K+1} \to [0,1]$ is
-drawn independently
-and uniformly at random, and $\pi(i, \cdot)$ denotes the $K$
-epistatic neighbors of
-variable $i$.
-
-When $K = 0$ the contributions are independent, producing a smooth,
-additively separable
-landscape analogous to \textsc{OneMax}. As $K$ increases toward $N-1$, epistatic
-interactions intensify and the landscape becomes increasingly rugged,
-with the number of
-local optima growing in the limit. NK-landscapes thus provide a tunable model of
-ruggedness and are widely used to study algorithmic scalability and
-robustness across a
-spectrum of problem difficulties.
-
 \subsection{Traditional Performance Measures in BBO}
 \label{subsec:bbo-perf}
 % - Expected runtime (hitting time to reach the optimum or a quality threshold)
@@ -1002,7 +1029,8 @@ and performance is summarized by $\mathbb{E}[\tau_{f^*}]$. Canonical results are
 $\Theta(n \log n)$ for the $(1+1)$~\acrshort{ea} on \textsc{OneMax},
 $\Theta(n^2)$ on \textsc{LeadingOnes}, and $\Theta(n^k)$ on
 $\textsc{Jump}_k$~\cite{droste2002analysis}, derived via drift
-theory~\cite{lengler2019drift} and Markov chain arguments~\cite{doerr2020theory}.
+theory~\cite{lengler2019drift} and Markov chain
+arguments~\cite{doerr2020theory}.
 
 \paragraph{Fixed-budget analysis.}
 \label{subsubsec:fixed-budget}
@@ -1053,7 +1081,6 @@ Pinto and Doerr~\cite{pinto2018practice} show that reporting the full
 collection $(\mathbb{E}[\tau_v])_v$ reveals crossover fitness levels where
 one algorithm overtakes another, behavior invisible to $\mathbb{E}[\tau_{f^*}]$
 alone. Chapter~\ref{cha:profiles} develops this further.
-
 
 \paragraph{Shared limitation.}
 \label{subsubsec:perf-limitations}
