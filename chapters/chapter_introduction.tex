@@ -4,50 +4,147 @@
 
 % Put in an illustrative picture
 \section{Motivation}
-Many aspects of our day-to-day lives revolves around finding
-optimality in problems that we can have no comprehensible insight
-about. This abstraction could be due to several factors. For
-instance, optimizing a design value in many large-scale and complex
-systems proves computationally or materially expensive. It can be
-observed in industrial processes of !TODO!. These
-types of problems are said to be \acrfull{bbo} problems.
+Across engineering, the natural sciences, and machine learning, a
+recurring class of optimization problems resists conventional
+analytical treatment. The objective function may arise from a physical
+experiment, a high-fidelity simulation, or a complex computational
+pipeline whose internal structure is either inaccessible or too
+intricate to exploit.
+In such settings, the practitioner's only recourse is to query the
+objective at a candidate solution and observe the resulting value;
+no gradient, curvature, or closed-form expression is
+available~\cite{liu_primer_2020}. Problems of
+this kind are collectively termed \textit{\acrfull{bbo}} problems.
+Industrial process optimization, drug-design pipelines, and the tuning of
+machine-learning models~\cite{bajaj2021black,bischl2017mlrmbo} belong
+to this class of problems.
 
-We do not possess many tools to interact with them save from a
-cost/objective function $\mathbf{f}: \mathcal{X} \mapsto \mathcal{S}$
-(the `oracle') that provides an abstract representation of the
-problem, where $\mathcal{X}$ is the search space, $\mathcal{S}$ the
-evaluation space !TODO: find concrete refs!. Typically, $\mathcal{S}
-\subseteq R$. The task is to minimize or maximize the solutions
-produced by this objective function, i.e., find a solution that Much
-study is done in optimizing this cost function without the liberty of
-classic mathematical tools such as continuity, smoothness and
-convexity (these methods warrant the oracle to return additional
-  information, such as gradients, apart from the evaluation value of an
-input \cite{liu_primer_2020}).
+Without structural access, practitioners turn to general-purpose
+\textit{\acrfull{rsh}}s: stochastic algorithms such as Evolutionary
+Algorithms (\acrshort{ea}) and Simulated Annealing (\acrshort{sa})
+that search by iterative perturbation and
+selection~\cite{abdel2018metaheuristic,rajwar2023exhaustive}. The
+standard theoretical question for such algorithms is the number of
+evaluations needed to first sample the optimum. This single
+metric (the expected runtime) has dominated the field for decades
+and underpins a rich body of complexity
+results~\cite{droste2002analysis,doerr2020theory,lengler2019drift}.
 
-While this approach secures the bounds on the first sampling of the
-optimum, it presents no clues on the solution quality produced by the
-algorithm. Consider the case when the algorithm samples the optimum
-at time $t$, then in the next step $t+1$, moves completely away from
-the vicinity. This algorithm might then produce worse answers, asymptotically.
+However, expected runtime is a blunt instrument. It says nothing
+about solution quality \textit{before} the optimum is reached.
+In practice, budgets are finite, runs are interrupted, and the
+best-so-far solution is what actually gets used~\cite{jansen2014fixed}.
+An algorithm that stagnates and then gets lucky looks identical, by
+this measure, to one that makes steady progress throughout. This gap
+has been noted explicitly in the literature: Pinto and
+Doerr~\cite{pinto2018practice} call for \textit{combined anytime
+measures} from machine learning, naming regret as a natural candidate
+while acknowledging that a satisfying formulation remains open.
 
-\subsection{Conventional Solutions}
-% A brief history of how this problem came to be
-Classical analysis of solving \acrshort{bbo} problems are concerned
-with the so-called \acrfull{bbc}, that is, deriving the runtime
-bounds for an algorithm to sample a (global) optimum, depending only
-on the problem size $\mathbf{n}$. The reasoning behind this is
-palpable; the \textit{computational} complexity of evaluating the
-objective function for such \acrshort{bbo} systems are usually expensive.
+This project answers that call. By connecting the \textit{regret}
+framework from online learning~\cite{cesa2006prediction,lattimore2020bandit}
+to the \textit{runtime profile} framework from evolutionary
+computation~\cite{pinto2018practice}, a unified anytime measure
+is established — one that captures solution quality across the
+\textit{entire} run, not only at its end. A bespoke experimental
+framework is developed to validate this connection and to investigate,
+across a broad range of benchmark problems and algorithm families,
+what regret trajectories reveal about landscape structure that
+classical measures cannot.
 
-A trivial example is Hyperparameter Tuning in \acrfull{ml}
-models~\cite{bischl2017mlrmbo}. Searching for optimal hyperparameters
-is a \acrfull{bbo} problem that
-optimizes a single or multiple objectives on the provided (training
-and validation) data.
-(e.g., accuracy, F1-score, $R^2$ score.).
+% Many aspects of our day-to-day lives revolves around finding
+% optimality in problems that we can have no comprehensible insight
+% about. This abstraction could be due to several factors. For
+% instance, optimizing a design value in many large-scale and complex
+% systems proves computationally or materially expensive. It can be
+% observed in industrial processes of !TODO!. These
+% types of problems are said to be \acrfull{bbo} problems.
 
-\newpage
+% We do not possess many tools to interact with them save from a
+% cost/objective function $\mathbf{f}: \mathcal{X} \mapsto \mathcal{S}$
+% (the `oracle') that provides an abstract representation of the
+% problem, where $\mathcal{X}$ is the search space, $\mathcal{S}$ the
+% evaluation space !TODO: find concrete refs!. Typically, $\mathcal{S}
+% \subseteq R$. The task is to minimize or maximize the solutions
+% produced by this objective function, i.e., find a solution that Much
+% study is done in optimizing this cost function without the liberty of
+% classic mathematical tools such as continuity, smoothness and
+% convexity (these methods warrant the oracle to return additional
+%   information, such as gradients, apart from the evaluation value of an
+% input \cite{liu_primer_2020}).
+
+% While this approach secures the bounds on the first sampling of the
+% optimum, it presents no clues on the solution quality produced by the
+% algorithm. Consider the case when the algorithm samples the optimum
+% at time $t$, then in the next step $t+1$, moves completely away from
+% the vicinity. This algorithm might then produce worse answers, asymptotically.
+
+% \subsection{Conventional Solutions}
+% % A brief history of how this problem came to be
+% Classical analysis of solving \acrshort{bbo} problems are concerned
+% with the so-called \acrfull{bbc}, that is, deriving the runtime
+% bounds for an algorithm to sample a (global) optimum, depending only
+% on the problem size $\mathbf{n}$. The reasoning behind this is
+% palpable; the \textit{computational} complexity of evaluating the
+% objective function for such \acrshort{bbo} systems are usually expensive.
+
+% A trivial example is Hyperparameter Tuning in \acrfull{ml}
+% models~\cite{bischl2017mlrmbo}. Searching for optimal hyperparameters
+% is a \acrfull{bbo} problem that
+% optimizes a single or multiple objectives on the provided (training
+% and validation) data.
+% (e.g., accuracy, F1-score, $R^2$ score.).
+\section{Contributions}
+\label{sec:intro:contributions}
+ 
+This project makes the following principal contributions, as summarized in Table~\ref{tab:contributions}.
+\begin{longtable}{@{}p{0.15\linewidth}p{0.79\linewidth}@{}}
+
+\toprule
+\textbf{Area} & \textbf{Contributions} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Area} & \textbf{Contributions} \\
+\midrule
+\endhead
+
+% \bottomrule
+% \endlastfoot
+
+\textsc{Theory} &
+Established a formal connection between expected incumbent cumulative regret and
+the distributional runtime profile of~\citet{pinto2018practice}
+(Theorem~\ref{thm:regret-profile}), yielding the \textit{combined anytime
+measure} identified as an open problem in the evolutionary computation
+literature. Corollary~\ref{cor:asymptotic-regret} relates infinite-horizon
+regret to the sum of expected first hitting times over all fitness levels,
+bridging expected-runtime analysis and regret-based evaluation. The results hold
+for any randomized black-box algorithm on any finite pseudo-Boolean domain. \\
+\hline
+
+\textsc{Empirics} &
+Introduced a structured suite of 14 experiments that numerically validates the
+tail-sum identity (Suite~08) and studies how regret trajectories reflect
+landscape structure, including barrier crossings (Suites~04--06, 09--10),
+epistatic ruggedness (Suites~03, 12), hierarchical difficulty (Suite~07), and
+scaling behavior (Suite~13). The results show that cumulative regret captures
+diagnostic information about trapped phases and saturation that fixed-budget and
+expected-runtime measures miss when $P(\mathrm{opt}) \approx 0$. \\
+\hline
+
+\textsc{Software} &
+Developed \texttt{regret}, a declarative, reproducible, and parallelized
+experimental framework for pseudo-Boolean and combinatorial optimization
+problems, with support for trajectory recording, regret metrics, runtime-profile
+analysis, and structured output in \acrshort{json} and \acrshort{pdf} formats. \\
+\hline
+
+\caption{Main contributions from the project.}
+\label{tab:contributions}
+\end{longtable}
+
 % Give context to the reader about the objectives
 \section{Aims and Objectives}
 % \subsection{General Aims}
@@ -58,65 +155,68 @@ and validation) data.
 % % TODO
 % \subsection{Experimental Analysis} % State hypotheses here
 % % TODO
-\begin{longtable}{||p{0.5\textwidth}|p{0.5\textwidth}||}
+\begin{longtable}{||p{0.48\textwidth}|p{0.48\textwidth}||}
   \hline
-  \textbf{Broader Aims} & \textbf{Specific Aims} \\
+  \textbf{Broader Aims} & \textbf{Specific Objectives} \\
   \hline
   \hline
   \endhead
   \hline
-  \textbf{Aim 1. } Aggregate the necessary knowledge and tools used
-  in canonical \acrfull{bbo} theory.
+  \textbf{Aim 1. } \emph{Consolidate the theoretical foundations of
+  \acrshort{bbo}, including the standard performance measures and
+  their limitations.}
   &
-  \begin{enumerate}
-    \item \textit{Aim 1.1. } Seek out the standard measures used in
-      \acrshort{bbo} theory.
-    \item \textit{Aim 1.2. }
-    \item \textit{Aim 1.2. }
-    \item \textit{Aim 1.2. }
-    \item \textit{Aim 1.2. }
+  \begin{enumerate}[topsep=0pt, partopsep=0pt, itemsep=0pt, parsep=0pt, leftmargin=*]
+    \item Formalize the expected runtime, fixed-budget, and
+        fixed-target frameworks.
+    \item Identify the shared limitation: the absence of a combined
+        anytime performance measure.
+    \item Review the regret vocabulary from online learning and
+        situate it relative to \acrshort{bbo} complexity theory.
   \end{enumerate}
   \\
   \hline
-  \textbf{Aim 2. } Explore a viable relationship between the
-  canonical measure of \acrshort{bbo} algorithms and regret.
+  \textbf{Aim 2. } \emph{Explore a viable relationship between the
+  canonical measure of \acrshort{bbo} algorithms and regret.}
   &
-  \begin{enumerate}
-    \item \textit{Aim 2.1. } Seek out the standard measures used in
-      \acrshort{bbo} theory.
-    \item \textit{Aim 2.2. }
-    \item \textit{Aim 2.2. }
-    \item \textit{Aim 2.2. }
-    \item \textit{Aim 2.2. }
+  \begin{enumerate}[topsep=0pt, partopsep=0pt, itemsep=0pt, parsep=0pt, leftmargin=*]
+    \item Define the distributional runtime profile
+        $\mathcal{P}(v, t) = \mathbb{P}(\tau_v > t)$.
+    \item Prove the tail-sum regret representation identity
+    (Theorem~\ref{thm:regret-profile}).
+    \item Derive the asymptotic corollary connecting long-run regret
+    to the expected hitting times $\mathbb{E}[\tau_v]$.
   \end{enumerate}
   \\
   \hline
-  \textbf{Aim 3. } Develop a novel, extensive software framework
-  highly relevant to the analysis in this project
+  \textbf{Aim 3. } \emph{Develop a reproducible experimental framework
+  suited to trajectory-level regret analysis.}
   &
-  \begin{enumerate}
-    \item \textit{Aim 3.1. } Seek out the standard measures used in
-      \acrshort{bbo} theory.
-    \item \textit{Aim 3.2. }
-    \item \textit{Aim 3.2. }
-    \item \textit{Aim 3.2. }
-    \item \textit{Aim 3.2. }
+  \begin{enumerate}[topsep=0pt, partopsep=0pt, itemsep=0pt, parsep=0pt, leftmargin=*]
+    \item Implement the \texttt{regret} framework with declarative
+       \acrshort{yaml}-driven experiment dispatch.
+    \item Support full trajectory recording, regret metric computation,
+    and runtime profile analysis.
+    \item Validate the implementation via a test-driven development
+    discipline with enforced coverage distribution.
   \end{enumerate}
   \\
   \hline
-  \textbf{Aim 4. } Formulate experiments pertinent and highly
-  appropriate to this project's concepts
-  &
-  \begin{enumerate}
-    \item \textit{Aim 4.1. } Seek out the standard measures used in
-      \acrshort{bbo} theory.
-    \item \textit{Aim 4.2. }
-    \item \textit{Aim 4.2. }
-    \item \textit{Aim 4.2. }
-    \item \textit{Aim 4.2. }
+  \textbf{Aim 4. } \emph{Investigate empirically how regret trajectories
+  reflect landscape structure across a broad benchmark suite.}
+  & 
+  \begin{enumerate}[topsep=0pt, partopsep=0pt, itemsep=0pt, parsep=0pt, leftmargin=*]
+    \item Verify the tail-sum identity numerically on tractable benchmarks.
+    \item Characterize the diagnostic signatures of barrier-crossing,
+      epistatic ruggedness, and hierarchical difficulty in cumulative
+      regret trajectories.
+    \item Identify conditions under which classical measures (\acrshort{ttfo},
+      $P(\text{opt})$) are uninformative and regret trajectories remain
+      structured.
   \end{enumerate}
   \\
   \hline
+  \caption{Project aims and specific objectives.}
 \end{longtable}
 
 \subsection{Success Criteria}
@@ -144,12 +244,77 @@ motivating the exploration.
 experiments conducted. Pointwise regret metrics extracted from the
 experiments (against known optimums) are analyzed qualitatively and
 quantitatively (especially for the verification experiments mentioned earlier).
-\paragraph{Conclusion and Future Work [Chapter~\ref{cha:bg}]}
+\paragraph{Conclusion and Future Work [Chapter~\ref{cha:conc}]}
 collates the substance, contributions, and achievements of the
 project. Reflections and potential future directions beyond the
 seminal work in this project are mapped out.
 
+% \subsection{Open Questions and Project Scope}
+% \label{subsec:open-questions}
+% % - Summary of what is NOT yet known:
+% %     Tight cumulative regret bounds for (1+1) EA / RLS on standard benchmarks
+% %     How the exploration-exploitation tension manifests quantitatively
+% %     Whether epsilon-greedy and SA schedules can be tuned to minimize regret
+% %       rather than (only) expected runtime
+% % - Research questions this project addresses:
+% %     [enumerate your specific RQs here]
+% % - Chapter roadmap: what follows from this background
 
+% Despite the maturity of both runtime analysis and regret theory as individual
+% disciplines, their intersection remains largely unexplored. The
+% principal open questions
+% motivating this project are as follows.
+
+% \paragraph{Tight cumulative regret bounds for standard \acrshort{rsh}s.}
+% Closed-form expressions for $\mathbb{E}[\mathrm{CR}(T)]$ are not yet
+% established for
+% the $(1+1)$~\acrshort{ea} or \acrshort{rls} on the canonical
+% pseudo-Boolean benchmarks.
+% While the tail-sum identity of Theorem~\ref{thm:regret-profile}
+% provides a route from
+% known hitting-time bounds to regret bounds, the resulting expressions
+% are in general
+% loose. Obtaining tight asymptotic characterizations of
+% $\mathbb{E}[\mathrm{CR}(T)]$
+% on \textsc{OneMax}, \textsc{LeadingOnes}, and \textsc{Jump} is an
+% open theoretical
+% problem.
+
+% \paragraph{Quantitative exploration--exploitation trade-offs.}
+% The $\varepsilon$-greedy and decaying-$\varepsilon$-greedy
+% \acrshort{rls} variants
+% (Section~\ref{subsubsec:ea}) introduce explicit exploration rates,
+% but the optimal
+% schedule for minimizing cumulative regret rather than expected
+% runtime is unknown.
+% It is unclear whether the decay schedule $\varepsilon_t =
+% \varepsilon_0 / t$ that
+% mirrors classical bandit theory~\cite{auer2002finite} is appropriate
+% in the pseudo-Boolean
+% setting, where the reward structure is not stationary.
+
+% \paragraph{Regret as a landscape diagnostic.}
+% Cumulative regret trajectories have a characteristic shape that reflects the
+% structure of the fitness landscape: a linear ramp during a trapped
+% phase, a sharp
+% drop upon barrier crossing, and a flat floor after convergence. Whether these
+% signatures are sufficiently distinct across barrier types (Jump,
+% Trap, Plateau) to
+% serve as practical diagnostics, and whether they remain informative when the
+% optimum is never reached within the budget, has not been studied
+% systematically.
+
+% This project addresses these questions empirically. The experimental suite of
+% Chapter~\ref{cha:exper} provides trajectory-level evidence for the
+% landscape diagnostic
+% value of cumulative regret across all three barrier archetypes, and
+% the runtime profile
+% verification of Suite 08 confirms the tail-sum identity of
+% Theorem~\ref{thm:regret-profile} numerically. Tight analytical bounds and the
+% derivation of regret-optimal parameter schedules are identified as
+% directions for
+% future work in Section~\ref{cha:conc}.
+%
 % \newpage
 % \section{Project Outline}
 % TODO: Maybe include Gantt Chart...?
