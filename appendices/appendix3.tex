@@ -5,10 +5,10 @@
 \label{app:lv-mc}
 
 In the standard (unrestricted, unbiased) black-box models, the
-\textit{Las Vegas} complexity — the expected number of queries until
-an optimal solution is first found — and the \textit{Monte Carlo}
-complexity — the minimum budget $T$ such that the optimum is found
-with probability at least $1 - p$ for a given $p > 0$ — are
+\textit{Las Vegas} complexity (the expected number of queries until
+an optimal solution is first found)  and the \textit{Monte Carlo}
+complexity (the minimum budget $T$ such that the optimum is found
+with probability at least $1 - p$ for a given $p > 0$)  are
 essentially equivalent up to constant factors via Markov's inequality:
 any Las Vegas algorithm with expected runtime $T$ finds the optimum
 within $T/p$ queries with probability at least $1 - p$.
@@ -44,7 +44,7 @@ factor~\cite{doerr2015onemax}.
 For the algorithms studied in this project, this distinction does not
 affect the experimental results directly: all runtime and regret
 analyses use expected quantities over independent runs, which
-corresponds to the Las Vegas framework. 
+corresponds to the Las Vegas framework.
 % The Monte Carlo / Las Vegas
 % distinction becomes relevant if one wishes to derive high-probability
 % tail bounds on cumulative regret, a direction noted as future work in
