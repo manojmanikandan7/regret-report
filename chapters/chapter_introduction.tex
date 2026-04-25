@@ -96,53 +96,59 @@ classical measures cannot.
 % (e.g., accuracy, F1-score, $R^2$ score.).
 \section{Contributions}
 \label{sec:intro:contributions}
- 
-This project makes the following principal contributions, as summarized in Table~\ref{tab:contributions}.
+
+This project makes the following principal contributions, as
+summarized in Table~\ref{tab:contributions}.
 \begin{longtable}{@{}p{0.15\linewidth}p{0.79\linewidth}@{}}
 
-\toprule
-\textbf{Area} & \textbf{Contributions} \\
-\midrule
-\endfirsthead
+  \toprule
+  \textbf{Area} & \textbf{Contributions} \\
+  \midrule
+  \endfirsthead
 
-\toprule
-\textbf{Area} & \textbf{Contributions} \\
-\midrule
-\endhead
+  \toprule
+  \textbf{Area} & \textbf{Contributions} \\
+  \midrule
+  \endhead
 
-% \bottomrule
-% \endlastfoot
+  % \bottomrule
+  % \endlastfoot
 
-\textsc{Theory} &
-Established a formal connection between expected incumbent cumulative regret and
-the distributional runtime profile of~\citet{pinto2018practice}
-(Theorem~\ref{thm:regret-profile}), yielding the \textit{combined anytime
-measure} identified as an open problem in the evolutionary computation
-literature. Corollary~\ref{cor:asymptotic-regret} relates infinite-horizon
-regret to the sum of expected first hitting times over all fitness levels,
-bridging expected-runtime analysis and regret-based evaluation. The results hold
-for any randomized black-box algorithm on any finite pseudo-Boolean domain. \\
-\hline
+  \textsc{Theory} &
+  Established a formal connection between expected incumbent
+  cumulative regret and
+  the distributional runtime profile of~\citet{pinto2018practice}
+  (Theorem~\ref{thm:regret-profile}), yielding the \textit{combined anytime
+  measure} identified as an open problem in the evolutionary computation
+  literature. Corollary~\ref{cor:asymptotic-regret} relates infinite-horizon
+  regret to the sum of expected first hitting times over all fitness levels,
+  bridging expected-runtime analysis and regret-based evaluation. The
+  results hold
+  for any randomized black-box algorithm on any finite pseudo-Boolean domain. \\
+  \hline
 
-\textsc{Empirics} &
-Introduced a structured suite of 14 experiments that numerically validates the
-tail-sum identity (Suite~08) and studies how regret trajectories reflect
-landscape structure, including barrier crossings (Suites~04--06, 09--10),
-epistatic ruggedness (Suites~03, 12), hierarchical difficulty (Suite~07), and
-scaling behavior (Suite~13). The results show that cumulative regret captures
-diagnostic information about trapped phases and saturation that fixed-budget and
-expected-runtime measures miss when $P(\mathrm{opt}) \approx 0$. \\
-\hline
+  \textsc{Empirics} &
+  Introduced a structured suite of 14 experiments that numerically validates the
+  tail-sum identity (Suite~08) and studies how regret trajectories reflect
+  landscape structure, including barrier crossings (Suites~04--06, 09--10),
+  epistatic ruggedness (Suites~03, 12), hierarchical difficulty (Suite~07), and
+  scaling behavior (Suite~13). The results show that cumulative regret captures
+  diagnostic information about trapped phases and saturation that
+  fixed-budget and
+  expected-runtime measures miss when $P(\mathrm{opt}) \approx 0$. \\
+  \hline
 
-\textsc{Software} &
-Developed \texttt{regret}, a declarative, reproducible, and parallelized
-experimental framework for pseudo-Boolean and combinatorial optimization
-problems, with support for trajectory recording, regret metrics, runtime-profile
-analysis, and structured output in \acrshort{json} and \acrshort{pdf} formats. \\
-\hline
+  \textsc{Software} &
+  Developed \texttt{regret}, a declarative, reproducible, and parallelized
+  experimental framework for pseudo-Boolean and combinatorial optimization
+  problems, with support for trajectory recording, regret metrics,
+  runtime-profile
+  analysis, and structured output in \acrshort{json} and
+  \acrshort{pdf} formats. \\
+  \hline
 
-\caption{Main contributions from the project.}
-\label{tab:contributions}
+  \caption{Main contributions from the project.}
+  \label{tab:contributions}
 \end{longtable}
 
 % Give context to the reader about the objectives
@@ -163,49 +169,53 @@ analysis, and structured output in \acrshort{json} and \acrshort{pdf} formats. \
   \endhead
   \hline
   \textbf{Aim 1. } \emph{Consolidate the theoretical foundations of
-  \acrshort{bbo}, including the standard performance measures and
+    \acrshort{bbo}, including the standard performance measures and
   their limitations.}
   &
-  \begin{enumerate}[topsep=0pt, partopsep=0pt, itemsep=0pt, parsep=0pt, leftmargin=*]
+  \begin{enumerate}[topsep=0pt, partopsep=0pt, itemsep=0pt,
+      parsep=0pt, leftmargin=*]
     \item Formalize the expected runtime, fixed-budget, and
-        fixed-target frameworks.
+      fixed-target frameworks.
     \item Identify the shared limitation: the absence of a combined
-        anytime performance measure.
+      anytime performance measure.
     \item Review the regret vocabulary from online learning and
-        situate it relative to \acrshort{bbo} complexity theory.
+      situate it relative to \acrshort{bbo} complexity theory.
   \end{enumerate}
   \\
   \hline
   \textbf{Aim 2. } \emph{Explore a viable relationship between the
   canonical measure of \acrshort{bbo} algorithms and regret.}
   &
-  \begin{enumerate}[topsep=0pt, partopsep=0pt, itemsep=0pt, parsep=0pt, leftmargin=*]
+  \begin{enumerate}[topsep=0pt, partopsep=0pt, itemsep=0pt,
+      parsep=0pt, leftmargin=*]
     \item Define the distributional runtime profile
-        $\mathcal{P}(v, t) = \mathbb{P}(\tau_v > t)$.
+      $\mathcal{P}(v, t) = \mathbb{P}(\tau_v > t)$.
     \item Prove the tail-sum regret representation identity
-    (Theorem~\ref{thm:regret-profile}).
+      (Theorem~\ref{thm:regret-profile}).
     \item Derive the asymptotic corollary connecting long-run regret
-    to the expected hitting times $\mathbb{E}[\tau_v]$.
+      to the expected hitting times $\mathbb{E}[\tau_v]$.
   \end{enumerate}
   \\
   \hline
   \textbf{Aim 3. } \emph{Develop a reproducible experimental framework
   suited to trajectory-level regret analysis.}
   &
-  \begin{enumerate}[topsep=0pt, partopsep=0pt, itemsep=0pt, parsep=0pt, leftmargin=*]
+  \begin{enumerate}[topsep=0pt, partopsep=0pt, itemsep=0pt,
+      parsep=0pt, leftmargin=*]
     \item Implement the \texttt{regret} framework with declarative
-       \acrshort{yaml}-driven experiment dispatch.
+      \acrshort{yaml}-driven experiment dispatch.
     \item Support full trajectory recording, regret metric computation,
-    and runtime profile analysis.
+      and runtime profile analysis.
     \item Validate the implementation via a test-driven development
-    discipline with enforced coverage distribution.
+      discipline with enforced coverage distribution.
   \end{enumerate}
   \\
   \hline
   \textbf{Aim 4. } \emph{Investigate empirically how regret trajectories
   reflect landscape structure across a broad benchmark suite.}
-  & 
-  \begin{enumerate}[topsep=0pt, partopsep=0pt, itemsep=0pt, parsep=0pt, leftmargin=*]
+  &
+  \begin{enumerate}[topsep=0pt, partopsep=0pt, itemsep=0pt,
+      parsep=0pt, leftmargin=*]
     \item Verify the tail-sum identity numerically on tractable benchmarks.
     \item Characterize the diagnostic signatures of barrier-crossing,
       epistatic ruggedness, and hierarchical difficulty in cumulative

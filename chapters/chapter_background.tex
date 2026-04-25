@@ -2,109 +2,94 @@
 % current: 3293
 \chapter{Background}
 \label{cha:bg}
+This chapter establishes the conceptual vocabulary required to
+understand, motivate, and situate the contributions of this project.
+The subject is the regret-based analysis of randomized search
+heuristics on pseudo-Boolean black-box optimization problems. Four
+bodies of knowledge bear on this subject: the structure of the
+optimization problems themselves, the algorithms used to solve them,
+the performance measures used to evaluate those algorithms, and the
+regret framework imported from online learning to address the
+limitations of classical measures. These are introduced in that order.
 
 \section{Computational Problems}
 
-\subsection{Problem Formulations}
+\subsection{Optimization Problems}
+
+An \textit{optimization problem} is a formal specification of the task of
+finding a candidate solution that is optimal with respect to a given
+objective function. The optimization can be minimizing or maximizing;
+this project adopts the latter convention. Given a set of candidate solutions
+$\mathcal{X}$ and an objective function $f : \mathcal{X} \to \mathbb{R}$,
+the goal is to identify
+\[
+  x^* \in \operatorname*{arg\,max}_{x \in \mathcal{X}} f(x).
+\]
+
+A further distinction concerns the role of randomness in the problem
+formulation. In a \textit{deterministic} formulation, both the problem
+instance and every algorithm operating on it are fully specified without
+any probabilistic component. In a \textit{stochastic} formulation, the
+instance itself, the objective evaluations, or the algorithm may involve
+randomness. \textit{Noisy} objective functions, where repeated evaluation
+of the same candidate solution may return different values, are a canonical
+example and arise naturally in simulation-based and real-world
+settings~\cite{liu_primer_2020}. All problems studied in this project are
+deterministic, though the algorithms applied to them are randomized; this
+distinction is elaborated in Section~\ref{subsec:algorithms}.
+
+% The algorithms studied interact with $f$ exclusively through a
+% \textit{function-evaluation oracle}: an abstract device that, given a
+% query $x \in \{0,1\}^n$, returns $f(x)$ and nothing else. No gradient,
+% curvature, or structural information about $f$ is available. This is the
+% \textit{black-box setting}, formalized in Section~\ref{sec:bbo}. The
+% relevant measure of algorithm efficiency in this setting is consequently
+% not the number of arithmetic operations performed but the
+% \textit{query complexity}: the number of oracle calls required to identify
+% a solution meeting some quality criterion~\cite{droste2006blackbox}.
+
+% \subsection{Problem Formulations}
 % Define problem instances and problem classes.
 % Distinguish between decision, search, and optimization problems.
 % Clarify deterministic vs. stochastic problem formulations.
 
-A \textit{computational problem} is a formal specification of a task
-defined over a set of
-\textit{problem instances}. Each instance encodes the input data
-relevant to a particular
-occurrence of the problem. The \textit{problem class} describes the
-collection of all
-such problem instances together with the corresponding output
-requirements.~\cite{hoos2005intro}
+% A \textit{computational problem} is a formal specification of a task
+% defined over a set of
+% \textit{problem instances}. Each instance encodes the input data
+% relevant to a particular
+% occurrence of the problem. The \textit{problem class} describes the
+% collection of all
+% such problem instances together with the corresponding output
+% requirements.~\cite{hoos2005intro}
 
-Problems are broadly categorized by the nature of their required output.
-\begin{itemize}
-  \item A \textit{decision problem} demands a binary answer, whether
-    a solution exists for a problem instance.
-  \item A \textit{search problem} asks for the construction of an
-    explicit solution
-    satisfying a specified property, such as a feasible assignment or
-    a path in a graph, or conclude no solution exists.
-  \item An \textit{optimization problem} further requires that the
-    returned solution be optimal (or near-optimal) with
-    respect to some given objective function.
-\end{itemize}
-The decision and search problem variants are closely related because
-algorithms solving the
-search variant can always be used to solve the decision
-variant.~\cite{hoos2005intro}
+% Problems are broadly categorized by the nature of their required output.
+% \begin{itemize}
+%   \item A \textit{decision problem} demands a binary answer, whether
+%     a solution exists for a problem instance.
+%   \item A \textit{search problem} asks for the construction of an
+%     explicit solution
+%     satisfying a specified property, such as a feasible assignment or
+%     a path in a graph, or conclude no solution exists.
+%   \item An \textit{optimization problem} further requires that the
+%     returned solution be optimal (or near-optimal) with
+%     respect to some given objective function.
+% \end{itemize}
+% The decision and search problem variants are closely related because
+% algorithms solving the
+% search variant can always be used to solve the decision
+% variant.~\cite{hoos2005intro}
 
-A further distinction concerns the role of randomness in the problem
-formulation. In a
-\textit{deterministic} formulation, both the instance and every
-algorithm operating on it are fully specified without any
-probabilistic component. In a \textit{stochastic}
-formulation, the instance itself, the objective evaluations, or the
-algorithm may involve randomness. Noisy objective functions, where
-repeated evaluation of the same candidate
-solution may return different values, are a canonical example and
-arise naturally in
-simulation-based and real-world settings.
-
-\subsection{Algorithms}
-
-An \textit{algorithm} is a finite, unambiguous sequence of instructions
-that transforms a given input into a desired output within a bounded
-number of steps~\cite{hoos2005intro}. In the context of optimization,
-the input is a problem instance and the output is a candidate solution
-together with its objective value; algorithm quality is judged both by
-the solutions returned and the computational resources consumed.
-
-\subsubsection{Algorithm Properties}
-\paragraph{Deterministic and Randomized Algorithms. }
-% Definitions and differences.
-A \textit{deterministic} algorithm produces the same sequence of
-operations and the same output on every execution for a given input.
-A \textit{randomized} algorithm, by contrast, makes probabilistic
-choices during execution, so its behavior on a fixed input may vary
-across runs. In the black-box optimization setting, randomization is
-not merely a convenience but a necessity: the No-Free-Lunch theorems
-imply that no deterministic algorithm can perform well uniformly
-across all problem instances (See~\ref{subsubsec:nfl},
-\citet{wolpert2002no}), and randomized search heuristics derive
-their practical value from their ability to escape local optima
-through stochastic perturbation~\cite{doerr2020theory,hoos2005intro}.
-The theoretical analysis of such algorithms therefore concerns
-expected quantities (expected runtime, expected solution quality)
-rather than worst-case deterministic guarantees.
-
-\paragraph{Adaptive and Non-Adaptive Algorithms.}
-% Sequential decision processes.
-% Role of feedback.
-An algorithm is \textit{adaptive} if each action at step $t$ is chosen
-as a function of the history of prior queries and their responses,
-$(x_1,f(x_1)),\ldots,(x_{t-1},f(x_{t-1}))$; a \textit{non-adaptive}
-algorithm such as pure random sampling fixes all query points in
-advance and serves as a natural complexity
-baseline~\cite{droste2006blackbox}. All algorithms studied in this
-project are fully adaptive.
-
-\subsubsection{Oracle-Based Computation}
-\label{subsubsec:oraclecomp}
-% Definition of oracle access.
-% Query-response interaction model.
-
-An \textit{oracle} is an abstract computational device that answers
-queries about a
-problem instance. In optimization, the most common oracle is the
-\textit{function
-evaluation oracle}, which, given a query point $x \in \mathcal{X}$, returns the
-objective value $f(x)$ (or a noisy estimate thereof). The algorithm
-interacts with the
-oracle in a \textit{query-response} model: it submits a query and
-receives a response
-before deciding on the next query. The total number of such
-interactions constitutes the
-\textit{query complexity} of the algorithm, formalized in
-Section~\ref{subsubsec:infocomplexity}~\cite{nocedal2006numerical,
-droste2006blackbox}.
+% A further distinction concerns the role of randomness in the problem
+% formulation. In a
+% \textit{deterministic} formulation, both the instance and every
+% algorithm operating on it are fully specified without any
+% probabilistic component. In a \textit{stochastic}
+% formulation, the instance itself, the objective evaluations, or the
+% algorithm may involve randomness. Noisy objective functions, where
+% repeated evaluation of the same candidate
+% solution may return different values, are a canonical example and
+% arise naturally in
+% simulation-based and real-world settings.
 
 \subsection{Search Space}
 \subsubsection{Structure of the Search Space}
@@ -136,29 +121,31 @@ a \textit{neighborhood function} $\mathcal{N} : \mathcal{X} \to
 2^{\mathcal{X}}$,
 assigning to each candidate solution the set of solutions reachable
 in a single step~\cite{hoos2005intro}.
-For the Boolean hypercube, the standard neighborhood consists of all
+For the Boolean hypercube $\{0,1\}^n$, the standard neighborhood consists of all
 strings at Hamming
 distance one\footnote{\textit{Hamming distance} between two
   bitstrings of equal length is the number of positions at which the
 corresponding bits differ}.
 
-\begin{remark}[Problem domain of interest]
-  This project is concerned with \emph{Pseudo-Boolean, Discrete
-  Optimization problems}, with solution space $\mathcal{X} \subseteq
-  \{0,1\}^n$. A candidate solution can be represented as a
-  \emph{bitstring}: a sequence of alphabets $a \in \{0,1\}$. The
-  objective functions considered for such problems are of the form
-  $f:\mathcal{X} \to \mathbb{R}_0^+$, where $\mathbb{R}_0^+$ denotes
-  the non-negative reals. Without loss of generality, an objective
-  function with co-domain $\mathcal{T} \subseteq \mathbb{R}$ can be
-  mapped to this convention via the affine shift
+This project is concerned exclusively with \textit{pseudo-Boolean
+optimization}: problems in which the search space is the Boolean hypercube
+$\mathcal{X} = \{0,1\}^n$ and the objective function takes non-negative
+real values. A candidate solution is represented as a \textit{bitstring},
+a sequence of bits $x = (x_1, \ldots, x_n) \in \{0,1\}^n$, and the
+integer $n$ is referred to as the \textit{problem dimension}. The
+hypercube has cardinality $2^n$, so exhaustive enumeration of all
+candidate solutions is intractable for any practically relevant $n$.
+
+\begin{remark}[Objective function convention]
+  Without loss of generality, $f$ is taken to be non-negative throughout
+  this project. Any objective function with co-domain
+  $\mathcal{T} \subseteq \mathbb{R}$ can be shifted via the affine map
   \[
     g: \mathbb{R} \to \mathbb{R}_0^+, \qquad g(x) = x - \min_{y \in
     \mathcal{X}} f(y),
   \]
-  which is well-defined whenever $f$ attains its minimum on
-  $\mathcal{X}$, and preserves the ordering of all objective values
-  by construction.
+  which is well-defined whenever $f$ attains its minimum on $\mathcal{X}$
+  and preserves the ordering of all objective values by construction.
 \end{remark}
 
 \subsubsection{Constraints and Feasibility}
@@ -172,7 +159,7 @@ restriction beyond membership in $\mathcal{X}$~\cite{nocedal2006numerical}.
 At times, the constraints themselves can be black-box.
 All pseudo-Boolean problems studied in this project are unconstrained.
 
-\subsection{Objective Functions and Landscape Properties}
+\subsection{Objective Functions}
 
 The geometric structure of the objective function determines both
 which algorithms are
@@ -183,6 +170,22 @@ curvature, or structural properties such as convexity, generally
 enables stronger
 theoretical guarantees and more efficient algorithms; restricting this access,
 as in the black-box setting, correspondingly limits what can be guaranteed.
+
+\subsubsection{Oracle-Based Computation}
+\label{subsubsec:oraclecomp}
+% Definition of oracle access.
+% Query-response interaction model.
+
+An \textit{oracle} is an abstract computational device that answers
+queries about a
+problem instance. In optimization, the most common oracle is the
+\textit{function
+evaluation oracle}, which, given a query point $x \in \mathcal{X}$, returns the
+objective value $f(x)$ (or a noisy estimate thereof). The algorithm
+interacts with the
+oracle in a \textit{query-response} model: it submits a query and
+receives a response
+before deciding on the next query.
 
 \subsubsection{Zeroth-, First-, and Second-Order Methods}
 \label{subsubsec:order-methods}
@@ -206,32 +209,126 @@ Hence, these problems are often referred to as \textit{\acrfull{dfo}}
 problems. These conditions lay ground for the black-box model formalized in
 Section~\ref{sec:bbo}.
 
-\subsubsection{Landscape Properties}
+% \subsection{Probabilistic Tools for Algorithm Analysis}
+% \subsubsection{Expectation and Variance}
+% \subsubsection{Concentration Inequalities}
+% \paragraph{Markov's Inequality. }
+% \paragraph{Chebyshev's Inequality. }
+% \paragraph{Chernoff Bounds. }
 
-The geometric properties of $f$ determine which tier of analytical
-information is both available and useful. Convexity and Lipschitz
-smoothness, the properties that underpin first- and second-order
-guarantees, are defined in Appendix~\ref{app:landscape-props}.
+\section{Black-Box Optimization}
+\label{sec:bbo}
 
-\paragraph{Ruggedness and Multimodality.}
-% - Multiple local optima, deceptive gradients, epistatic interactions
-% - Motivates heuristic / stochastic methods: no first-order
-% structure to exploit
-% - Forward reference to NK-landscapes as a tunable model of ruggedness
-A landscape is \textit{rugged} when it contains many local optima
-separated by fitness valleys. In such landscapes the gradient (where
-it exists) is deceptive: improving moves at the local scale lead away
-from the global optimum, and no first-order structure can be
-exploited. Ruggedness arises naturally from \textit{epistatic
-interactions}, where the contribution of one variable to the
-objective depends on the values of others, preventing any separable
-decomposition. As $K$ increases in the NK-landscape model
-(Section~\ref{subsubsec:nk}), epistasis intensifies and the number
-of local optima grows, providing a tunable axis of landscape
-difficulty. Ruggedness is the primary motivation for stochastic
-search heuristics: randomized perturbation and acceptance of
-worsening moves are the principal tools for escaping local optima
-that would permanently trap deterministic hill-climbers.
+\subsection{Algorithms}
+\label{subsec:algorithms}
+
+An \textit{algorithm} is a finite, unambiguous sequence of instructions
+that transforms a given input into a desired output within a bounded
+number of steps~\cite{hoos2005intro}. In the context of optimization,
+the input is a problem instance and the output is a candidate solution
+together with its objective value; algorithm quality is judged both by
+the solutions returned and the computational resources consumed.
+
+\paragraph{Adaptive Algorithms.}
+
+An algorithm is \textit{adaptive} if each action at step $t$ is chosen
+as a function of the history of prior queries and their responses,
+$(x_1,f(x_1)),\ldots,(x_{t-1},f(x_{t-1}))$; a \textit{non-adaptive}
+algorithm such as pure random sampling fixes all query points in
+advance and serves as a natural complexity
+baseline~\cite{droste2006blackbox}. All algorithms studied in this
+project are fully adaptive.
+
+\paragraph{Deterministic and Randomized Algorithms.}
+% Definitions and differences.
+A \textit{deterministic} algorithm produces the same sequence of
+operations and the same output on every execution for a given input.
+A \textit{randomized} algorithm, by contrast, makes probabilistic
+choices during execution, so its behavior on a fixed input may vary
+across runs. In the black-box optimization setting, randomization is
+not merely a convenience but a necessity: the No-Free-Lunch theorems
+imply that no deterministic algorithm can perform well uniformly
+across all problem instances (See~\ref{subsubsec:nfl},
+\citet{wolpert2002no}), and randomized search heuristics derive
+their practical value from their ability to escape local optima
+through stochastic perturbation~\cite{doerr2020theory,hoos2005intro}.
+The theoretical analysis of such algorithms therefore concerns
+expected quantities (expected runtime, expected solution quality)
+rather than worst-case deterministic guarantees.
+
+% \paragraph{Adaptive and Non-Adaptive Algorithms.}
+% % Sequential decision processes.
+% % Role of feedback.
+
+\subsection{The Black-Box Model}
+% Formal oracle model.
+% Zeroth-order information.
+% Information revealed per query.
+% - What structural knowledge white-box methods exploit
+% - Gradient availability as the dividing line
+% - Computational trade-offs: information richness vs. access cost
+
+In the \textit{black-box optimization} model, the algorithm has no access to the
+analytical form of the objective function. It interacts with the
+objective exclusively
+through an oracle that, upon receiving a query $x \in \mathcal{X}$,
+returns $f(x)$ (or
+  a noisy estimate
+thereof)~\cite{droste2006blackbox,doerr2020theory,lengler2019drift}.
+The total number of such
+interactions constitutes the
+\textit{query complexity} of the algorithm, formalized in
+Section~\ref{subsubsec:infocomplexity}~\cite{nocedal2006numerical,
+droste2006blackbox}.
+The black-box model is appropriate whenever the objective arises from
+a simulation,
+physical experiment, or any process whose internal structure is
+inaccessible or too
+complex to exploit analytically. In fact, it has been observed that
+\acrshort{bbo} methods are sometimes applied due to their ease of use
+rather than necessity~\cite{bajaj2021black}.
+
+In contrast, in \textit{white-box optimization}, some information about
+the problem instance is made available to
+the algorithm (i.e., properties described in
+Subsubsection~\ref{subsubsec:order-methods}, Subsection~\ref{subsec:landprop}).
+
+\subsubsection{Taxonomy}
+
+Three models are relevant to this project. In the
+\textbf{unrestricted model}, the algorithm has arbitrary memory and
+full access to function values, yielding the weakest restriction and
+smallest complexity~\cite{droste2006blackbox}. In the \textbf{unary
+unbiased model}, variation operators are invariant under permutations
+and bitwise complementations of the search
+space~\cite{lehre2010black}; both \acrshort{rls} and the
+$(1+1)$~\acrshort{ea} fall into this class, making its \acrshort{bbc}
+the tightest applicable lower bound for these algorithms.
+\acrshort{sa} fits neither model cleanly (it exploits absolute fitness
+differences rather than rankings) so its performance is studied empirically.
+
+\subsubsection{Yao's Minimax Principle}
+\label{subsubsec:yaomini}
+
+Lower bounds are proved via Yao's minimax
+principle~\cite{yao1977probabilistic}. Let $\mathcal{I}$ be the set
+of problem instances, $\mathcal{A}$ the set of deterministic
+algorithms, and $T(I,A)$ the query cost (number of oracle calls) of
+algorithm $A \in \mathcal{A}$ on instance $I \in \mathcal{I}$. For
+any distribution $p$ over instances and $q$ over deterministic
+algorithms,
+\[
+  \min_{A \in \mathcal{A}}\,\mathbb{E}_{I \sim p}[T(I,A)]
+  \;\leq\;
+  \max_{I \in \mathcal{I}}\,\mathbb{E}_{A \sim q}[T(I,A)].
+\]
+A lower bound follows by exhibiting a distribution over instances on
+which every deterministic algorithm is slow. This parallels the
+minimax regret framework (Section~\ref{subsubsec:cr}), replacing the
+hitting criterion with a trajectory-level measure. The principle
+extends to memory-restricted and elitist models via a suitable
+superset construction~\cite{doerr2015onemax} (see
+Appendix~\ref{app:bbc-extended}).
 
 \subsection{Complexity Measures}
 \subsubsection{Classical Complexity: Time and Space}
@@ -242,9 +339,7 @@ of memory consumed). Both are typically expressed using asymptotic
 notation: $O(\cdot)$, $\Omega(\cdot)$, and $\Theta(\cdot)$ describe
 upper, lower, and tight bounds, respectively, on resource usage as
 the input size
-$n$ grows. In the setting of combinatorial optimization over
-$\{0,1\}^n$, the input size is the bitstring length $n$, and
-complexity results are stated as functions of $n$.
+$n$ grows.
 
 \subsubsection{Information Complexity: Query and Oracle Complexity}
 \label{subsubsec:infocomplexity}
@@ -287,78 +382,6 @@ and Yao's minimax principle, which lower-bounds the expected
 complexity of any randomized algorithm by exhibiting a hard
 distribution over instances~\cite{droste2006blackbox}
 (Subsubsection~\ref{subsubsec:yaomini}).
-
-% \subsection{Probabilistic Tools for Algorithm Analysis}
-% \subsubsection{Expectation and Variance}
-% \subsubsection{Concentration Inequalities}
-% \paragraph{Markov's Inequality. }
-% \paragraph{Chebyshev's Inequality. }
-% \paragraph{Chernoff Bounds. }
-
-\section{Black-Box Optimization}
-\label{sec:bbo}
-
-\subsection{The Black-Box Model}
-% Formal oracle model.
-% Zeroth-order information.
-% Information revealed per query.
-% - What structural knowledge white-box methods exploit
-% - Gradient availability as the dividing line
-% - Computational trade-offs: information richness vs. access cost
-
-In the \textit{black-box optimization} model, the algorithm has no access to the
-analytical form of the objective function. It interacts with the
-objective exclusively
-through an oracle that, upon receiving a query $x \in \mathcal{X}$,
-returns $f(x)$ (or
-  a noisy estimate
-thereof)~\cite{droste2006blackbox,doerr2020theory,lengler2019drift}.
-The black-box model is appropriate whenever the objective arises from
-a simulation,
-physical experiment, or any process whose internal structure is
-inaccessible or too
-complex to exploit analytically.
-
-In contrast, in \textit{white-box optimization}, some information about
-the problem instance is made available to
-the algorithm.
-
-\subsubsection{Black-Box Models}
-
-Three models are relevant to this project. In the
-\textbf{unrestricted model}, the algorithm has arbitrary memory and
-full access to function values, yielding the weakest restriction and
-smallest complexity~\cite{droste2006blackbox}. In the \textbf{unary
-unbiased model}, variation operators are invariant under permutations
-and bitwise complementations of the search
-space~\cite{lehre2010black}; both \acrshort{rls} and the
-$(1+1)$~\acrshort{ea} fall into this class, making its \acrshort{bbc}
-the tightest applicable lower bound for these algorithms.
-\acrshort{sa} fits neither model cleanly (it exploits absolute fitness
-differences rather than rankings) so its performance is studied empirically.
-
-\subsubsection{Yao's Minimax Principle}
-\label{subsubsec:yaomini}
-
-Lower bounds are proved via Yao's minimax
-principle~\cite{yao1977probabilistic}. Let $\mathcal{I}$ be the set
-of problem instances, $\mathcal{A}$ the set of deterministic
-algorithms, and $T(I,A)$ the query cost (number of oracle calls) of
-algorithm $A \in \mathcal{A}$ on instance $I \in \mathcal{I}$. For
-any distribution $p$ over instances and $q$ over deterministic
-algorithms,
-\[
-  \min_{A \in \mathcal{A}}\,\mathbb{E}_{I \sim p}[T(I,A)]
-  \;\leq\;
-  \max_{I \in \mathcal{I}}\,\mathbb{E}_{A \sim q}[T(I,A)].
-\]
-A lower bound follows by exhibiting a distribution over instances on
-which every deterministic algorithm is slow. This parallels the
-minimax regret framework (Section~\ref{subsubsec:cr}), replacing the
-hitting criterion with a trajectory-level measure. The principle
-extends to memory-restricted and elitist models via a suitable
-superset construction~\cite{doerr2015onemax} (see
-Appendix~\ref{app:bbc-extended}).
 
 \subsection{A Few Pseudo-Boolean Problems}
 
@@ -623,6 +646,34 @@ local optima growing in the limit. NK-landscapes thus provide a tunable model of
 ruggedness and are widely used to study algorithmic scalability and
 robustness across a
 spectrum of problem difficulties.
+
+\subsection{Landscape Properties}
+\label{subsec:landprop}
+
+The geometric properties of $f$ determine which tier of analytical
+information is both available and useful. Convexity and Lipschitz
+smoothness, the properties that underpin first- and second-order
+guarantees, are defined in Appendix~\ref{app:landscape-props}.
+
+\paragraph{Ruggedness and Multimodality.}
+% - Multiple local optima, deceptive gradients, epistatic interactions
+% - Motivates heuristic / stochastic methods: no first-order
+% structure to exploit
+% - Forward reference to NK-landscapes as a tunable model of ruggedness
+A landscape is \textit{rugged} when it contains many local optima
+separated by fitness valleys. In such landscapes the gradient (where
+it exists) is deceptive: improving moves at the local scale lead away
+from the global optimum, and no first-order structure can be
+exploited. Ruggedness arises naturally from \textit{epistatic
+interactions}, where the contribution of one variable to the
+objective depends on the values of others, preventing any separable
+decomposition. As $K$ increases in the NK-landscape model
+(Section~\ref{subsubsec:nk}), epistasis intensifies and the number
+of local optima grows, providing a tunable axis of landscape
+difficulty. Ruggedness is the primary motivation for stochastic
+search heuristics: randomized perturbation and acceptance of
+worsening moves are the principal tools for escaping local optima
+that would permanently trap deterministic hill-climbers.
 
 \subsection{Purpose of Randomized Search Heuristics}
 % Explain why, given the BBO setting, one turns to general-purpose
@@ -990,7 +1041,7 @@ behavior as the run progresses.
   \end{algorithmic}
 \end{algorithm}
 
-\subsection{Traditional Performance Measures in BBO}
+\subsection{Performance Measures in BBO}
 \label{subsec:bbo-perf}
 % - Expected runtime (hitting time to reach the optimum or a quality threshold)
 %   as the standard measure in EA theory  [droste2002analysis; doerr2020theory]
