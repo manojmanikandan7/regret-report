@@ -134,8 +134,7 @@ real values. A candidate solution is represented as a \textit{bitstring},
 a sequence of bits $x = (x_1, \ldots, x_n) \in \{0,1\}^n$, and the
 integer $n$ is referred to as the \textit{problem dimension}. The
 hypercube has cardinality $2^n$, so exhaustive enumeration of all
-candidate solutions is intractable for any practically relevant $n$.
-
+candidate solutions is intractable for any practically relevant $n$.\footnote{%
 \begin{remark}[Objective function convention]
   Without loss of generality, $f$ is taken to be non-negative throughout
   this project. Any objective function with co-domain
@@ -147,6 +146,7 @@ candidate solutions is intractable for any practically relevant $n$.
   which is well-defined whenever $f$ attains its minimum on $\mathcal{X}$
   and preserves the ordering of all objective values by construction.
 \end{remark}
+}
 
 \subsubsection{Constraints and Feasibility}
 % Feasible region definition.
@@ -218,6 +218,12 @@ Section~\ref{sec:bbo}.
 
 \section{Black-Box Optimization}
 \label{sec:bbo}
+The project is concerned with algorithms that interact with the 
+objective function exclusively through a query oracle, the 
+\textit{black-box} setting. This section formalizes that model, 
+establishes the complexity measures used to evaluate algorithms 
+within it, and introduces the benchmark problems and algorithm 
+families that are studied throughout the rest of the report.
 
 \subsection{Algorithms}
 \label{subsec:algorithms}
@@ -1155,12 +1161,16 @@ optimum in a single lucky step is indistinguishable from one making steady
 progress under $\mathbb{E}[\tau_{f^*}]$ alone. Pinto and
 Doerr~\cite{pinto2018practice} call explicitly for \textit{combined anytime
 measures} from machine learning, naming regret as a natural candidate while
-noting that a satisfying formulation remains open. This project takes that call
-as its starting point; the regret vocabulary is developed in
-Sections~\ref{sec:online}--\ref{sec:regret}.
+noting that a satisfying formulation remains open.
 
 \section{Sequential and Online Optimization Frameworks}
 \label{sec:online}
+The regret framework adopted in this project originates in the 
+online learning and sequential decision-making literature. This section introduces the 
+minimal concepts from that tradition, the exploration--exploitation 
+trade-off, the multi-armed bandit model, and Bayesian optimization, that are required to make the regret vocabulary of 
+Section~\ref{sec:regret} rigorous and to situate this project 
+within the broader landscape of black-box optimization research.
 
 \subsection{Exploration-Exploitation Trade-off}
 %   Gathering information (exploration) vs. using current best
@@ -1208,11 +1218,6 @@ the number of pulls of arm $i$ up to time
 $T$~\cite{bubeck2012regret,lattimore2020bandit}. Regret is therefore
 driven by how often the learner samples suboptimal actions.
 
-This model connects naturally to \acrshort{bbo}. In a finite search
-space, candidate solutions can be viewed as arms and objective
-evaluations as arm pulls. For large or structured domains, however,
-this flat view breaks down, motivating more structured models such as
-Bayesian optimization.
 
 % TODO: add to intro (?)
 % \subsection{Reinforcement Learning (Overview)}
@@ -1264,6 +1269,11 @@ that form the subject of this project.
 
 \section{Computational Regret}
 \label{sec:regret}
+Having established both the black-box setting and the online 
+learning framework from which regret originates, this section 
+defines regret formally and identifies the specific variant, incumbent cumulative regret, that is used as the primary 
+performance measure throughout the experimental analysis in 
+Chapter~\ref{cha:exper}.
 
 \subsection{Definition of Regret}
 % Formal mathematical definition.
