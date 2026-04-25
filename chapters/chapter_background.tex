@@ -135,17 +135,17 @@ a sequence of bits $x = (x_1, \ldots, x_n) \in \{0,1\}^n$, and the
 integer $n$ is referred to as the \textit{problem dimension}. The
 hypercube has cardinality $2^n$, so exhaustive enumeration of all
 candidate solutions is intractable for any practically relevant $n$.\footnote{%
-\begin{remark}[Objective function convention]
-  Without loss of generality, $f$ is taken to be non-negative throughout
-  this project. Any objective function with co-domain
-  $\mathcal{T} \subseteq \mathbb{R}$ can be shifted via the affine map
-  \[
-    g: \mathbb{R} \to \mathbb{R}_0^+, \qquad g(x) = x - \min_{y \in
-    \mathcal{X}} f(y),
-  \]
-  which is well-defined whenever $f$ attains its minimum on $\mathcal{X}$
-  and preserves the ordering of all objective values by construction.
-\end{remark}
+  \begin{remark}[Objective function convention]
+    Without loss of generality, $f$ is taken to be non-negative throughout
+    this project. Any objective function with co-domain
+    $\mathcal{T} \subseteq \mathbb{R}$ can be shifted via the affine map
+    \[
+      g: \mathbb{R} \to \mathbb{R}_0^+, \qquad g(x) = x - \min_{y \in
+      \mathcal{X}} f(y),
+    \]
+    which is well-defined whenever $f$ attains its minimum on $\mathcal{X}$
+    and preserves the ordering of all objective values by construction.
+  \end{remark}
 }
 
 \subsubsection{Constraints and Feasibility}
@@ -218,11 +218,11 @@ Section~\ref{sec:bbo}.
 
 \section{Black-Box Optimization}
 \label{sec:bbo}
-The project is concerned with algorithms that interact with the 
-objective function exclusively through a query oracle, the 
-\textit{black-box} setting. This section formalizes that model, 
-establishes the complexity measures used to evaluate algorithms 
-within it, and introduces the benchmark problems and algorithm 
+The project is concerned with algorithms that interact with the
+objective function exclusively through a query oracle, the
+\textit{black-box} setting. This section formalizes that model,
+establishes the complexity measures used to evaluate algorithms
+within it, and introduces the benchmark problems and algorithm
 families that are studied throughout the rest of the report.
 
 \subsection{Algorithms}
@@ -1134,7 +1134,7 @@ intermediate fitness level $v$, characterizing the distribution of
 \[
   \tau_v \;:=\; \min\bigl\{t \in \mathbb{N} : f(x_t) \geq v\bigr\}.
 \]
-Pinto and Doerr~\cite{pinto2018practice} show that reporting the full
+\citet{pinto2018practice} show that reporting the full
 collection $(\mathbb{E}[\tau_v])_v$ reveals crossover fitness levels where
 one algorithm overtakes another, behavior invisible to $\mathbb{E}[\tau_{f^*}]$
 alone. Chapter~\ref{cha:profiles} develops this further.
@@ -1165,11 +1165,13 @@ noting that a satisfying formulation remains open.
 
 \section{Sequential and Online Optimization Frameworks}
 \label{sec:online}
-The regret framework adopted in this project originates in the 
-online learning and sequential decision-making literature. This section introduces the 
-minimal concepts from that tradition, the exploration--exploitation 
-trade-off, the multi-armed bandit model, and Bayesian optimization, that are required to make the regret vocabulary of 
-Section~\ref{sec:regret} rigorous and to situate this project 
+The regret framework adopted in this project originates in the
+online learning and sequential decision-making literature. This
+section introduces the
+minimal concepts from that tradition, the exploration--exploitation
+trade-off, the multi-armed bandit model, and Bayesian optimization,
+that are required to make the regret vocabulary of
+Section~\ref{sec:regret} rigorous and to situate this project
 within the broader landscape of black-box optimization research.
 
 \subsection{Exploration-Exploitation Trade-off}
@@ -1218,7 +1220,6 @@ the number of pulls of arm $i$ up to time
 $T$~\cite{bubeck2012regret,lattimore2020bandit}. Regret is therefore
 driven by how often the learner samples suboptimal actions.
 
-
 % TODO: add to intro (?)
 % \subsection{Reinforcement Learning (Overview)}
 % % - Value functions, policies, and the policy optimization perspective
@@ -1246,19 +1247,19 @@ driven by how often the learner samples suboptimal actions.
 % - Distinction from the RSH setting: BO uses a learned surrogate;
 %   RSHs are memoryless or use no probabilistic model
 
-\acrfull{bo} treats expensive black-box optimization as a sequential
-learning problem~\cite{jones1998efficient,shahriari2015taking,
-frazier2018tutorial}. A probabilistic surrogate (typically a Gaussian
-process) models the unknown objective, and an acquisition function
-selects the next query by balancing predicted value against
-uncertainty. \acrshort{bo} is relevant here primarily because it is
-the closest existing framework to have developed a mature regret
-theory for black-box settings: \textsc{GP-UCB} admits sublinear
-cumulative-regret guarantees under Gaussian-process or RKHS
-\footnote{\textit{abbr.}~Reproducing kernel Hilbert space.
-(Optionally, see \cite{ghojogh2021reproducing})}
-assumptions~\cite{srinivas2009gaussian,chowdhury2017kernelized,
-scarlett2017lower}. These guarantees rely on surrogate assumptions
+The closest existing body of work applying regret to black-box
+optimization is \acrfull{bo}~\cite{jones1998efficient,
+shahriari2015taking, frazier2018tutorial}. \acrshort{bo} treats the optimization
+as a sequential learning problem: a probabilistic surrogate
+(typically a Gaussian process) models the unknown objective, and an
+acquisition function selects the next query by trading predicted
+value against uncertainty. Incidentally, it has yielded a mature regret
+theory: the GP-UCB algorithm admits sublinear cumulative-regret
+guarantees under Gaussian-process or
+RKHS\footnote{\textit{abbr.}~Reproducing kernel Hilbert space.
+(Optionally, see \cite{ghojogh2021reproducing})} assumptions
+\cite{srinivas2009gaussian, chowdhury2017kernelized, scarlett2017lower}.
+These guarantees rely on surrogate assumptions
 that are natural in low-dimensional continuous spaces but do not
 transfer directly to the pseudo-Boolean domains $\{0,1\}^n$ studied
 here, where kernel engineering is required and acquisition
@@ -1266,13 +1267,13 @@ optimization is itself an NP-hard combinatorial
 problem~\cite{shahriari2015taking}. This motivates studying regret
 for the simpler, surrogate-free randomized search heuristics
 that form the subject of this project.
-
 \section{Computational Regret}
 \label{sec:regret}
-Having established both the black-box setting and the online 
-learning framework from which regret originates, this section 
-defines regret formally and identifies the specific variant, incumbent cumulative regret, that is used as the primary 
-performance measure throughout the experimental analysis in 
+Having established both the black-box setting and the online
+learning framework from which regret originates, this section
+defines regret formally and identifies the specific variant,
+incumbent cumulative regret, that is used as the primary
+performance measure throughout the experimental analysis in
 Chapter~\ref{cha:exper}.
 
 \subsection{Definition of Regret}
