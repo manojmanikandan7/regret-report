@@ -94,62 +94,6 @@ classical measures cannot.
 % optimizes a single or multiple objectives on the provided (training
 % and validation) data.
 % (e.g., accuracy, F1-score, $R^2$ score.).
-\section{Contributions}
-\label{sec:intro:contributions}
-
-This project makes the following principal contributions, as
-summarized in Table~\ref{tab:contributions}.
-\begin{longtable}{@{}p{0.15\linewidth}p{0.79\linewidth}@{}}
-
-  \toprule
-  \textbf{Area} & \textbf{Contributions} \\
-  \midrule
-  \endfirsthead
-
-  \toprule
-  \textbf{Area} & \textbf{Contributions} \\
-  \midrule
-  \endhead
-
-  % \bottomrule
-  % \endlastfoot
-
-  \textsc{Theory} &
-  Established a formal connection between expected incumbent
-  cumulative regret and
-  the distributional runtime profile of~\citet{pinto2018practice}
-  (Theorem~\ref{thm:regret-profile}), yielding the \textit{combined anytime
-  measure} identified as an open problem in the evolutionary computation
-  literature. Corollary~\ref{cor:asymptotic-regret} relates infinite-horizon
-  regret to the sum of expected first hitting times over all fitness levels,
-  bridging expected-runtime analysis and regret-based evaluation. The
-  results hold
-  for any randomized black-box algorithm on any finite pseudo-Boolean domain. \\
-  \hline
-
-  \textsc{Empirics} &
-  Introduced a structured suite of 13 experiments that numerically validates the
-  tail-sum identity (Suite~08) and studies how regret trajectories reflect
-  landscape structure, including barrier crossings (Suites~04--06, 09--10),
-  epistatic ruggedness (Suites~03, 12), hierarchical difficulty (Suite~07), and
-  scaling behavior (Suite~13). The results show that cumulative regret captures
-  diagnostic information about trapped phases and saturation that
-  fixed-budget and
-  expected-runtime measures miss when $P(\mathrm{opt}) \approx 0$. \\
-  \hline
-
-  \textsc{Software} &
-  Developed \texttt{regret}, a declarative, reproducible, and parallelized
-  experimental framework for pseudo-Boolean and combinatorial optimization
-  problems, with support for trajectory recording, regret metrics,
-  runtime-profile
-  analysis, and structured output in \acrshort{json} and
-  \acrshort{pdf} formats. \\
-  \hline
-
-  \caption{Main contributions from the project.}
-  \label{tab:contributions}
-\end{longtable}
 
 % Give context to the reader about the objectives
 \section{Aims and Objectives}
@@ -227,9 +171,121 @@ summarized in Table~\ref{tab:contributions}.
   \\
   \hline
   \caption{Project aims and specific objectives.}
+  \label{tab:aims}
 \end{longtable}
 
 \subsection{Success Criteria}
+\label{subsec:intro:success}
+Following this project's intended aims (Table~\ref{tab:aims}), the \emph{success criteria} for these achievements are quantified in Table~\ref{tab:succrit}.
+ 
+\begin{longtable}{@{}p{0.15\linewidth}p{0.79\linewidth}@{}}
+
+  \toprule
+  \textbf{Area} & \textbf{Criteria} \\
+  \midrule
+  \endfirsthead
+
+  \toprule
+  \textbf{Area} & \textbf{Criteria} \\
+  \midrule
+  \endhead
+
+  % \bottomrule
+  % \endlastfoot
+
+  \textsc{Theory} &
+The tail-sum identity (Theorem~\ref{thm:regret-profile}) must be both
+proved rigorously \textit{and} corroborated numerically to within
+Monte-Carlo sampling error on at least two benchmark functions. Proof
+alone is insufficient: if the identity cannot be verified in the
+finite, discrete experimental setting, it provides no practical basis
+for the empirical analyses that follow. Agreement between
+trajectory-derived and profile-derived expected cumulative regret
+curves procured from experiments constitutes the verification. \\
+\hline
+
+\textsc{Empirics} &
+Cumulative regret trajectories must yield qualitatively distinct
+signatures across at least three landscape archetypes (for instance,
+unimodal, barrier, and deceptive) that are not separated by
+expected runtime (time to optimum) alone. This is the
+operational test of the project's central claim that regret provides
+strictly more diagnostic information than classical measures. Without
+this, the theoretical contribution, though formally correct, would
+have no demonstrated practical utility.\\
+\hline
+ 
+\textsc{Software} &
+The \texttt{regret} framework must execute all 14 experimental suites
+reproducibly and maintain a minimum of 50\% branch coverage enforced
+in \acrshort{ci}. This threshold is the evidentiary floor for the
+empirical contribution: results obtained from an unvalidated
+implementation cannot support claims about algorithm behavior, and
+reproducibility is a precondition for any comparative conclusion.\\
+\hline
+
+\caption{Success criteria for the project}
+\label{tab:succrit}
+
+\end{longtable}
+ 
+
+\section{Contributions}
+\label{sec:intro:contributions}
+
+This project makes the following principal contributions, as
+summarized in Table~\ref{tab:contributions}.
+\begin{longtable}{@{}p{0.15\linewidth}p{0.79\linewidth}@{}}
+
+  \toprule
+  \textbf{Area} & \textbf{Contributions} \\
+  \midrule
+  \endfirsthead
+
+  \toprule
+  \textbf{Area} & \textbf{Contributions} \\
+  \midrule
+  \endhead
+
+  % \bottomrule
+  % \endlastfoot
+
+  \textsc{Theory} &
+  Established a formal connection between expected incumbent
+  cumulative regret and
+  the distributional runtime profile of~\citet{pinto2018practice}
+  (Theorem~\ref{thm:regret-profile}), yielding the \textit{combined anytime
+  measure} identified as an open problem in the evolutionary computation
+  literature. Corollary~\ref{cor:asymptotic-regret} relates infinite-horizon
+  regret to the sum of expected first hitting times over all fitness levels,
+  bridging expected-runtime analysis and regret-based evaluation. The
+  results hold
+  for any randomized black-box algorithm on any finite pseudo-Boolean domain. \\
+  \hline
+
+  \textsc{Empirics} &
+  Introduced a structured suite of 13 experiments that numerically validates the
+  tail-sum identity (Suite~08) and studies how regret trajectories reflect
+  landscape structure, including barrier crossings (Suites~04--06, 09--10),
+  epistatic ruggedness (Suites~03, 12), hierarchical difficulty (Suite~07), and
+  scaling behavior (Suite~13). The results show that cumulative regret captures
+  diagnostic information about trapped phases and saturation that
+  fixed-budget and
+  expected-runtime measures miss when $P(\mathrm{opt}) \approx 0$. \\
+  \hline
+
+  \textsc{Software} &
+  Developed \texttt{regret}, a declarative, reproducible, and parallelized
+  experimental framework for pseudo-Boolean and combinatorial optimization
+  problems, with support for trajectory recording, regret metrics,
+  runtime-profile
+  analysis, and structured output in \acrshort{json} and
+  \acrshort{pdf} formats. \\
+  \hline
+
+  \caption{Main contributions from the project.}
+  \label{tab:contributions}
+\end{longtable}
 
 \newpage
 \section{Report Structure}
