@@ -19,6 +19,29 @@ Industrial process optimization, drug-design pipelines, and the tuning of
 machine-learning models~\cite{bajaj2021black,bischl2017mlrmbo} belong
 to this class of problems.
 
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+      node distance=2.8cm,
+      box/.style={rectangle, rounded corners, draw, align=center,
+      minimum width=3.0cm, minimum height=1.0cm},
+      arrow/.style={->, thick}
+    ]
+    \node[box] (alg) {Black-box\\algorithm $\mathcal{A}$};
+    \node[box, right=of alg] (oracle) {Function-evaluation\\oracle};
+    \node[box, below=of oracle] (obj) {Unknown
+    objective\\$f:\{0,1\}^n\to\mathbb{R}$};
+
+    \draw[arrow] (alg) -- node[above] {query $x_t$} (oracle);
+    \draw[arrow] (oracle) -- node[below] {value $f(x_t)$} (alg);
+    \draw[arrow] (oracle) -- (obj);
+  \end{tikzpicture}
+  \caption{Black-box optimization interaction model. The algorithm receives
+    only zeroth-order objective values and must adapt future queries from the
+  observed history.}
+  \label{fig:bbo-query-loop}
+\end{figure}
+
 Without structural access, practitioners turn to general-purpose
 \textit{\acrfull{rsh}}s: stochastic algorithms such as Evolutionary
 Algorithms (\acrshort{ea}) and Simulated Annealing (\acrshort{sa})
@@ -176,8 +199,10 @@ classical measures cannot.
 
 \subsection{Success Criteria}
 \label{subsec:intro:success}
-Following this project's intended aims (Table~\ref{tab:aims}), the \emph{success criteria} for these achievements are quantified in Table~\ref{tab:succrit}.
- 
+Following this project's intended aims (Table~\ref{tab:aims}), the
+\emph{success criteria} for these achievements are quantified in
+Table~\ref{tab:succrit}.
+
 \begin{longtable}{@{}p{0.15\linewidth}p{0.79\linewidth}@{}}
 
   \toprule
@@ -194,41 +219,40 @@ Following this project's intended aims (Table~\ref{tab:aims}), the \emph{success
   % \endlastfoot
 
   \textsc{Theory} &
-The tail-sum identity (Theorem~\ref{thm:regret-profile}) must be both
-proved rigorously \textit{and} corroborated numerically to within
-Monte-Carlo sampling error on at least two benchmark functions. Proof
-alone is insufficient: if the identity cannot be verified in the
-finite, discrete experimental setting, it provides no practical basis
-for the empirical analyses that follow. Agreement between
-trajectory-derived and profile-derived expected cumulative regret
-curves procured from experiments constitutes the verification. \\
-\hline
+  The tail-sum identity (Theorem~\ref{thm:regret-profile}) must be both
+  proved rigorously \textit{and} corroborated numerically to within
+  Monte-Carlo sampling error on at least two benchmark functions. Proof
+  alone is insufficient: if the identity cannot be verified in the
+  finite, discrete experimental setting, it provides no practical basis
+  for the empirical analyses that follow. Agreement between
+  trajectory-derived and profile-derived expected cumulative regret
+  curves procured from experiments constitutes the verification. \\
+  \hline
 
-\textsc{Empirics} &
-Cumulative regret trajectories must yield qualitatively distinct
-signatures across at least three landscape archetypes (for instance,
-unimodal, barrier, and deceptive) that are not separated by
-expected runtime (time to optimum) alone. This is the
-operational test of the project's central claim that regret provides
-strictly more diagnostic information than classical measures. Without
-this, the theoretical contribution, though formally correct, would
-have no demonstrated practical utility.\\
-\hline
- 
-\textsc{Software} &
-The \texttt{regret} framework must execute all 14 experimental suites
-reproducibly and maintain a minimum of 50\% branch coverage enforced
-in \acrshort{ci}. This threshold is the evidentiary floor for the
-empirical contribution: results obtained from an unvalidated
-implementation cannot support claims about algorithm behavior, and
-reproducibility is a precondition for any comparative conclusion.\\
-\hline
+  \textsc{Empirics} &
+  Cumulative regret trajectories must yield qualitatively distinct
+  signatures across at least three landscape archetypes (for instance,
+  unimodal, barrier, and deceptive) that are not separated by
+  expected runtime (time to optimum) alone. This is the
+  operational test of the project's central claim that regret provides
+  strictly more diagnostic information than classical measures. Without
+  this, the theoretical contribution, though formally correct, would
+  have no demonstrated practical utility.\\
+  \hline
 
-\caption{Success criteria for the project}
-\label{tab:succrit}
+  \textsc{Software} &
+  The \texttt{regret} framework must execute all 14 experimental suites
+  reproducibly and maintain a minimum of 50\% branch coverage enforced
+  in \acrshort{ci}. This threshold is the evidentiary floor for the
+  empirical contribution: results obtained from an unvalidated
+  implementation cannot support claims about algorithm behavior, and
+  reproducibility is a precondition for any comparative conclusion.\\
+  \hline
+
+  \caption{Success criteria for the project}
+  \label{tab:succrit}
 
 \end{longtable}
- 
 
 \section{Contributions}
 \label{sec:intro:contributions}

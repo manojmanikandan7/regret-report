@@ -391,6 +391,48 @@ distribution over instances~\cite{droste2006blackbox}
 
 \subsection{A Few Pseudo-Boolean Problems}
 
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{vis/landscape_onemax.pdf}
+    \caption{\textsc{OneMax}.}
+    \label{fig:landscape-onemax}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{vis/landscape_jump.pdf}
+    \caption{\textsc{Jump}: a $k$-wide unitation gap separates the
+    local and global optima.}
+    \label{fig:landscape-jump}
+  \end{subfigure}
+
+  \vspace{0.8em}
+
+  \begin{subfigure}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{vis/landscape_plateau.pdf}
+    \caption{\textsc{Plateau}: a $k$-wide neutral region removes
+    gradient information.}
+    \label{fig:landscape-plateau}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{vis/landscape_trap.pdf}
+    \caption{\textsc{Trap}: a deceptive basin competes with the global optimum.}
+    \label{fig:landscape-trap}
+  \end{subfigure}
+
+  \caption{Unitation-based views of representative pseudo-Boolean benchmark
+    landscapes. Here $u=|x|_1$ denotes the number of one-bits. For the
+    parameterized landscapes, $k$ is shown directly on the unitation axis and
+  marks the width of the barrier, plateau, or deceptive region.}
+  \label{fig:benchmark-landscape-subfigures}
+\end{figure}
+
 The \textit{pseudo-Boolean} setting considers functions $f :
 \{0,1\}^n \to \mathbb{R}$
 defined on binary strings of length $n$. Several benchmark functions
@@ -602,7 +644,9 @@ important benchmark for combinatorial optimization algorithms.
 \label{subsec:petersen}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{petersen_graph.pdf}
+  \includegraphics[width=0.4\textwidth]{petersen_graph.pdf}
+  \caption{From \cite{weisstein_petersen_graph}, depicting a Petersen
+  graph, a cubic graph on 10 vertices and 15 edges}
 \end{figure}
 
 The \textit{Petersen graph}~\cite{weisstein_petersen_graph} is a
@@ -825,6 +869,15 @@ implementation-aware refinements are discussed in
 Appendix~\ref{app:ea}.
 
 \subsubsection{Simulated Annealing}
+\acrfull{sa} is a randomized local-search method that differs from a
+pure hill-climber by sometimes accepting worse neighboring solutions.
+At each iteration, the algorithm proposes a neighboring candidate
+solution and compares its objective value with that of the current
+solution. Improving moves are accepted immediately. Worsening moves may
+also be accepted, but only with a probability controlled by a
+temperature parameter. High temperatures make such moves relatively
+likely, encouraging exploration; low temperatures make them rare,
+causing the search to behave increasingly like local search.
 
 \begin{algorithm}[H]
   \caption{Simulated Annealing with cooling schedule $T(\cdot)$}
@@ -848,45 +901,108 @@ Appendix~\ref{app:ea}.
   \end{algorithmic}
 \end{algorithm}
 
-\acrfull{sa} is a probabilistic local search
-algorithm that extends iterative improvement by occasionally accepting
-worsening moves, allowing escape from local optima that would otherwise
-trap a pure hill-climber. The method was introduced by
-\citet{kirkpatrick1983optimization}, who drew an
-explicit analogy with the physical process of annealing in solids:
-a material is first melted at high temperature, then cooled slowly
-so that atoms settle into a stable, low-energy crystalline configuration.
-
-In the optimization context, the algorithm maintains a current solution
-$x \in \mathcal{X}$ and at each step proposes a random neighbor
-$y \in \mathcal{N}(x)$. If $f(y) \geq f(x)$, the move is accepted
-unconditionally. If $f(y) < f(x)$, the move is accepted with
-probability
+This acceptance rule is a special case of the
+Metropolis--Hastings acceptance
+criterion~\cite{hastings1970monte,metropolis1953equation}. In
+general, a proposed move
+is accepted according to the ratio between the probability assigned to
+the proposed state and the probability assigned to the current state.
+For the symmetric neighborhood proposals used in this project, the
+proposal probabilities cancel, leaving only the ratio of the
+temperature-dependent state weights. In the maximization convention
+used throughout this project, a candidate solution with objective value
+\(f(x)\) is assigned weight
 \[
-  \exp\!\left(\frac{f(y) - f(x)}{T(t)}\right),
+  \exp(f(x)/T)\footnote{The classical physics notation writes the
+    Boltzmann factor as
+    \(\exp(-E/T)\), where \(E\) is an energy to be minimized. This project
+    uses a maximization objective \(f\), so the equivalent form is
+    \(\exp(f/T)\). The two conventions agree under the identification
+  \(f=-E\).\label{fn:bolmaxinot}},
 \]
-where $T(t) > 0$ is the \textit{temperature} at step $t$, a control
-parameter that decreases over time according to a \textit{cooling
-schedule}~\cite{kirkpatrick1983optimization,bertsimas1993simulated}.
-At high temperatures the acceptance criterion is nearly uniform,
-permitting broad exploration; as $T(t) \to 0$ the algorithm collapses
-toward a greedy hill-climber that accepts only improvements.
+where \(T>0\) is the current temperature. Hence, a proposed move from
+\(x\) to \(x'\) is accepted automatically when \(f(x') \geq f(x)\), and
+is accepted with probability
+\[
+  \exp((f(x') - f(x))/T)
+  \quad \text{when } f(x') < f(x).
+\]
+Thus, small decreases in objective value are more likely to be accepted
+than large decreases, and all worsening moves become less likely as the
+temperature decreases.
 
-The theoretical behavior of \acrshort{sa} is governed by the \textit{cooling
-schedule}. Modelling the process as a time-inhomogeneous Markov chain,
-Hajek~\cite{hajek1988cooling} established a sharp necessary and
-sufficient condition on the schedule for convergence in probability to
-the global optimum; the condition relates the decay rate of $T(t)$ to
-the depth $d^{*}$ of the deepest non-global local minimum. The full
-statement and its implications are given in
-Appendix~\ref{app:hajek}. In practice, the schedule satisfying this
-condition cools logarithmically, which is theoretically optimal but
-often too slow; faster schedules reduce \acrshort{sa} to a stochastic
-hill-climber once the temperature reaches zero. The choice of cooling
-schedule therefore encodes a fundamental trade-off between solution
-quality and computational budget, and is the primary design decision
-when applying \acrshort{sa} to any combinatorial
-problem~\cite{kirkpatrick1983optimization,hajek1988cooling}.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{boltzmann_dist.png}
+  \caption{From \cite[Figure 1]{nityananda2012bose}: The Boltzmann
+    distribution of particles over energy states.
+    The horizontal axis represents
+    the energy \(E\) of a physical state; in simulated annealing this
+    corresponds to the cost or energy \(E(x)\) of a candidate solution
+    \(x\), where lower values are preferred (minimization, see
+    footnote ~\ref{fn:bolmaxinot}). The vertical axis represents
+    the number of particles occupying states of that energy; in simulated
+    annealing this corresponds to the relative probability assigned to
+    candidate solutions with that energy. At high temperature, the
+    distribution is flatter, so higher-energy, worse solutions still have
+    non-negligible probability and the algorithm explores more freely. As
+    the temperature decreases, probability mass concentrates on
+    lower-energy solutions, making worsening moves increasingly unlikely
+    and causing the search to behave more like local descent.
+  }
+  \label{fig:boltzmann-sa}
+\end{figure}
+
+This places \acrshort{sa} in direct relation to the Gibbs distribution,
+also called the Boltzmann distribution in its statistical-mechanical
+setting. The distribution assigns higher probability to states with
+larger objective value at a fixed temperature, while the cooling
+schedule gradually concentrates probability mass on high-quality
+solutions~\cite{kirkpatrick1983optimization,bertsimas1993simulated}.
+The practical role of \acrshort{sa} is therefore to use this
+temperature-dependent acceptance mechanism to balance exploration early
+in the run with exploitation later in the run. Formal convergence
+conditions for cooling schedules are given in Appendix~\ref{app:hajek}.
+
+% \acrfull{sa} is a probabilistic local search
+% algorithm that extends iterative improvement by occasionally accepting
+% worsening moves, allowing escape from local optima that would otherwise
+% trap a pure hill-climber. The method was introduced by
+% \citet{kirkpatrick1983optimization}, who drew an
+% explicit analogy with the physical process of annealing in solids:
+% a material is first melted at high temperature, then cooled slowly
+% so that atoms settle into a stable, low-energy crystalline configuration.
+
+% In the optimization context, the algorithm maintains a current solution
+% $x \in \mathcal{X}$ and at each step proposes a random neighbor
+% $y \in \mathcal{N}(x)$. If $f(y) \geq f(x)$, the move is accepted
+% unconditionally. If $f(y) < f(x)$, the move is accepted with
+% probability
+% \[
+%   \exp\!\left(\frac{f(y) - f(x)}{T(t)}\right),
+% \]
+% where $T(t) > 0$ is the \textit{temperature} at step $t$, a control
+% parameter that decreases over time according to a \textit{cooling
+% schedule}~\cite{kirkpatrick1983optimization,bertsimas1993simulated}.
+% At high temperatures the acceptance criterion is nearly uniform,
+% permitting broad exploration; as $T(t) \to 0$ the algorithm collapses
+% toward a greedy hill-climber that accepts only improvements.
+
+% The theoretical behavior of \acrshort{sa} is governed by the \textit{cooling
+% schedule}. Modelling the process as a time-inhomogeneous Markov chain,
+% Hajek~\cite{hajek1988cooling} established a sharp necessary and
+% sufficient condition on the schedule for convergence in probability to
+% the global optimum; the condition relates the decay rate of $T(t)$ to
+% the depth $d^{*}$ of the deepest non-global local minimum. The full
+% statement and its implications are given in
+% Appendix~\ref{app:hajek}. In practice, the schedule satisfying this
+% condition cools logarithmically, which is theoretically optimal but
+% often too slow; faster schedules reduce \acrshort{sa} to a stochastic
+% hill-climber once the temperature reaches zero. The choice of cooling
+% schedule therefore encodes a fundamental trade-off between solution
+% quality and computational budget, and is the primary design decision
+% when applying \acrshort{sa} to any combinatorial
+% problem~\cite{kirkpatrick1983optimization,hajek1988cooling}.
 
 \paragraph{Cooling Schedules.}
 
