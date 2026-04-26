@@ -8,6 +8,30 @@
 
 \section{Baseline Suites}
 \label{sec:results:baseline}
+A central diagnostic in the baseline suites is the slope of the cumulative
+regret curve. Let $r_t = f^{*}-f(x_t^{\mathrm{best}})$ denote the incumbent
+instantaneous regret after evaluation $t$, and let
+$\mathrm{\acrshort{cr}}(T)=\sum_{t=1}^{T} r_t$. Then
+$\mathrm{\acrshort{cr}}(T)-\mathrm{CR}(T-1)=r_T$. Thus, a persistent
+positive slope in the
+linear cumulative-regret plot is direct evidence that the incumbent remains
+suboptimal. When the best-so-far solution has stagnated at a local optimum, on a
+plateau, or in a deceptive basin, the slope estimates the residual fitness gap
+to the true optimum.
+
+Conversely, if $\mathrm{\acrshort{cr}}(T)$ approaches a horizontal
+asymptote $y=k$ as
+$T\to\infty$, then $r_T\to 0$; on the finite benchmark landscapes used here,
+this corresponds to eventual discovery of a global optimum. In finite-budget
+experiments the asymptote can only be approximated, but the approximation
+improves as the budget extends beyond the typical hitting time. The intercept
+$y_0$ should therefore be read as the cumulative cost paid before convergence:
+it is the area under the incumbent-regret trajectory, not merely the time of the
+first optimum. Hence, two algorithms can have different interpretations under
+\acrshort{ttfo} and cumulative regret. An algorithm may reach the optimum
+sooner on average but accumulate more regret early in the run, whereas another
+may converge more cautiously through better intermediate incumbents and finish
+with a smaller $y_0$.
 
 \subsection{Suite 01: Algorithm-Family Comparison}
 \label{sec:results:suite01}
