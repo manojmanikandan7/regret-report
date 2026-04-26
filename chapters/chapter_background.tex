@@ -394,14 +394,20 @@ distribution over instances~\cite{droste2006blackbox}
 \begin{figure}[H]
   \centering
 
-  \begin{subfigure}[t]{0.48\textwidth}
+  \begin{subfigure}[t]{0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{vis/landscape_onemax.pdf}
     \caption{\textsc{OneMax}.}
     \label{fig:landscape-onemax}
   \end{subfigure}
-  \hfill
-  \begin{subfigure}[t]{0.48\textwidth}
+  \begin{subfigure}[t]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{vis/landscape_twomax.pdf}
+    \caption{\textsc{TwoMax}: symmetric bimodal landscape with two
+    global optima.}
+    \label{fig:landscape-twomax}
+  \end{subfigure}
+  \begin{subfigure}[t]{0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{vis/landscape_jump.pdf}
     \caption{\textsc{Jump}: a $k$-wide unitation gap separates the
@@ -409,17 +415,14 @@ distribution over instances~\cite{droste2006blackbox}
     \label{fig:landscape-jump}
   \end{subfigure}
 
-  \vspace{0.8em}
-
-  \begin{subfigure}[t]{0.48\textwidth}
+  \begin{subfigure}[t]{0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{vis/landscape_plateau.pdf}
     \caption{\textsc{Plateau}: a $k$-wide neutral region removes
     gradient information.}
     \label{fig:landscape-plateau}
   \end{subfigure}
-  \hfill
-  \begin{subfigure}[t]{0.48\textwidth}
+  \begin{subfigure}[t]{0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{vis/landscape_trap.pdf}
     \caption{\textsc{Trap}: a deceptive basin competes with the global optimum.}
@@ -432,7 +435,6 @@ distribution over instances~\cite{droste2006blackbox}
   marks the width of the barrier, plateau, or deceptive region.}
   \label{fig:benchmark-landscape-subfigures}
 \end{figure}
-
 The \textit{pseudo-Boolean} setting considers functions $f :
 \{0,1\}^n \to \mathbb{R}$
 defined on binary strings of length $n$. Several benchmark functions
@@ -454,6 +456,21 @@ a clear gradient
 for local search methods. The expected runtime of the
 $(1+1)$~\acrfull{ea} on \textsc{OneMax} is
 $\Theta(n \log n)$.~\cite{droste2002analysis}
+
+\subsubsection{TwoMax}
+The \textsc{TwoMax} problem is a simple bimodal benchmark over bit
+strings~\cite{oliveto2014runtime}:
+\[
+  \textsc{TwoMax}(x) = \max\{\textsc{OneMax}(x), n -
+  \textsc{OneMax}(x)\}, \qquad x \in \{0,1\}^n.
+\]
+
+It consists of two different symmetric branches (i.e.,
+\textsc{ZeroMax} and \textsc{OneMax}) and two symmetric global
+optima, $0^n$ and $1^n$. This makes \textsc{TwoMax} useful for
+studying whether evolutionary algorithms can preserve diversity and
+explore symmetric search-space regions rather than converging to only
+one optimum.
 
 \subsubsection{LeadingOnes}
 
