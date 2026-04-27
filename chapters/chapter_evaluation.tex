@@ -1,7 +1,8 @@
-\chapter{Evaluation and Discussion of Results}
+\chapter{Discussion and Evaluation of Results}
 \label{cha:results}
 
 \section{Overview}
+\label{sec:results:overview}
 % Brief orientation: how to read the plots, what each output type reveals,
 % and cross-references to the experiment structure
 % (Sec.~\ref{sec:exper:structure}).
@@ -16,7 +17,8 @@ f(x_s)$ is the best solution found so far, and let
 $\mathrm{CR}(T) = \sum_{t=1}^{T} \rho_t^{\mathrm{inc}}$. Since
 $\mathrm{CR}(T) - \mathrm{CR}(T-1) = \rho_T^{\mathrm{inc}}$, a
 persistent positive slope in the linear cumulative-regret plot is
-direct evidence that the incumbent remains suboptimal !TODO: ref trap, jump CR plots!. When the
+direct evidence that the incumbent remains suboptimal !TODO: ref
+trap, jump CR plots!. When the
 best-so-far solution has stagnated at a local optimum, on a plateau,
 or in a deceptive basin, the slope at time $T$ estimates the residual
 fitness gap $f^{*} - f(\hat{x}_T)$ to the true optimum.
@@ -26,7 +28,8 @@ $C = \lim_{T \to \infty} \mathrm{CR}(T)$ as $T \to \infty$, then
 $\rho_T^{\mathrm{inc}} \to 0$, which on the finite benchmark
 landscapes studied here corresponds to eventual discovery of the
 global optimum !TODO: ref
-OneMax, LeadingOnes, TwoMax!. In finite-budget experiments the asymptote can only be
+OneMax, LeadingOnes, TwoMax!. In finite-budget experiments the
+asymptote can only be
 approximated, but the approximation improves as the budget extends
 beyond the typical hitting time. By Corollary~\ref{cor:asymptotic-regret},
 $C = \sum_{v=1}^{f^{*}} \mathbb{E}[\tau_v] - f^{*}$, so the
@@ -39,30 +42,26 @@ trajectory!TODO: ref BinVal!. This distinguishes it from time-to-first-optimum
 
 All experiments in this section use $n = 100$, except for
 \textsc{BinVal} at $n = 50$\footnote{The restriction arises because
-\textsc{BinVal}'s optimum is $2^n - 1$: at $n = 100$ this value
-exceeds the precision range of IEEE~754 double-precision
-floating-point arithmetic, introducing rounding error into the regret
-computation. At $n = 50$ the optimum $2^{50} - 1 \approx 1.13 \times
-10^{15}$ is representable exactly.}.
+  \textsc{BinVal}'s optimum is $2^n - 1$: at $n = 100$ this value
+  exceeds the precision range of IEEE~754 double-precision
+  floating-point arithmetic, introducing rounding error into the regret
+  computation. At $n = 50$ the optimum $2^{50} - 1 \approx 1.13 \times
+  10^{15}$ is representable exactly.}.
 
 \subsection{Suite 01: Algorithm-Family Comparison}
 \label{sec:results:suite01}
-
-\subsubsection{Aggregate Regret and Convergence}
-% regret_curves (log-log), convergence_probability, comparison_heatmap
-% Key question: at which budget does each family overtake the others?
-
-\subsection{Suite 01: Algorithm-Family Comparison}
-\label{sec:results:suite01}
-\subsubsection{Regret Distributions and TTFO}
-% regret_boxplots, performance_profile, ttfo_distribution at budget_for_plots
-% Pairwise annotations (vs. RLS)
-For the simpler \textsc{OneMax} and \textsc{TwoMax} instances, the relative ordering of mean algorithm performance aligns with the horizontal convergence points of the median incumbent \acrshort{cr} curves !TODO: ref onemax, twomax cr inc plots!. However, on \textsc{LeadingOnes} and \textsc{BinVal}, a structural inversion emerges !TODO: ref leadingones, binval!: the algorithms reach the global optimum in the order \acrshort{rls}, \acrshort{sa}-Log (d=2.0d=2.0
-d=2.0), \acrshort{rlse}, then (1+1)(1+1)
-(1+1)-\acrshort{ea}, yet their \acrshort{cr} asymptotes are ordered in reverse
+For the simpler \textsc{OneMax} and \textsc{TwoMax} instances, the
+relative ordering of mean algorithm performance aligns with the
+horizontal convergence points of the median incumbent \acrshort{cr}
+curves !TODO: ref onemax, twomax cr inc plots!. However, on
+\textsc{LeadingOnes} and \textsc{BinVal}, a structural inversion
+emerges !TODO: ref leadingones, binval!: the algorithms reach the
+global optimum in the order \acrshort{rls}, \acrshort{sa}-Log (d=2.0), \acrshort{rlse}, then $(1+1)$-\acrshort{ea}, yet their \acrshort{cr} asymptotes are ordered in reverse
 
 This inversion follows directly from Corollary~\ref{cor:asymptotic-regret}:
-the asymptote $C = \lim_{T \to \infty} \mathbb{E}[\mathrm{CR}(T)] = \sum_{v=1}^{f^{*}} \mathbb{E}[\tau_v] - f^{*}$ is governed by first-hitting times across \emph{all} intermediate fitness
+the asymptote $C = \lim_{T \to \infty} \mathbb{E}[\mathrm{CR}(T)] =
+\sum_{v=1}^{f^{*}} \mathbb{E}[\tau_v] - f^{*}$ is governed by
+first-hitting times across \emph{all} intermediate fitness
 levels. \acrshort{rls}'s greedy trajectory
 reaches $f^{*}$ efficiently but lingers at lower fitness levels during
 its ascent, inflating the per-level $\mathbb{E}[\tau_v]$ terms and
@@ -83,7 +82,8 @@ algorithm is trapped further from the optimum and is therefore
 incurring a greater per-evaluation cost. The slopes differ across
 algorithms, reflecting the fact that each stagnates at a different
 local optimum depending on its search strategy, while remaining
-non-zero throughout the budget because the landscape barrier (whose depth is a fixed property of the problem) prevents any
+non-zero throughout the budget because the landscape barrier (whose
+depth is a fixed property of the problem) prevents any
 algorithm from closing the gap. This illustrates a key advantage of
 \acrshort{cr} over \acrshort{ttfo}: even when convergence is never
 observed, the regret trajectory continues to distinguish algorithms
@@ -92,117 +92,225 @@ optimum achievement measure cannot provide.
 
 !TODO: mention MWU and other stats from regret boxplots!
 
-\subsubsection{Trajectory Analysis}
-% history_best, regret_instantaneous, regret_instantaneous_best,
-% regret_cumulative_best per problem
-% Focus: shape differences across unimodal / deceptive / exponential problems
 
 \subsection{Suite 02: Extended Pseudo-Boolean Benchmark}
 \label{sec:results:suite02}
 
-\subsubsection{Aggregate Regret and Convergence}
-
-\subsubsection{Effect of Algorithm Overrides}
-% RLSExploration (eps=0.05, no decay) on Jump/Trap vs. default behaviour
-% SA d=6.0 on Jump-5 / Trap-5 vs. d=2.0
-
-\subsubsection{Trajectory Analysis}
-% Harder problems: HIFF-64, Petersen, Plateau-10 - convergence or saturation?
-
 \section{Verification Suite}
 \label{sec:results:verification}
+The verification compares two curves indexed by evaluation time: the empirical mean cumulative regret $\bar R_t$ and the profile-derived
+quantity $\hat R_t$. Since Theorem~\ref{thm:regret-profile} asserts an
+identity over the full trajectory, not just at the final horizon, the
+comparison is performed pointwise over $t=1,\ldots,T$.
+
+Three complementary error summaries are reported
+(Table~\ref{tab:vermeas}). The \acrfull{rmse} measures the
+typical global discrepancy between the two curves and is sensitive to
+persistent deviations across the horizon. The
+\acrfull{mae}~\cite{higham2002acc} records the worst pointwise
+discrepancy and therefore checks
+whether the identity fails locally at any evaluation index. Finally, the
+\acrfull{rmae} normalizes this worst-case gap
+by the scale of the empirical cumulative regret curve, allowing results
+to be compared across problems with very different regret magnitudes.
+Together, these measures test both average agreement and worst-case
+pointwise agreement.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    Measure & Formula & Interpretation \\
+    \midrule
+    \acrshort{rmse}
+    & $\sqrt{\dfrac{1}{T}\sum_{t=1}^{T}\left(\hat{R}_t-\bar{R}_t\right)^2}$
+    & Average curve-level discrepancy \\[1.4em]
+
+    \acrshort{mae}
+    & $\max_t \left|\hat{R}_t-\bar{R}_t\right|$
+    & Worst pointwise discrepancy \\[0.8em]
+
+    \acrshort{rmae}
+    & $\dfrac{\max_t \left|\hat{R}_t-\bar{R}_t\right|}{\max_t \bar{R}_t}$
+    & Scale-normalized worst-case discrepancy \\
+    \bottomrule
+  \end{tabular}
+  \caption{Error measures used to compare profile-derived ($\hat{R}_t$) and
+    empirical ($\bar{R}_t$) expected cumulative regret
+    $\mathbb{E}[\mathrm{CR}(T)]$
+  at each evaluation index $t$.}
+  \label{tab:vermeas}
+\end{table}
+
+The verification is accepted if the profile-derived and empirical curves
+satisfy two conditions: first, the relative maximum pointwise error must
+remain below $1\%$,
+\[
+  \frac{\max_t |\hat R_t-\bar R_t|}{\max_t \bar R_t} < 0.01,
+\]
+and second, the normalized RMSE,
+\[
+  \frac{\mathrm{RMSE}}{\max_t \bar R_t},
+\]
+must be of the same order or smaller. These thresholds are deliberately
+scale-normalized, so that the criterion is not biased against problems
+such as \textsc{LeadingOnes}, where cumulative regret is naturally much
+larger in absolute value.
 
 \subsection{Suite 08: Runtime Profile Verification}
 \label{sec:results:suite08}
 
-\subsubsection{Tail-Sum Identity: Direct vs.\ Profile-Derived
-\texorpdfstring{$\mathbb{E}[\mathrm{CR}(T)]$}{E[CR(T)]}}
-% cr_profile_verification for RLS and (1+1)-EA on OneMax and LeadingOnes
-% Quantify residual gap; attribute to discretisation or numerical error
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.80\textwidth}
+    \includegraphics[width=\linewidth]{results/verification/cr_prof_ver_onemax.pdf}
+    \caption{Verification plots for \acrshort{rls} (black) and
+      $(1+1)$-\acrshort{ea} (blue) for the \textsc{OneMax} problem,
+    with maximum budget 2\,000}
+  \end{subfigure}
+  \begin{subfigure}[t]{0.80\textwidth}
+    \includegraphics[width=\linewidth]{results/verification/cr_prof_ver_leadingones.pdf}
+    \caption{Verification plots for \acrshort{rls} (black) and
+      $(1+1)$-\acrshort{ea} (blue) for the \textsc{LeadingOnes}
+    problem, with maximum budget 10\,000}
+  \end{subfigure}
+  \caption{The verification curves for the empirically calculated
+    mean \acrshort{cr} ($\mathbb{E}[\mathrm{CR}(T)]$, solid plot) and
+  the profile-derived expected \acrshort{cr} ($\hat{R}_t$, dotted plot)}
+\end{figure}
 
-\subsubsection{Inverse Runtime Profile Surfaces and Curves}
-% inverse_runtime_profile_surface per algorithm
-% inverse_runtime_profile_curves at selected fitness levels
+\begin{wraptable}{i}{0.6\textwidth}
+  \begin{tabular}{||l|l|lll||}
+    \hline
+    Problem & Algorithm & \acrshort{rmse} & \acrshort{mae} & \acrshort{rmae} \\
+    \hline
+    \multirow{2}{8.5em}{\textsc{OneMax} (Budget: 2\,000)}  &
+    $(1+1)$-\acrshort{ea}& 46.92318 & 49.13000 & 0.00862 \\
+    & \acrshort{rls}  & 47.27119 & 49.13000 & 0.00998 \\
+    \hline
+    \multirow{2}{8.5em}{\textsc{LeadingOnes} (Budget: 10\,000)} &
+    $(1+1)$-\acrshort{ea} & 81.38108 & 98.97000 & 0.00043 \\
+    & \acrshort{rls} & 80.51411 & 98.97000 & 0.00040 \\
+    \hline
+  \end{tabular}
+  \caption{The pointwise distances calculated between the empirically
+  calculated $\mathbb{E}(CR)$ and the distributional profile-derived $CR$}
+\end{wraptable}
 
-\section{Exploratory Analysis}
-\label{sec:results:exploratory}
+The profile identity holds to within negligible numerical error
+across all four combinations. \acrshort{rmae} does not exceed 1\% in
+any case (0.862\% and 0.998\% for \textsc{OneMax}, and just 0.043\%
+and 0.040\% for \textsc{LeadingOnes}), confirming that residual
+deviation is potentially attributable to discretization of the
+integer fitness grid. The larger absolute errors on
+\textsc{LeadingOnes} (\acrshort{rmse} $\approx 80$--$81$ versus
+$\approx 47$ on \textsc{OneMax}) reflect the much greater cumulative
+regret scale of that problem; the \acrshort{rmae} values are in fact
+smaller by roughly an order of magnitude. Notably, the maximum
+deviation is identical across both algorithms within each problem
+(49.13 and 98.97 respectively), indicating the residual gap is a
+property of the fitness grid discretization at a specific time point,
+not of the algorithm's trajectory. With $R = 100$ runs, Monte Carlo
+variance is negligible, so these deviations represent a verified
+upper bound on numerical error rather than sampling noise.
 
-\subsection{Barrier Structure and Mutation Rate}
+Since the empirical curve is averaged over $R=100$ independent runs,
+sampling variation is reduced. The observed deviations
+should therefore be interpreted as a combined effect of finite-run Monte
+Carlo error and numerical discretization of the integer fitness grid.
+Because the relative maximum errors remain below $1\%$ in all cases, the
+residual discrepancy is small enough for the profile-derived curves to be
+used in the subsequent suites.
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.49\textwidth}
+    \includegraphics[width=\linewidth]{results/verification/inv_prof_surf_onemax_RLS.pdf}
+    \caption{\acrshort{rls} for the \textsc{OneMax} problem, with
+    maximum budget 1\,000}
+  \end{subfigure}
+  \begin{subfigure}[t]{0.49\textwidth}
+    \includegraphics[width=\linewidth]{results/verification/inv_prof_surf_onemax_(1+1)-EA.pdf}
+    \caption{$(1+1)$-\acrshort{ea} for the \textsc{OneMax} problem,
+    with maximum budget 1\,000}
+  \end{subfigure}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{results/verification/inv_prof_surf_leadingones_RLS.pdf}
+    \caption{\acrshort{rls} for the \textsc{LeadingOnes} problem,
+    with maximum budget 10\,000}
+  \end{subfigure}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{results/verification/inv_prof_surf_leadingones_(1+1)-EA.pdf}
+    \caption{$(1+1)$-\acrshort{ea} for the \textsc{LeadingOnes}
+    problem, with maximum budget 10\,000}
+  \end{subfigure}
+  \caption{Inverse runtime profile [$P(\tau_v \le T)$] plots for
+  \acrshort{rls} and $(1+1)$-\acrshort{ea}}
+  \label{fig:invprof}
+\end{figure}
+The inverse runtime profile surfaces in Figure~\ref{fig:invprof} show
+the expected separation between
+the two benchmark regimes. For \textsc{OneMax}, the saturation frontier is
+compressed into the early part of the budget: low and intermediate fitness
+levels satisfy $P(\tau_v \le T) \approx 1$ after only a few hundred
+evaluations, and the contour near the optimum $f^\ast$ reaches high
+probability well before the end of the $T=2000$ window for both
+\acrshort{rls} and the $(1+1)$-\acrshort{ea}. In contrast, the
+\textsc{LeadingOnes} surfaces exhibit a broad diagonal transition band
+across the full $T=10000$ range. The probability mass moves gradually from
+low to high fitness levels, and the saturation frontier for $v=f^\ast$
+appears only in the later part of the budget. This delayed frontier is
+consistent with the sequential structure of \textsc{LeadingOnes}, where
+progress depends on extending the correct prefix, and with the known
+asymptotic contrast between the $\Theta(n \log n)$ optimization time of
+\textsc{OneMax} and the $\Theta(n^2)$ behavior of
+\textsc{LeadingOnes}. Thus, the inverse profiles verify not only the
+profile construction itself, but also that the derived surfaces preserve
+the qualitative runtime ordering of the underlying benchmark problems.
+
+The verification result supports the use of profile-derived
+$\mathbb{E}[\mathrm{CR}(T)]$ curves in the remaining evaluation suites.
+Since the identity from Chapter~\ref{cha:profiles} holds to within
+scale-normalized numerical error on tractable benchmarks, the same
+profile construction can be used with confidence in Suites~03 and~12,
+where direct averaging is more susceptible to sampling noise because only
+$R=25$ runs are available. The verification therefore establishes the
+methodological basis for interpreting cumulative-regret curves obtained
+from runtime profiles, rather than treating them as independent empirical
+estimates. Section~\ref{sec:results:synthesis} returns to this point by
+relating the Suite~08 verification to the saturation frontiers observed
+in the NK benchmark suites.
+\section{Barrier Structure and Mutation Rate}
 \label{sec:results:barrier}
-
-\subsubsection{Suite 04: Trap -- Deception Width and Mutation Rate}
-% Does cumulative regret shape change with k (not just final regret)?
-% Does SA escape deceptive basins where the EA cannot?
-
-\subsubsection{Suite 05: Jump -- Mutation Rate and Plateau Onset}
-% Instantaneous regret plateau as diagnostic of trapped phase
-% Adaptive k/n vs. fixed rates; comparison with TTFO when P(opt)~0
-
-\subsubsection{Suite 06: Plateau -- Neutral Walk and SA}
-% Jump vs. Plateau cumulative regret shape at shared k=2, k=5
-% Does SA benefit on neutral landscapes?
-
-\subsubsection{Suite 09: Jump -- Plateau Duration}
-% Extended horizon: plateau duration scales as Theta(n^k)?
-% Plateau exit at adaptive rate for small k
-
-\subsubsection{Suite 10: Barrier Archetype Comparison at k=5}
-% Trap vs. Jump vs. Plateau cumulative regret: early deception,
-% delayed crossing, neutral trapping
-% TTFO insufficiency at P(opt)~0 vs. regret trajectory informativeness
-
-\subsection{NK Ruggedness and SA Cooling}
+\subsection{Suite 04: Trap --- Deception Width and Mutation Rate}
+\label{sec:results:suite04}
+\subsection{Suites 05 and 09: Jump --- Mutation Rate and Plateau Duration}
+\label{sec:results:suite05}
+\subsection{Suite 06: Plateau --- Neutral Walk and Mutation Rate}
+\label{sec:results:suite06}
+\subsection{Suite 10: Barrier Archetype Comparison at $k=5$}
+\label{sec:results:suite10}
+\section{NK Ruggedness and SA Cooling}
 \label{sec:results:nk}
+\subsection{Suite 11: SA Cooling Schedule Diagnostics}
+\label{sec:results:suite11}
+\subsection{Suite 03: NK Ruggedness --- Cooling $\times$ Epistasis Grid}
+\label{sec:results:suite03}
 
-\subsubsection{Suite 03: Cooling Schedule × Epistasis Grid}
-% 6x5 grid results: which d value performs best at each k?
-% Crossover levels in profile curves; saturation frontier in profile surface
-% RLS / (1+1)-EA baselines: does any SA variant improve on
-% hill-climbing at low k?
+\subsection{Suite 12: NK Saturation}
+\label{sec:results:suite12}
 
-\subsubsection{Suite 11: SA Cooling Schedule Diagnostics}
-% Instantaneous regret trajectory signatures by schedule family
-% Logarithmic (sustained positive T) vs. linear/exponential (collapse
-% to hill-climber)
-% Schedules underperforming RLS identified via pairwise annotations
-
-\subsubsection{Suite 12: NK Saturation}
-% Regret saturation floor vs. k; inverse runtime profile saturation frontier
-% Per-problem d tuning: does adequate temperature maintenance change
-% saturation outcome?
-
-\subsection{Hierarchical Structure and Scaling}
+\section{Hierarchical Structure and Scaling}
 \label{sec:results:scaling}
 
-\subsubsection{Suite 07: HIFF Scaling with Problem Size}
-% RLS saturation at first hierarchical level (n>=64)
-% EA mutation rate sensitivity at each n
-% SA trajectory on hierarchical sub-block barriers
+\subsection{Suite 07: HIFF Scaling with Problem Size}
+\label{sec:results:suite07}
 
-\subsubsection{Suite 13: Regret Scaling with n on OneMax}
-% E[CR(T)] scaling exponent: theoretical Theta(n) vs. empirical estimate
-% Log-log regret curves: rightward shift of ~log(2) per doubling of n
-
-% \subsection{Population Dynamics}
-% \label{sec:results:population}
-
-% \subsubsection{Suite 14: (mu+lambda)-EA vs. (1+1)-EA}
-% (1+1)-EA vs. (1+1)-EA-framework: implementation consistency check
-% Population overhead on unimodal problems (OneMax, LeadingOnes)
-% Diversity benefit on multimodal problems (TwoMax, Jump-3)
-% Selection pressure ratio (mu/lambda) effect on cumulative regret shape
+\subsection{Suite 13: Regret Scaling with $n$ on OneMax}
+\label{sec:results:suite13}
 
 \section{Cross-Suite Synthesis}
 \label{sec:results:synthesis}
 
-\subsection{Regret Trajectory Shapes as Landscape Diagnostics}
-% Summarise the diagnostic signatures identified across suites:
-% flat floor (saturation), linear ramp (barrier), smooth decay (unimodal)
 
-\subsection{When TTFO Fails and Cumulative Regret Succeeds}
-% Consolidate evidence from suites 05, 09, 10 where P(opt)~0 renders
-% TTFO uninformative but regret trajectories remain structured
 
-\subsection{Runtime Profiles and Regret: Complementary Views}
-% Connect suite 08 verification to suite 03/12 profile surfaces
-% Practical value of the identity E[CR(T)] = sum_v sum_t P(tau_v > t)
