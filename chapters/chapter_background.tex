@@ -252,7 +252,7 @@ operations and the same output on every execution for a given input.
 A \textit{randomized} algorithm, by contrast, makes probabilistic
 choices during execution, so its behavior on a fixed input may vary
 across runs. In the black-box optimization setting, randomization is
-not merely a convenience but a necessity: the No-Free-Lunch theorems
+not only a convenience but a necessity: the No-Free-Lunch theorems
 imply that no deterministic algorithm can perform well uniformly
 across all problem instances (See~\ref{subsubsec:nfl},
 \citet{wolpert2002no}), and randomized search heuristics derive
@@ -308,7 +308,7 @@ smallest complexity~\cite{droste2006blackbox}. In the \textbf{unary
 unbiased model}, variation operators are invariant under permutations
 and bitwise complementations of the search
 space~\cite{lehre2010black}; both \acrshort{rls} and the
-$(1+1)$~\acrshort{ea} fall into this class, making its \acrshort{bbc}
+$(1+1)$-\acrshort{ea} fall into this class, making its \acrshort{bbc}
 the tightest applicable lower bound for these algorithms.
 \acrshort{sa} fits neither model cleanly (it exploits absolute fitness
 differences rather than rankings) so its performance is studied empirically.
@@ -352,9 +352,9 @@ $n$ grows.
 % Number of oracle calls as complexity measure.
 
 In \acrshort{bbo}, the internal structure of $f$ is
-inaccessible, so the relevant measure of complexity is not the
-number of arithmetic operations but the number of oracle queries
-required to solve a problem. The \textit{query complexity} of an
+inaccessible, so the relevant measure of complexity is the number of oracle queries
+required to solve a problem instead of the
+number of arithmetic operations. The \textit{query complexity} of an
 algorithm $\mathcal{A}$ on a problem class $\mathcal{F}$ is the
 number of calls to the function-evaluation oracle needed to identify
 a solution meeting the target criterion. The \textit{black-box
@@ -454,7 +454,7 @@ unimodal and every
 improving move increases the function value by exactly one, providing
 a clear gradient
 for local search methods. The expected runtime of the
-$(1+1)$~\acrfull{ea} on \textsc{OneMax} is
+$(1+1)$-\acrfull{ea} on \textsc{OneMax} is
 $\Theta(n \log n)$.~\cite{droste2002analysis}
 
 \subsubsection{TwoMax}
@@ -487,7 +487,7 @@ progress requires the leading bit to be set before any subsequent bit
 can contribute,
 \textsc{LeadingOnes} is significantly harder than \textsc{OneMax}:
 the expected runtime
-of the $(1+1)$~\acrshort{ea} is $\Theta(n^2)$.~\cite{droste2002analysis}
+of the $(1+1)$-\acrshort{ea} is $\Theta(n^2)$.~\cite{droste2002analysis}
 
 \subsubsection{Jump}
 
@@ -504,7 +504,7 @@ constitutes a
 local optimum of standard local search, and reaching the global
 optimum $1^n$ requires
 flipping all $k$ remaining zero bits simultaneously. For the
-$(1+1)$~\acrshort{ea} with standard
+$(1+1)$-\acrshort{ea} with standard
 bit mutation at rate $1/n$, the probability of a specific $k$-bit flip is
 $\Theta(n^{-k})$, giving an expected runtime of $\Theta(n^k)$ on
 $\textsc{Jump}_k$.
@@ -521,13 +521,13 @@ Formally, \textsc{Jump}$_{k,n} \colon \{0,1\}^n \to \mathbb{R}$ is defined as
 \]
 Droste, Jansen, and Wegener~\cite{droste2002analysis} proved that the
 expected running
-time of the $(1+1)$~\acrshort{ea} on $\textsc{Jump}_{k,n}$ is
+time of the $(1+1)$-\acrshort{ea} on $\textsc{Jump}_{k,n}$ is
 $\Theta(n^k + n\log n)$ for
 $k \in \{1, 2, \ldots, n\}$, which simplifies to $\Theta(n^k)$ for $k \geq 2$.
 
-\subsubsection{BinaryValue [BinVal]}
+\subsubsection{BinaryValue}
 
-The \textsc{BinaryValue} (\textsc{BinVal}) function interprets a bit
+The \textsc{\acrfull{bv}} function interprets a bit
 string as a binary
 integer by weighting bits exponentially by position:
 \[
@@ -537,7 +537,7 @@ The global optimum is $1^n$ with value $2^n - 1$. The exponential
 weighting means that
 the most significant bit contributes more than the combined value of
 all less significant
-bits, making \textsc{BinVal} highly structured.
+bits, making \textsc{\acrshort{bv}} highly structured.
 
 \subsubsection{Trap}
 
@@ -585,7 +585,7 @@ until it reaches $1^n$ by flipping between one and $k$ zero-bits
 simultaneously.
 
 \citet{antipov2021precise} establish that the expected runtime of the
-$(1+1)$~\acrshort{ea} on \textsc{Plateau}$_k$ depends only on the
+$(1+1)$-\acrshort{ea} on \textsc{Plateau}$_k$ depends only on the
 probability of flipping between one and $k$ bits per step, not on
 other properties of the mutation operator, and that the optimal
 mutation rate under standard bit mutation is approximately $k/(en)$,
@@ -800,7 +800,7 @@ performs strongly
 on benchmarks such as \textsc{OneMax} or \textsc{LeadingOnes} must
 underperform on some
 complementary class of functions. Complexity results such as
-$\mathbb{E}[\tau_{f^*}] = \Theta(n \log n)$ for the $(1+1)$~\acrshort{ea} on
+$\mathbb{E}[\tau_{f^*}] = \Theta(n \log n)$ for the $(1+1)$-\acrshort{ea} on
 \textsc{OneMax}~\cite{droste2002analysis} are meaningful purely because
 \textsc{OneMax} is a natural representative of unimodal functions.
 The \acrshort{nfl}
@@ -837,12 +837,12 @@ strings) and iterates
 two operators: \emph{mutation}, which perturbs a solution stochastically, and
 \emph{selection}, which retains solutions according to their objective
 value~\cite{droste2002analysis,doerr2020theory}. The simplest instance of this
-paradigm, the $(1+1)$~EA, serves as the theoretical baseline
+paradigm, the $(1+1)$-EA, serves as the theoretical baseline
 throughout this project.
 
-\paragraph{The $(1+1)$~EA.}
+\paragraph{The $(1+1)$-EA.}
 \label{par:oneone-ea}
-The $(1+1)$~EA maintains a single current solution $x \in \{0,1\}^n$. In each
+The $(1+1)$-EA maintains a single current solution $x \in \{0,1\}^n$. In each
 iteration it produces one offspring $y$ by \emph{standard bit
 mutation}: every bit is
 flipped independently with probability $p$. The offspring replaces
@@ -855,7 +855,7 @@ homogeneous Markov chain on $\{0,1\}^n$ with a non-decreasing fitness
 sequence~\cite{droste2002analysis,witt2013tight}.
 
 \begin{algorithm}[H]
-  \caption{The $(1+1)$~EA with mutation probability $p \in (0,1)$}
+  \caption{The $(1+1)$-EA with mutation probability $p \in (0,1)$}
   \label{alg:oneone-ea}
   \begin{algorithmic}[1]
     \State Sample $x \in \{0,1\}^n$ uniformly at random; evaluate $f(x)$
@@ -1216,7 +1216,7 @@ queried~\cite{droste2002analysis,doerr2020theory}. Formally, the
   \tau_{f^*} \;:=\; \min\bigl\{t \in \mathbb{N} : f(x_t) = f^*\bigr\},
 \]
 and performance is summarized by $\mathbb{E}[\tau_{f^*}]$. Canonical results are
-$\Theta(n \log n)$ for the $(1+1)$~\acrshort{ea} on \textsc{OneMax},
+$\Theta(n \log n)$ for the $(1+1)$-\acrshort{ea} on \textsc{OneMax},
 $\Theta(n^2)$ on \textsc{LeadingOnes}, and $\Theta(n^k)$ on
 $\textsc{Jump}_k$~\cite{droste2002analysis}, derived via drift
 theory~\cite{lengler2019drift} and Markov chain
@@ -1405,7 +1405,7 @@ that form the subject of this project.
 Having established both the black-box setting and the online
 learning framework from which regret originates, this section
 defines regret formally and identifies the specific variant,
-incumbent cumulative regret, that is used as the primary
+incumbent \acrfull{cr}, that is used as the primary
 performance measure throughout the experimental analysis in
 Chapter~\ref{cha:exper}.
 
@@ -1444,7 +1444,7 @@ regret evaluated at time $t$(~\ref{subsubsec:sr}).
 \subsubsection{Cumulative Regret}
 \label{subsubsec:cr}
 % Definition, interpretation, and relationship to IR.
-Two cumulative regret variants arise naturally and serve different purposes.
+Two \acrfull{cr} variants arise naturally and serve different purposes.
 
 The \textit{\acrfull{cr}} after $T$ rounds is~\cite{cesa2006prediction}
 \[
@@ -1458,7 +1458,7 @@ has previously observed. Minimizing $R_T$ corresponds to performing well
 \textit{throughout} the optimization process, penalizing every
 suboptimal query equally.
 
-The \textit{incumbent cumulative regret} instead tracks the best-so-far process
+The \textit{incumbent \acrshort{cr}} instead tracks the best-so-far process
 \[
   B(t) \;:=\; \max_{s \leq t} f(x_s),
 \]
@@ -1479,7 +1479,7 @@ project. All regret
 analyses in Chapter~\ref{cha:exper} use $R^{\mathrm{inc}}_T$ unless
 otherwise stated.
 
-In continuous time, the incumbent cumulative regret is approximated
+In continuous time, the incumbent \acrshort{cr} is approximated
 via a left-hold
 (piecewise-constant) integral
 \[
@@ -1622,7 +1622,7 @@ evaluations~\cite{jansen2014fixed,bubeck2011pure}.
 
 The distinction matters operationally. Low simple regret is
 appropriate when only the final returned solution matters. Low
-cumulative regret is appropriate in anytime settings, where useful
+\acrshort{cr} is appropriate in anytime settings, where useful
 intermediate performance also
 matters~\cite{cesa2006prediction,pinto2018practice}. For the
 heuristics considered in this project, the incumbent-based

@@ -23,20 +23,20 @@ $(1\pm o(1))\frac{e^c}{c}\,n\ln n$, minimized at $c = 1$~\cite{witt2013tight}.
 
 A practical observation of \citet{pinto2018practice}
 is that roughly a
-$1/e$ fraction of all $(1+1)$~\acrshort{ea} iterations flip \emph{no}
+$1/e$ fraction of all $(1+1)$-\acrshort{ea} iterations flip \emph{no}
 bit (the offspring equals
 the parent), yet standard analyses charge a full function evaluation
 for each such
 iteration. Real implementations avoid these wasted evaluations by one
 of two strategies.
 
-\paragraph{Resampling variant -- $(1+1)$~\texorpdfstring{EA$_{>0}$}{EA>0}.}
+\paragraph{Resampling variant -- $(1+1)$-\texorpdfstring{EA$_{>0}$}{EA>0}.}
 \label{app:par:resampea}
 The mutation strength $\ell$ is drawn from the \emph{conditional} binomial
 distribution $\mathrm{Bin}_{>0}(n,p)$, i.e., $\mathrm{Bin}(n,p)$ conditioned on
 $\ell > 0$. This effectively skips any iteration that would flip nothing.
 
-\paragraph{Shift variant -- $(1+1)$~\texorpdfstring{EA$_{0\to1}$}{EA0to1}.}
+\paragraph{Shift variant -- $(1+1)$-\texorpdfstring{EA$_{0\to1}$}{EA0to1}.}
 \label{app:par:shiftea}
 If $\ell = 0$ is sampled, it is replaced by $\ell = 1$, shifting all
 probability mass
@@ -53,17 +53,17 @@ Table~\ref{app:tab:variant-runtimes}.
     \hline
     \textbf{Algorithm} & \textbf{OneMax} & \textbf{LeadingOnes} \\
     \hline
-    $(1+1)$~EA         & $e\,n\ln n + O(n) \approx 2.718\,n\ln n$ &
+    $(1+1)$-EA         & $e\,n\ln n + O(n) \approx 2.718\,n\ln n$ &
     $\approx 0.859\,n^2$ \\
-    $(1+1)$~EA$_{>0}$  & $\approx 1.718\,n\ln n + O(n)$           &
+    $(1+1)$-EA$_{>0}$  & $\approx 1.718\,n\ln n + O(n)$           &
     $\approx 0.543\,n^2$ \\
-    $(1+1)$~EA$_{0\to1}$ & $\approx 1.359\,n\ln n + O(n)$         &
+    $(1+1)$-EA$_{0\to1}$ & $\approx 1.359\,n\ln n + O(n)$         &
     $\approx 0.517\,n^2$ \\
     RLS                & $n H_n \approx n\ln n$                    &
     $\approx 0.5\,n^2$   \\
     \hline
   \end{tabular}
-  \caption{Expected optimization times at $p = 1/n$ for the $(1+1)$~EA and its
+  \caption{Expected optimization times at $p = 1/n$ for the $(1+1)$-EA and its
     implementation-aware variants. RLS is included for reference.
     Bounds for the variants follow
   from~\cite{pinto2018practice,bottcher2010optimal,witt2013tight}.}

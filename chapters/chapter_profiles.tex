@@ -78,11 +78,11 @@ already implicit
 in existing runtime proofs and calls only for a richer mode of presentation.
 
 The practical value of this richer view is illustrated by the
-behavior of $(1+1)$~\acrshort{ea}
+behavior of $(1+1)$-\acrshort{ea}
 variants on \textsc{LeadingOnes}: reporting only the expected
 optimization time suggests
 RLS is superior, yet the runtime profile reveals that
-$(1+1)$~EA$_{>0}$ (\textit{App. para.}~\ref{app:par:resampea})
+$(1+1)$-EA$_{>0}$ (\textit{App. para.}~\ref{app:par:resampea})
 reaches all intermediate fitness levels $i \leq 7{,}980$ faster than
 RLS for problem
 size $n = 10{,}000$, with RLS only pulling ahead in the final portion of the
@@ -114,7 +114,7 @@ The distributional profile is the more primitive object from which
 expectation-based
 statements follow, and it constitutes the formal link between runtime
 profiles and
-the cumulative regret framework developed below.
+the \acrshort{cr} framework developed below.
 
 \begin{remark}[Naming convention]
   \label{rem:profile-naming}
@@ -171,7 +171,7 @@ algorithm produces an adaptive sequence of query points $x_1, x_2, \ldots \in
 which records the best objective value seen up to time $t$. Since $B(t)$ is
 non-decreasing in $t$, the event $\{B(t) < v\}$ is equivalent to
 $\{\tau_v > t\}$:
-the level $v$ has not yet been hit. The incumbent cumulative regret
+the level $v$ has not yet been hit. The incumbent \acrshort{cr}
 over a budget of
 $T$ evaluations is therefore
 \[
@@ -210,7 +210,7 @@ The proof of the main theorem relies on two elementary lemmas.
   two indicators agree on every sample path.
 \end{proof}
 
-The following identity connects \textit{expected} cumulative regret
+The following identity connects \textit{expected} \acrshort{cr}
 to the distributional
 runtime profile.
 
@@ -252,7 +252,7 @@ runtime profile.
   the stated result.
 \end{proof}
 
-Theorem~\ref{thm:regret-profile} expresses expected cumulative regret
+Theorem~\ref{thm:regret-profile} expresses expected \acrshort{cr}
 as a double sum
 of the distributional runtime profile: $\mathbb{E}[\mathrm{CR}(T)]$ is the total
 expected time the algorithm spends below each fitness level $v$,
@@ -322,13 +322,13 @@ asymptotic connection.
 
 Corollary~\ref{cor:asymptotic-regret} provides a unifying
 perspective: the long-run
-expected cumulative regret decomposes as the sum of the expected
+expected \acrshort{cr} decomposes as the sum of the expected
 first hitting times
 over all fitness levels, minus the constant $f^*$ arising from the $t
 = 0$ term in the
 tail-sum identity. Algorithms that reach all intermediate fitness
 levels quickly are
-therefore those that incur low long-run cumulative regret. This formalizes
+therefore those that incur low long-run \acrshort{cr}. This formalizes
 the intuition advanced in~\cite{pinto2018practice} that an algorithm
 making steady
 progress through the fitness landscape is preferable to one that
@@ -369,10 +369,10 @@ Furthermore, as established in Theorem~\ref{thm:regret-profile}, any
 collection of
 upper bounds on $\mathbb{E}[\tau_v]$ for all levels $v$
 simultaneously yields an upper
-bound on expected cumulative regret, and conversely, lower bounds on
+bound on expected \acrshort{cr}, and conversely, lower bounds on
 regret propagate to
 lower bounds on a weighted aggregate of first hitting times.
-Cumulative regret thus
+\acrshort{cr} thus
 provides a single scalar summary of the entire runtime profile,
 complementing the
 per-level view that the profile itself offers. The two

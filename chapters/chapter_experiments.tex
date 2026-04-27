@@ -105,9 +105,9 @@ purpose, and the suites or conditions that enable it.
 
 For hill-climbing algorithms (RLS, $(1+1)$-EA) the current-solution and
 incumbent IR variants coincide because no worsening moves are accepted; for SA
-and \acrshort{rls}Exploration they diverge during phases of active exploration,
+and \acrshort{rlse} they diverge during phases of active exploration,
 making the current-solution variant a direct diagnostic of temperature-driven
-behaviour. Cumulative regret is always plotted on a linear $y$-axis: its slope
+behavior. \acrshort{cr} is always plotted on a linear $y$-axis: its slope
 during the trapped phase grows linearly with time, and a log axis would suppress
 that signal.
 
@@ -201,14 +201,14 @@ is developed in Chapter~\ref{cha:profiles}.
 
 Suite 01 establishes a reference comparison of four algorithm families across
 six pseudo-boolean problems of increasing structural difficulty: \acrfull{rls},
-\acrshort{rls}Exploration, the $(1+1)$-\acrshort{ea}, and \acrshort{sa} with
+\acrshort{rlse}, the $(1+1)$-\acrshort{ea}, and \acrshort{sa} with
 logarithmic cooling at $d=2.0$. SA is reduced to a single representative
 schedule here; the effect of varying the schedule parameter is deferred to
 suites 03 and 11.
 
 The six problems are: OneMax ($n=100$), LeadingOnes ($n=100$), TwoMax
-($n=100$), Jump-3 ($n=100$, $k=3$), Trap-10 ($n=100$, $k=10$), and BinVal
-($n=50$). BinVal uses $n=50$ rather than $n=100$ because its exponential
+($n=100$), Jump-3 ($n=100$, $k=3$), Trap-10 ($n=100$, $k=10$), and \acrshort{bv}
+($n=50$). \acrshort{bv} uses $n=50$ rather than $n=100$ because its exponential
 fitness structure already produces large fitness gaps and rapid convergence at
 this size; the \texttt{budget\_for\_plots} of 500 reflects this. The 50 runs
 per combination are evaluated at six budgets: $\{200, 500, 1000, 2000, 5000,
@@ -224,7 +224,7 @@ over 50 runs. Profile analysis is disabled.
 
 Three problems receive problem-specific algorithm overrides (full parameter
   values are listed in Table~\ref{tab:suite02-overrides} in the
-appendix). For \acrshort{rls}Exploration on Jump-3, Jump-5, and Trap-5, the
+appendix). For \acrshort{rlse} on Jump-3, Jump-5, and Trap-5, the
 exploration rate is raised to $\varepsilon=0.05$ with decay disabled,
 maintaining
 persistent non-improving moves on barrier problems. For SA, the cooling
@@ -241,7 +241,7 @@ budget.
     \textbf{Algorithm} & \textbf{Problem} & \textbf{Parameter} &
     \textbf{Default} & \textbf{Override} \\
     \midrule
-    \multirow{3}{*}{\acrshort{rls}Exploration}
+    \multirow{3}{*}{\acrshort{rlse}}
     & Jump-3  & $\varepsilon$, decay & $0.01$, on & $0.05$, off \\
     & Jump-5  & $\varepsilon$, decay & $0.01$, on & $0.05$, off \\
     & Trap-5  & $\varepsilon$, decay & $0.01$, on & $0.05$, off \\
@@ -252,7 +252,7 @@ budget.
     \bottomrule
   \end{tabular}
   \caption{Problem-specific algorithm overrides in suite 02. For
-    \acrshort{rls}Exploration the default is $\varepsilon=1/n=0.01$
+    \acrshort{rlse} the default is $\varepsilon=1/n=0.01$
     with exponential
     decay ($\varepsilon_t = \varepsilon/t$); for SA the default cooling
   parameter is $d=2.0$.}
@@ -275,7 +275,7 @@ variance in $\widehat{\mathbb{E}}[\text{CR}(T)]$ is suppressed to the point
 where any visible gap between trajectory-derived and profile-derived curves in
 the verification plot can be attributed to numerical discretization rather than
 sampling noise. The \texttt{budget\_for\_plots} for LeadingOnes is set to the
-maximum available (10\,000) to capture the full cumulative regret ramp, which
+maximum available (10\,000) to capture the full \acrshort{cr} ramp, which
 extends further than on OneMax due to its $\Theta(n^{2})$ expected convergence
 time. Profile analysis is enabled; pairwise annotations use \acrshort{rls} as
 the reference.
@@ -391,7 +391,7 @@ barrier types. Profile analysis is disabled.
 % insight beyond the $1/n$ baseline.
 
 % The budget list extends to 20\,000 and includes six points:\\
-% $\{500, 1000, 2000, 5000, 10000, 20000\}$. Cumulative regret is plotted on a
+% $\{500, 1000, 2000, 5000, 10000, 20000\}$. \acrshort{cr} is plotted on a
 % linear $y$-axis (\texttt{log\_y: false}), while instantaneous regret uses
 % \texttt{log\_y: true}. This distinction matters: during the plateau phase
 % (when the algorithm is trapped at $\text{ones}=n-k$), cumulative regret grows
@@ -406,7 +406,7 @@ three $(1+1)$-\acrshort{ea} variants: fixed rates $1/n$ and $2/n$, and a
 problem-adaptive rate $k/n$ set via per-problem overrides. The lower rate
 $0.5/n$ is omitted because it offers no advantage over $1/n$ for crossing a
 $k$-bit gap. Budgets range from 500 to 20\,000. Instantaneous regret is plotted
-on a log scale, while cumulative regret uses a linear scale so that the
+on a log scale, while \acrshort{cr} uses a linear scale so that the
 trapped-phase slope remains visible. Profile analysis is disabled; the
 longer-horizon Jump study is deferred to suite 09.
 
@@ -439,7 +439,7 @@ longer-horizon Jump study is deferred to suite 09.
 % Profile analysis is disabled.
 %
 Suite 06 mirrors suite 05 on Plateau instances ($k \in \{2,5,10,20\}$, $n=100$)
-to compare cumulative regret trajectory shape across barrier types at
+to compare \acrshort{cr} trajectory shape across barrier types at
 structurally equivalent widths. The algorithm set is three
 $(1+1)$-\acrshort{ea} variants at rates $1/n$, $2/n$, and $5/n$, plus
 SA-Log-d\_4.0.
@@ -581,7 +581,7 @@ $(1+1)$-\acrshort{ea} mutation rates: $0.5/n$, $1/n$, $2/n$, and $5/n$, applied
 uniformly across all three barrier types with budgets to 50\,000. Since all
 three barriers share $\mathbb{E}[\text{\acrshort{ttfo}}] = \Theta(n^{k})$ at
 rate $1/n$, \acrshort{ttfo} distributions cannot separate them when
-$P(\text{opt}) \approx 0$; cumulative regret trajectories accumulate
+$P(\text{opt}) \approx 0$; \acrshort{cr} trajectories accumulate
 differently depending on the fitness gradient before and during the barrier, and
 testing whether this distinction is visible at $n=100$, $k=5$ is the suite's
 primary purpose. Pairwise annotations use

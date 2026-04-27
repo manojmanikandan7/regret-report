@@ -217,12 +217,12 @@ Table~\ref{tab:succrit}.
   alone is insufficient: if the identity cannot be verified in the
   finite, discrete experimental setting, it provides no practical basis
   for the empirical analyses that follow. Agreement between
-  trajectory-derived and profile-derived expected cumulative regret
+  trajectory-derived and profile-derived expected \acrfull{cr}
   curves procured from experiments constitutes the verification. \\
   \hline
 
   \textsc{Empirics} &
-  Cumulative regret trajectories must yield qualitatively distinct
+  \acrfull{cr} trajectories must yield qualitatively distinct
   signatures across at least three landscape archetypes (for instance,
   unimodal, barrier, and deceptive) that are not separated by
   expected runtime (time to optimum) alone. This is the
@@ -233,7 +233,7 @@ Table~\ref{tab:succrit}.
   \hline
 
   \textsc{Software} &
-  The \texttt{regret} framework must execute all 14 experimental suites
+  The \texttt{regret} framework must execute all 13 experimental suites
   reproducibly and maintain a minimum of 50\% branch coverage enforced
   in \acrshort{ci}. This threshold is the evidentiary floor for the
   empirical contribution: results obtained from an unvalidated
@@ -268,7 +268,7 @@ summarized in Table~\ref{tab:contributions}.
 
   \textsc{Theory} &
   Established a formal connection between expected incumbent
-  cumulative regret and
+  \acrfull{cr} and
   the distributional runtime profile of~\citet{pinto2018practice}
   (Theorem~\ref{thm:regret-profile}), yielding the \textit{combined anytime
   measure} identified as an open problem in the evolutionary computation
@@ -284,7 +284,7 @@ summarized in Table~\ref{tab:contributions}.
   tail-sum identity (Suite~08) and studies how regret trajectories reflect
   landscape structure, including barrier crossings (Suites~04--06, 09--10),
   epistatic ruggedness (Suites~03, 12), hierarchical difficulty (Suite~07), and
-  scaling behavior (Suite~13). The results show that cumulative regret captures
+  scaling behavior (Suite~13). The results show that \acrshort{cr} captures
   diagnostic information about trapped phases and saturation that
   fixed-budget and
   expected-runtime measures miss when $P(\mathrm{opt}) \approx 0$. \\
@@ -350,7 +350,7 @@ seminal work in this project are mapped out.
 % \paragraph{Tight cumulative regret bounds for standard \acrshort{rsh}s.}
 % Closed-form expressions for $\mathbb{E}[\mathrm{CR}(T)]$ are not yet
 % established for
-% the $(1+1)$~\acrshort{ea} or \acrshort{rls} on the canonical
+% the $(1+1)$-\acrshort{ea} or \acrshort{rls} on the canonical
 % pseudo-Boolean benchmarks.
 % While the tail-sum identity of Theorem~\ref{thm:regret-profile}
 % provides a route from

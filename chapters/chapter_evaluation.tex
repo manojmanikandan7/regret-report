@@ -32,6 +32,42 @@ first optimum. Hence, two algorithms can have different interpretations under
 sooner on average but accumulate more regret early in the run, whereas another
 may converge more cautiously through better intermediate incumbents and finish
 with a smaller $y_0$.
+A central diagnostic in the baseline suites is the slope of the
+cumulative regret curve. Let $\rho_t^{\mathrm{inc}} = f^{*} -
+f(\hat{x}_t)$ denote the incumbent instantaneous regret after
+evaluation $t$, where $\hat{x}_t = \operatorname{arg\,max}_{s \leq t}
+f(x_s)$ is the best solution found so far, and let
+$\mathrm{CR}(T) = \sum_{t=1}^{T} \rho_t^{\mathrm{inc}}$. Since
+$\mathrm{CR}(T) - \mathrm{CR}(T-1) = \rho_T^{\mathrm{inc}}$, a
+persistent positive slope in the linear cumulative-regret plot is
+direct evidence that the incumbent remains suboptimal !TODO: ref trap, jump CR plots!. When the
+best-so-far solution has stagnated at a local optimum, on a plateau,
+or in a deceptive basin, the slope at time $T$ estimates the residual
+fitness gap $f^{*} - f(\hat{x}_T)$ to the true optimum.
+
+Conversely, if $\mathrm{CR}(T)$ approaches a horizontal asymptote
+$C = \lim_{T \to \infty} \mathrm{CR}(T)$ as $T \to \infty$, then
+$\rho_T^{\mathrm{inc}} \to 0$, which on the finite benchmark
+landscapes studied here corresponds to eventual discovery of the
+global optimum !TODO: ref
+OneMax, LeadingOnes, TwoMax!. In finite-budget experiments the asymptote can only be
+approximated, but the approximation improves as the budget extends
+beyond the typical hitting time. By Corollary~\ref{cor:asymptotic-regret},
+$C = \sum_{v=1}^{f^{*}} \mathbb{E}[\tau_v] - f^{*}$, so the
+asymptote is determined by the sum of expected first-hitting times
+across \emph{all} intermediate fitness levels, not only the terminal
+one. It should therefore be read as the total cumulative cost paid
+before convergence: the area under the entire incumbent-regret
+trajectory!TODO: ref BinVal!. This distinguishes it from time-to-first-optimum
+(\acrshort{ttfo}), which captures only the moment of final arrival.
+
+All experiments in this section use $n = 100$, except for
+\textsc{BinVal} at $n = 50$\footnote{The restriction arises because
+\textsc{BinVal}'s optimum is $2^n - 1$: at $n = 100$ this value
+exceeds the precision range of IEEE~754 double-precision
+floating-point arithmetic, introducing rounding error into the regret
+computation. At $n = 50$ the optimum $2^{50} - 1 \approx 1.13 \times
+10^{15}$ is representable exactly.}.
 
 \subsection{Suite 01: Algorithm-Family Comparison}
 \label{sec:results:suite01}
@@ -40,9 +76,45 @@ with a smaller $y_0$.
 % regret_curves (log-log), convergence_probability, comparison_heatmap
 % Key question: at which budget does each family overtake the others?
 
+\subsection{Suite 01: Algorithm-Family Comparison}
+\label{sec:results:suite01}
 \subsubsection{Regret Distributions and TTFO}
 % regret_boxplots, performance_profile, ttfo_distribution at budget_for_plots
 % Pairwise annotations (vs. RLS)
+For the simpler \textsc{OneMax} and \textsc{TwoMax} instances, the relative ordering of mean algorithm performance aligns with the horizontal convergence points of the median incumbent \acrshort{cr} curves !TODO: ref onemax, twomax cr inc plots!. However, on \textsc{LeadingOnes} and \textsc{BinVal}, a structural inversion emerges !TODO: ref leadingones, binval!: the algorithms reach the global optimum in the order \acrshort{rls}, \acrshort{sa}-Log (d=2.0d=2.0
+d=2.0), \acrshort{rlse}, then (1+1)(1+1)
+(1+1)-\acrshort{ea}, yet their \acrshort{cr} asymptotes are ordered in reverse
+
+This inversion follows directly from Corollary~\ref{cor:asymptotic-regret}:
+the asymptote $C = \lim_{T \to \infty} \mathbb{E}[\mathrm{CR}(T)] = \sum_{v=1}^{f^{*}} \mathbb{E}[\tau_v] - f^{*}$ is governed by first-hitting times across \emph{all} intermediate fitness
+levels. \acrshort{rls}'s greedy trajectory
+reaches $f^{*}$ efficiently but lingers at lower fitness levels during
+its ascent, inflating the per-level $\mathbb{E}[\tau_v]$ terms and
+therefore $C$. The $(1+1)$-\acrshort{ea}'s multi-bit mutation
+occasionally promotes the incumbent earlier in the run, reducing those
+intermediate contributions and shrinking $C$, despite the later arrival
+at $f^{*}$.
+
+For \textsc{Jump} ($k=3$) and \textsc{Trap} ($k=10$), all algorithms
+remain trapped in suboptimal basins within the given budget, so
+$P(\mathrm{opt}) \approx 0$ and \acrshort{ttfo} is undefined for the
+vast majority of runs. The incumbent \acrshort{cr} curves nevertheless
+retain diagnostic structure. Each curve grows at an approximately
+constant rate, confirming stagnation of the incumbent; the slope at
+time $T$ estimates the residual fitness gap $\rho_T^{\mathrm{inc}} =
+f^{*} - f(\hat{x}_T)$, so a steeper slope indicates that the
+algorithm is trapped further from the optimum and is therefore
+incurring a greater per-evaluation cost. The slopes differ across
+algorithms, reflecting the fact that each stagnates at a different
+local optimum depending on its search strategy, while remaining
+non-zero throughout the budget because the landscape barrier (whose depth is a fixed property of the problem) prevents any
+algorithm from closing the gap. This illustrates a key advantage of
+\acrshort{cr} over \acrshort{ttfo}: even when convergence is never
+observed, the regret trajectory continues to distinguish algorithms
+by the quality of their trapped incumbent, information that a binary
+optimum achievement measure cannot provide.
+
+!TODO: mention MWU and other stats from regret boxplots!
 
 \subsubsection{Trajectory Analysis}
 % history_best, regret_instantaneous, regret_instantaneous_best,
