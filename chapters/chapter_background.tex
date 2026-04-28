@@ -543,25 +543,54 @@ bits, making \textsc{\acrshort{bv}} highly structured.
 \subsubsection{Trap}
 
 The \textsc{Trap} function is a piecewise-linear \textit{function of
-unitation} formally analyzed for deception
-conditions by \citet{deb1993analyzing}. Its value
-depends only on the number of ones $u = \sum_{i=1}^n x_i$, not on
-their positions, and with slope-change location $z = n - k$ it is
-defined as
+unitation} formally analyzed for deception conditions by
+\citet{deb1993analyzing}. Its value depends only on the number of ones
+$u = \sum_{i=1}^n x_i$, not on their positions. \citet{deb1993analyzing} define
+the general trap using a local-optimum value $a$, a global-optimum value
+$b>a$, and a slope-change location $z$:
 \[
-  \textsc{Trap}_{k}(x) =
+  f(u) =
   \begin{cases}
-    \dfrac{n}{z}(z - u) & \text{if } u \leq z, \\[8pt]
-    \dfrac{n}{k}(u - z) & \text{otherwise.}
+    \dfrac{a}{z}(z-u) & \text{if } u \leq z, \\[8pt]
+    \dfrac{b}{n-z}(u-z) & \text{otherwise.}
   \end{cases}
 \]
-For $u \leq z$ the gradient points toward the all-zeros attractor
-$0^n$; only past the slope change does fitness increase toward the
-global optimum $1^n$. Every improving move for a hill-climber
-therefore moves \emph{away} from the optimum. Deb and Goldberg
-establish that the necessary and sufficient condition for full
-deception is that all schemata of order $n-1$ favor the local
-optimum, which requires $z \geq \lfloor n/2 \rfloor$~\cite{deb1993analyzing}.
+The implementation used in this project fixes $b=n$ and sets
+$z=n-k$, so that $a=z=n-k$. Thus, \textsc{Trap}$_{k,n}$ is
+\[
+  \textsc{Trap}_{k,n}(x) =
+  \begin{cases}
+    z-u & \text{if } u \leq z, \\[8pt]
+    \dfrac{n}{k}(u-z) & \text{otherwise,}
+  \end{cases}
+  \qquad z=n-k .
+\]
+The all-zeros string $0^n$ is therefore a strict local optimum with
+value $n-k$, while the all-ones string $1^n$ is the unique global
+optimum with value $n$. For $u \leq z$, the fitness gradient points
+toward the all-zeros attractor; only after the slope change does
+fitness increase toward the global optimum.
+
+\citet{deb1993analyzing} show that full deception is characterized not merely
+by the location of the slope change, but by the ratio
+$r=a/b$ between the local and global optimum values. A necessary and
+sufficient condition is that all order-$(n-1)$ schemata favor the local
+optimum, equivalently
+\[
+  r \geq
+  \frac{2 - 1/(n-z)}{2 - 1/z}.
+\]
+For the implemented normalization, $r=z/n=(n-k)/n$, so full deception
+requires
+\[
+  \frac{n-k}{n}
+  \geq
+  \frac{2 - 1/k}{2 - 1/(n-k)},
+\]
+equivalently $n \geq k(2k+1)$. In particular, $k=1$ gives the classical
+fully deceptive trap for all $n \geq 3$, while larger values of $k$
+increase the right-hand basin width and do not automatically preserve
+full deception.
 
 \subsubsection{Plateau}
 
