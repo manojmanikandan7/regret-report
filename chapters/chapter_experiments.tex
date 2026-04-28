@@ -169,7 +169,7 @@ is developed in Chapter~\ref{cha:profiles}.
       10 & Barrier archetype comparison
       & Jump/Trap/Plateau ($k=5$, $n=100$)
       & 4$\times$EA ($0.5/n$--$5/n$)
-      & 30 & 50\,000 & No \\
+      & 30 & 10\,000 & No \\
       11 & SA cooling diagnostics
       & OneMax, LeadingOnes
       & RLS, 6$\times$SA-Log, SA-Lin, SA-Exp
@@ -560,8 +560,8 @@ Jump-$k$ in suite~09, not as within-suite overlays.
 % ($n=100$): Jump-k5, Trap-k5, and Plateau-k5. Four $(1+1)$-EA variants at
 % rates $0.5/n$, $1/n$, $2/n$, and $5/n$ are applied with no per-problem
 % overrides, meaning the same rate is used on all three barrier types. The
-% budget list extends to 50\,000 to allow the $k=5$ barrier to be crossed at
-% moderate rates within the observation window.
+% budget list extends to 10\,000, matching the common barrier-comparison
+% horizon used for the $k=5$ archetype plots.
 
 % The motivation for fixing $k=5$ and varying the barrier type (rather than
 % fixing the type and varying $k$) is that Jump-k5, Trap-k5, and Plateau-k5
@@ -585,7 +585,7 @@ Jump-$k$ in suite~09, not as within-suite overlays.
 %
 Suite 10 compares Jump-k5, Trap-k5, and Plateau-k5 at $n=100$ under four
 $(1+1)$-\acrshort{ea} mutation rates: $0.5/n$, $1/n$, $2/n$, and $5/n$, applied
-uniformly across all three barrier types with budgets to 50\,000. Since all
+uniformly across all three barrier types with budgets to 10\,000. Since all
 three barriers share $\mathbb{E}[\text{\acrshort{ttfo}}] = \Theta(n^{k})$ at
 rate $1/n$, \acrshort{ttfo} distributions cannot separate them when
 $P(\text{opt}) \approx 0$; \acrshort{cr} trajectories accumulate
