@@ -717,16 +717,16 @@ Suite~10 fixes $k=5$ across \textsc{Jump}, \textsc{Trap}, and
 \textsc{Plateau} because endpoint convergence is deliberately absent:
 none of the tested $(1+1)$-\acrshort{ea} mutation-rate variants reaches
 the global optimum within the available budget on any of the three
-problems. \todo{Cite convergence probability and/or simple-regret curves
-showing non-convergence for all algorithms and all three problems.}
+problems. !TODO: Cite convergence probability and/or simple-regret curves
+showing non-convergence for all algorithms and all three problems.!
 The comparison therefore queries how different barrier mechanisms are
 reflected in the regret trajectories when \acrshort{ttfo} provides no
 usable samples.
 
 The \textsc{Jump}-$5$ and \textsc{Plateau}-$5$ incumbent
 cumulative-regret curves remain close in shape, matching the behavior
-already observed in the Suite~06 matched comparison. \todo{Reference
-Suite~06 and the Suite~10 incumbent cumulative-regret figure.} At this
+already observed in the Suite~06 matched comparison. !TODO:Reference
+Suite~06 and the Suite~10 incumbent cumulative-regret figure.! At this
 width, the neutral-walk and gap-crossing mechanisms induce similar
 realized \acrshort{ir} curves under the tested mutation rates, so their cumulative
 curves primarily record comparable optimization cost rather than a
@@ -736,12 +736,12 @@ The \textsc{Trap}-$5$ median incumbent instantaneous-regret trajectories
 show a clearer contrast. Across all four mutation-rate variants, the
 algorithm spends substantially longer at intermediate fitness
 levels before settling into the deceptive basin with residual regret
-approximately $k$. \todo{Reference median incumbent instantaneous-regret
-figures for \textsc{Trap}-$5$.} This extended intermediate phase is
+approximately $k$. !TODO:Reference median incumbent instantaneous-regret
+figures for \textsc{Trap}-$5$.! This extended intermediate phase is
 consistent with the deceptive gradient: progress can continue locally,
 but it carries the search toward the wrong basin rather than toward the
-global optimum. \todo{Insert table reporting convergence to the local
-optimum/deceptive basin by algorithm and problem.}
+global optimum. !TODO:Insert table reporting convergence to the local
+optimum/deceptive basin by algorithm and problem.!
 
 Thus, although no method solves any of the three instances within the
 budget, the trajectory plots still expose how each barrier shapes the
@@ -955,7 +955,7 @@ one-bit greediness: once \acrshort{rls} reaches a locally coherent block
 structure, improving moves typically require coordinated flips that are
 inaccessible to its neighborhood. The resulting instantaneous-regret floors and
 best-fitness stagnation make this failure mode visible before the final budget.
-\todo{Reference Suite 07 incumbent instantaneous regret and history-best plots.}
+!TODO:Reference Suite 07 incumbent instantaneous regret and history-best plots.!
 
 The exploratory \acrshort{rlse} variant and the $(1+1)$-\acrshort{ea}
 mutation-rate
@@ -963,13 +963,13 @@ grid test two ways of relaxing this limitation: accepting occasional worsening
 moves, and allowing multi-bit flips. Over the three tested
 \acrshort{hiff} sizes,
 these mechanisms improve partial progress but do not establish a general
-convergence threshold.\todo{Reference Suite 07 incumbent
-instantaneous regret and history-best plots.} The appropriate conclusion is therefore narrower than a
+convergence threshold.!TODO:Reference Suite 07 incumbent
+instantaneous regret and history-best plots.! The appropriate conclusion is therefore narrower than a
 regret-scaling law: on hierarchical landscapes, mutation and exploration affect
 both the final incumbent quality and the rate at which cumulative regret accrues
-under a fixed evaluation budget.\todo{Reference Suite 07 incumbent
-instantaneous regret and history-best plots.}
-\todo{Reference Suite 07 incumbent cumulative-regret}
+under a fixed evaluation budget.!TODO:Reference Suite 07 incumbent
+instantaneous regret and history-best plots.!
+!TODO: Reference Suite 07 incumbent cumulative-regret!
 
 \section{Cross-Suite Synthesis}
 \label{sec:results:synthesis}
