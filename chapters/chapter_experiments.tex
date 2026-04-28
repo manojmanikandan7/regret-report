@@ -95,7 +95,8 @@ purpose, and the suites or conditions that enable it.
   & aggregate table              & Across-problem mean regret, mean
   $P(\text{opt})$, best-count per algorithm & --- \\
   \bottomrule
-  \caption{Plot types produced by the experimental pipeline. The ``Output key''
+  \caption[Experimental pipeline plot types]{Plot types produced by
+    the experimental pipeline. The ``Output key''
     column matches the YAML \texttt{plots} sub-block name.
     All trajectory and distribution plots are generated at
     \texttt{budget\_for\_plots}; aggregate plots pool across all budgets in the
@@ -113,7 +114,7 @@ that signal.
 
 \subsection{Suite Numbering and Roles}
 
-Suites are numbered 01--13. Table~\ref{tab:suite-overview} gives a complete
+Suites are numbered 01--12. Table~\ref{tab:suite-overview} gives a complete
 reference; the methodological context for runtime-profile suites (03, 08, 12)
 is developed in Chapter~\ref{cha:profiles}.
 
@@ -159,7 +160,7 @@ is developed in Chapter~\ref{cha:profiles}.
       & 30 & 10\,000 & No \\
       07 & \acrshort{hiff} scaling
       & 3 \acrshort{hiff} ($n\in\{32,64,128\}$)
-      & RLS, 4$\times$EA, SA-Log-d4.0
+      & \acrshort{rls}, 4$\times$ $(1+1)$-\acrshort{ea}, \acrshort{rlse}
       & 25 & 50\,000 & No \\
       09 & Jump reference for Plateau comparison
       & 5 Jump (same as 05)
@@ -177,10 +178,6 @@ is developed in Chapter~\ref{cha:profiles}.
       & 5 NK ($k\in\{0,2,4,6,8\}$, $n=20$)
       & RLS, $(1+1)$-EA, SA-Log per-$k$ $d$
       & 25 & 50\,000 & \textbf{Yes} \\
-      13 & Regret scaling with $n$
-      & 4 OneMax ($n\in\{25,50,100,200\}$)
-      & $(1+1)$-EA at rate $1/n$
-      & 60 & 10\,000 & No \\
       % 14 & Population dynamics
       % & OneMax, LeadingOnes, TwoMax, Jump-3
       % & $(1+1)$-EA + 4$\times(\mu{+}\lambda)$-EA
@@ -188,7 +185,8 @@ is developed in Chapter~\ref{cha:profiles}.
       \bottomrule
     \end{tabular}
   }
-  \caption{Overview of all 13 experimental suites.
+  \caption[Overview of experimental suites]{Overview of the 12
+    reported experimental suites.
     $R$ = runs per algorithm--problem--budget combination.
     ``Profile'' indicates whether \texttt{suite.profile:~true} is set.
     Budget values are in evaluations; ``max'' is the largest value in the
@@ -253,7 +251,8 @@ budget.
     & Trap-5  & $d$ & $2.0$ & $6.0$ \\
     \bottomrule
   \end{tabular}
-  \caption{Problem-specific algorithm overrides in suite 02. For
+  \caption[Suite 02 algorithm overrides]{Problem-specific algorithm
+    overrides in suite 02. For
     \acrshort{rlse} the default is $\varepsilon=1/n=0.01$
     with decay disabled, and only $\varepsilon$ is overridden; for SA the
   default cooling parameter is $d=2.0$.}
@@ -275,7 +274,8 @@ With $R=100$ independent runs (the highest run count in the study) Monte-Carlo
 variance in $\widehat{\mathbb{E}}[\text{CR}(T)]$ is small, but any visible gap
 between trajectory-derived and profile-derived curves in the verification plot
 should still be read as the combined effect of finite-run Monte Carlo error and
-fitness-grid discretization. The \texttt{budget\_for\_plots} for LeadingOnes is set to the
+fitness-grid discretization. The \texttt{budget\_for\_plots} for
+LeadingOnes is set to the
 maximum available (10\,000) to capture the full \acrshort{cr} ramp, which
 extends further than on OneMax due to its $\Theta(n^{2})$ expected convergence
 time. Profile analysis is enabled; pairwise annotations use \acrshort{rls} as
@@ -283,9 +283,9 @@ the reference.
 
 \section{Exploratory Analysis of Regret and Runtime}
 
-The exploratory suites address four themes: barrier structure and mutation rate
+The exploratory suites address three themes: barrier structure and mutation rate
 (suites 04--06, 09--10), NK ruggedness and SA cooling (suites 03, 11--12),
-hierarchical structure, and scaling (suites 07, 13).
+and hierarchical size effects (suite 07).
 
 \subsection{Suite 03: NK Landscape Ruggedness}
 
@@ -499,7 +499,8 @@ reference, especially at $k=2$ and $k=5$. Profile analysis is disabled.
 Suite 07 evaluates \acrshort{hiff} at $n \in \{32,64,128\}$ under
 \acrshort{rls}, four $(1+1)$-\acrshort{ea} variants at rates
 $\{0.5/n,1/n,2/n,3/n\}$ (exact per-problem decimal values listed in
-Table~\ref{tab:suite07-rates}), and SA-Log-d\_4.0 at a fixed $d=4.0$.
+Table~\ref{tab:suite07-rates}), and \acrshort{rlse} with default
+uniform $\varepsilon=1/n$.
 \acrshort{rls} is expected to stagnate at the first hierarchical level for
 $n \geq 64$ since a single bit-flip disrupts any uniform sub-block, anchoring
 the comparison. For $n=128$, \texttt{budget\_for\_plots} is set to the maximum
@@ -532,7 +533,8 @@ cases. Profile analysis is disabled.
     & $\nicefrac{3}{128}\approx0.02344$ \\
     \bottomrule
   \end{tabular}
-  \caption{Per-problem mutation rates in suite 07. Values are set via
+  \caption[Suite 07 mutation rates]{Per-problem mutation rates in
+    suite 07. Values are set via
     \texttt{by\_problem} overrides to exact decimal representations of
   $\{0.5/n,1/n,2/n,3/n\}$ at each problem size.}
   \label{tab:suite07-rates}
@@ -664,34 +666,12 @@ through discretization and does not hold exactly.
     $d$ & 4.0 & 4.0 & 8.0 & 8.0 & 12.0 \\
     \bottomrule
   \end{tabular}
-  \caption{SA-Log cooling parameter $d$ per NK instance in suite 12.
+  \caption[Suite 12 SA-Log cooling parameters]{SA-Log cooling
+    parameter $d$ per NK instance in suite 12.
     Values increase monotonically with epistasis $k$ to compensate for
   deeper local optima.}
   \label{tab:suite12-d}
 \end{table}
-
-\subsection{Suite 13: Regret Scaling with Problem Size}
-
-Suite 13 runs the $(1+1)$-\acrshort{ea} at rate $1/n$ on four OneMax instances
-($n \in \{25,50,100,200\}$) over 60 runs (the second-highest run count in the
-study) to produce empirical $\mathbb{E}[\text{CR}(T)]$ estimates suitable for
-fitting a scaling exponent. Using a single algorithm isolates the scaling
-behavior of the regret metric from algorithm-to-algorithm differences.
-\texttt{budget\_for\_plots} values are set somewhat above $5n\log_2 n$ so that
-the relevant scaling regime is visible in trajectory plots. Profile analysis is
-disabled.
-
-% \subsection{Suite 14: Population Dynamics}
-
-% Suite 14 compares the $(1+1)$-\acrshort{ea} against four
-% $(\mu+\lambda)$-\acrshort{ea} variants ($(1+1)$ via framework, $(5+5)$,
-% $(10+20)$, and $(20+10)$) on OneMax, LeadingOnes, TwoMax, and Jump-3
-% ($n=100$). All entries use mutation rate $1/n$ with no per-problem overrides,
-% isolating the effect of population structure. Including both the standalone
-% $(1+1)$-\acrshort{ea} and its framework equivalent ($\mu=1$, $\lambda=1$) acts
-% as an implementation consistency check: any divergence between them indicates
-% framework overhead rather than a population effect. Profile analysis is
-% disabled.
 
 \section{Cross-Suite Design Relationships}
 

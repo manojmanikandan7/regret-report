@@ -36,7 +36,8 @@ to this class of problems.
     \draw[arrow] (oracle) -- node[below] {value $f(x_t)$} (alg);
     \draw[arrow] (oracle) -- (obj);
   \end{tikzpicture}
-  \caption{Black-box optimization interaction model. The algorithm receives
+  \caption[Black-box optimization interaction model]{Black-box
+    optimization interaction model. The algorithm receives
     only objective values and must adapt future queries from the
   observed history.}
   \label{fig:bbo-query-loop}
@@ -240,7 +241,7 @@ Table~\ref{tab:succrit}.
   \hline
 
   \textsc{Software} &
-  The \texttt{regret} framework must execute all 13 experimental suites
+  The \texttt{regret} framework must execute all 12 experimental suites
   reproducibly and maintain a minimum of 50\% branch coverage enforced
   in \acrshort{ci}. This threshold is the evidentiary floor for the
   empirical contribution: results obtained from an unvalidated
@@ -288,11 +289,11 @@ summarized in Table~\ref{tab:contributions}.
   \hline
 
   \textsc{Empirics} &
-  Introduced a structured suite of 13 experiments that numerically validates the
+  Introduced a structured suite of 12 experiments that numerically validates the
   tail-sum identity (Suite~08) and studies how regret trajectories reflect
   landscape structure, including barrier crossings (Suites~04--06, 09--10),
-  epistatic ruggedness (Suites~03, 12), hierarchical difficulty (Suite~07), and
-  scaling behavior (Suite~13). The results show that \acrshort{cr} captures
+  epistatic ruggedness (Suites~03, 12), and hierarchical difficulty
+  (Suite~07). The results show that \acrshort{cr} captures
   diagnostic information about trapped phases and saturation that
   fixed-budget and
   expected-runtime measures miss when $P(\mathrm{opt}) \approx 0$. \\

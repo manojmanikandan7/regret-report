@@ -25,16 +25,19 @@ $C = \lim_{T \to \infty} \mathrm{CR}(T)$ as $T \to \infty$, then
 $\rho_T^{\mathrm{inc}} \to 0$, which on the finite benchmark
 landscapes studied here corresponds to eventual discovery of the
 global optimum (Figures~\ref{fig:baseline-cr-onemax},
-\ref{fig:baseline-cr-leadingones}, and~\ref{fig:baseline-cr-twomax}). In finite-budget experiments the
+\ref{fig:baseline-cr-leadingones}, and~\ref{fig:baseline-cr-twomax}).
+In finite-budget experiments the
 asymptote can only be
 approximated, but the approximation improves as the budget extends
-beyond the typical hitting time. By Corollary~\ref{cor:asymptotic-regret},
+beyond the typical hitting time. In the infinite-budget limit described by
+Corollary~\ref{cor:asymptotic-regret},
 $C = \sum_{v=1}^{f^{*}} \mathbb{E}[\tau_v] - f^{*}$, so the
 asymptote is determined by the sum of expected first-hitting times
 across \emph{all} intermediate fitness levels, not only the terminal
 one. It should therefore be read as the total cumulative cost paid
 before convergence: the area under the entire incumbent \acrshort{ir}
-trajectory (Figure~\ref{fig:baseline-cr-binval}). This distinguishes it from time-to-first-optimum
+trajectory (Figure~\ref{fig:baseline-cr-binval}). This distinguishes
+it from time-to-first-optimum
 (\acrshort{ttfo}), which captures only the moment of final arrival.
 
 All experiments in this section use $n = 100$, except for
@@ -77,10 +80,11 @@ All experiments in this section use $n = 100$, except for
     \caption{\textsc{Trap}-$10$.}
     \label{fig:baseline-cr-trap10}
   \end{subfigure}
-  \caption{Suite~01 incumbent cumulative-regret trajectories for the
+  \caption[Suite 01 cumulative-regret trajectories]{Suite~01
+    incumbent cumulative-regret trajectories for the
     baseline pseudo-Boolean problems. Smooth landscapes approach a
     horizontal floor, while barrier and deceptive landscapes retain a
-    positive slope under the displayed budget.}
+  positive slope under the displayed budget.}
   \label{fig:baseline-cr}
 \end{figure}
 
@@ -89,14 +93,17 @@ All experiments in this section use $n = 100$, except for
 For the simpler \textsc{OneMax} and \textsc{TwoMax} instances, the
 relative ordering of mean algorithm performance aligns with the
 horizontal convergence points of the median incumbent \acrshort{cr}
-curves (Figures~\ref{fig:baseline-cr-onemax} and~\ref{fig:baseline-cr-twomax}). However, on
+curves (Figures~\ref{fig:baseline-cr-onemax}
+and~\ref{fig:baseline-cr-twomax}). However, on
 \textsc{LeadingOnes} and \textsc{BinVal}, a structural inversion
-emerges (Figures~\ref{fig:baseline-cr-leadingones} and~\ref{fig:baseline-cr-binval}): the algorithms reach the
+emerges (Figures~\ref{fig:baseline-cr-leadingones}
+and~\ref{fig:baseline-cr-binval}): the algorithms reach the
 global optimum in the order \acrshort{rls}, \acrshort{sa}-Log
 (d=2.0), \acrshort{rlse}, then $(1+1)$-\acrshort{ea}, yet their
-\acrshort{cr} asymptotes are ordered in reverse
+\acrshort{cr} asymptotes are ordered in reverse.
 
-This inversion follows directly from Corollary~\ref{cor:asymptotic-regret}:
+This inversion is consistent with the mechanism described by
+Corollary~\ref{cor:asymptotic-regret}:
 the asymptote $C = \lim_{T \to \infty} \mathbb{E}[\mathrm{CR}(T)] =
 \sum_{v=1}^{f^{*}} \mathbb{E}[\tau_v] - f^{*}$ is governed by
 first-hitting times across \emph{all} intermediate fitness
@@ -169,9 +176,10 @@ part of the benchmark.
     \caption{\textsc{TwoMax} mean-regret heat map.}
     \label{fig:suite02-twomax-heatmap}
   \end{subfigure}
-  \caption{Suite~02 easy-tier summary plots. Convergence probabilities and
+  \caption[Suite 02 easy-tier summary plots]{Suite~02 easy-tier
+    summary plots. Convergence probabilities and
     mean-regret heat maps show that the baseline algorithm ordering is stable
-    on smooth benchmark problems under the extended budget.}
+  on smooth benchmark problems under the extended budget.}
   \label{fig:suite02-easy-summary}
 \end{figure}
 
@@ -192,9 +200,10 @@ part of the benchmark.
     \caption{\textsc{Petersen}-3-colour cumulative regret.}
     \label{fig:suite02-petersen-cr}
   \end{subfigure}
-  \caption{Selected Suite~02 cumulative-regret trajectories for harder
+  \caption[Suite 02 harder-instance regret trajectories]{Selected
+    Suite~02 cumulative-regret trajectories for harder
     benchmark instances. The barrier problems retain sustained regret growth,
-    while the graph-colouring instance is solved within the displayed budget.}
+  while the graph-colouring instance is solved within the displayed budget.}
   \label{fig:suite02-selected-cr}
 \end{figure}
 
@@ -216,10 +225,9 @@ The ``hotter'' SA schedule ($d=6.0$) on \textsc{Jump-5} and \textsc{Trap-5}
 reduces premature freezing, as seen by higher \acrshort{iqr} in
 Figures~\ref{fig:suite02-jump5-cr} and~\ref{fig:suite02-trap5-cr}.
 
-On \acrshort{hiff}-64 no method reaches the optimum within budget; the
-best final incumbents reach approximately [X]/$f^\ast$, [Y]/$f^\ast$,
-[Z]/$f^\ast$,
-and [W]/$f^\ast$.
+On \acrshort{hiff}-64 no method reaches the optimum within budget, so this
+instance is retained as a hard hierarchical case rather than a convergence
+benchmark.
 
 In contrast, \textsc{Petersen-3-Color} is solved by all four
 algorithms within budget, with convergence concentrated around
@@ -265,7 +273,8 @@ pointwise agreement.
     & Scale-normalized worst-case discrepancy \\
     \bottomrule
   \end{tabular}
-  \caption{Error measures used to compare profile-derived ($\hat{R}_t$) and
+  \caption[Profile verification error measures]{Error measures used
+    to compare profile-derived ($\hat{R}_t$) and
     empirical ($\bar{R}_t$) expected cumulative regret
     $\mathbb{E}[\mathrm{CR}(T)]$
   at each evaluation index $t$.}
@@ -294,17 +303,20 @@ larger in absolute value.
   \centering
   \begin{subfigure}[t]{0.80\textwidth}
     \includegraphics[width=\linewidth]{results/verification/cr_prof_ver_onemax.pdf}
-    \caption{Verification plots for \acrshort{rls} (black) and
+    \caption[\textsc{OneMax} verification plots]{Verification plots
+      for \acrshort{rls} (black) and
       $(1+1)$-\acrshort{ea} (blue) for the \textsc{OneMax} problem,
     with maximum budget 2\,000}
   \end{subfigure}
   \begin{subfigure}[t]{0.80\textwidth}
     \includegraphics[width=\linewidth]{results/verification/cr_prof_ver_leadingones.pdf}
-    \caption{Verification plots for \acrshort{rls} (black) and
+    \caption[\textsc{LeadingOnes} verification plots]{Verification
+      plots for \acrshort{rls} (black) and
       $(1+1)$-\acrshort{ea} (blue) for the \textsc{LeadingOnes}
     problem, with maximum budget 10\,000}
   \end{subfigure}
-  \caption{The verification curves for the empirically calculated
+  \caption[Empirical and profile-derived verification curves]{The
+    verification curves for the empirically calculated
     mean \acrshort{cr} ($\mathbb{E}[\mathrm{CR}(T)]$, solid plot) and
   the profile-derived expected \acrshort{cr} ($\hat{R}_t$, dotted plot)}
 \end{figure}
@@ -323,7 +335,8 @@ larger in absolute value.
     & \acrshort{rls} & 80.51411 & 98.97000 & 0.00040 \\
     \hline
   \end{tabular}
-  \caption{The pointwise distances calculated between the empirically
+  \caption[Pointwise profile verification distances]{The pointwise
+    distances calculated between the empirically
   calculated $\mathbb{E}(CR)$ and the distributional profile-derived $CR$}
 \end{wraptable}
 
@@ -354,25 +367,30 @@ used later, subject to the discretization caveat for real-valued landscapes.
   \centering
   \begin{subfigure}[t]{0.49\textwidth}
     \includegraphics[width=\linewidth]{results/verification/inv_prof_surf_onemax_RLS.pdf}
-    \caption{\acrshort{rls} for the \textsc{OneMax} problem, with
+    \caption[\acrshort{rls} profile on
+    \textsc{OneMax}]{\acrshort{rls} for the \textsc{OneMax} problem, with
     maximum budget 1\,000}
   \end{subfigure}
   \begin{subfigure}[t]{0.49\textwidth}
     \includegraphics[width=\linewidth]{results/verification/inv_prof_surf_onemax_(1+1)-EA.pdf}
-    \caption{$(1+1)$-\acrshort{ea} for the \textsc{OneMax} problem,
+    \caption[$(1+1)$-\acrshort{ea} profile on
+    \textsc{OneMax}]{$(1+1)$-\acrshort{ea} for the \textsc{OneMax} problem,
     with maximum budget 1\,000}
   \end{subfigure}
   \begin{subfigure}[t]{0.48\textwidth}
     \includegraphics[width=\linewidth]{results/verification/inv_prof_surf_leadingones_RLS.pdf}
-    \caption{\acrshort{rls} for the \textsc{LeadingOnes} problem,
+    \caption[\acrshort{rls} profile on
+    \textsc{LeadingOnes}]{\acrshort{rls} for the \textsc{LeadingOnes} problem,
     with maximum budget 10\,000}
   \end{subfigure}
   \begin{subfigure}[t]{0.48\textwidth}
     \includegraphics[width=\linewidth]{results/verification/inv_prof_surf_leadingones_(1+1)-EA.pdf}
-    \caption{$(1+1)$-\acrshort{ea} for the \textsc{LeadingOnes}
+    \caption[$(1+1)$-\acrshort{ea} profile on
+    \textsc{LeadingOnes}]{$(1+1)$-\acrshort{ea} for the \textsc{LeadingOnes}
     problem, with maximum budget 10\,000}
   \end{subfigure}
-  \caption{Inverse runtime profile [$P(\tau_v \le T)$] plots for
+  \caption[Inverse runtime profile plots]{Inverse runtime profile
+    [$P(\tau_v \le T)$] plots for
   \acrshort{rls} and $(1+1)$-\acrshort{ea}}
   \label{fig:invprof}
 \end{figure}
@@ -392,9 +410,9 @@ consistent with the sequential structure of \textsc{LeadingOnes}, where
 progress depends on extending the correct prefix, and with the known
 asymptotic contrast between the $\Theta(n \log n)$ optimization time of
 \textsc{OneMax} and the $\Theta(n^2)$ behavior of
-\textsc{LeadingOnes}. Thus, the inverse profiles verify not only the
-profile construction itself, but also that the derived surfaces preserve
-the qualitative runtime ordering of the underlying benchmark problems.
+\textsc{LeadingOnes}. Thus, the inverse profiles verify the profile
+construction itself and preserve the qualitative finite-$n$ runtime ordering of
+the underlying benchmark problems.
 
 The verification result supports the use of profile-derived
 $\mathbb{E}[\mathrm{CR}(T)]$ curves on integer-valued or explicitly
@@ -434,10 +452,11 @@ saturation frontiers observed in the NK benchmark suites.
     \caption{\textsc{Trap}-$20$.}
     \label{fig:suite04-trap-k20-cr}
   \end{subfigure}
-  \caption{Suite~04 incumbent cumulative-regret trajectories on
+  \caption[Suite 04 Trap cumulative-regret trajectories]{Suite~04
+    incumbent cumulative-regret trajectories on
     \textsc{Trap} as deception width increases. The trajectories remain
     non-convergent within budget, so the ramp height and slope carry the main
-    diagnostic information.}
+  diagnostic information.}
   \label{fig:suite04-trap-cr}
 \end{figure}
 
@@ -463,10 +482,11 @@ saturation frontiers observed in the NK benchmark suites.
     \caption{\textsc{Trap}-$20$.}
     \label{fig:suite04-trap-k20-box}
   \end{subfigure}
-  \caption{Suite~04 regret distributions at budget $10{,}000$ for
+  \caption[Suite 04 Trap regret distributions]{Suite~04 regret
+    distributions at budget $10{,}000$ for
     increasing \textsc{Trap} widths. The boxplots summarize the end-of-budget
     regret separation between mutation rates and the simulated-annealing
-    schedule.}
+  schedule.}
   \label{fig:suite04-trap-box}
 \end{figure}
 
@@ -508,9 +528,10 @@ Matched-Budget Reference}
     \includegraphics[width=\linewidth]{results/barrier_mut/jump/k3-history_regret_instantaneous_best.pdf}
     \caption{\textsc{Jump}-$3$.}
   \end{subfigure}
-  \caption{Suite~05 incumbent instantaneous-regret trajectories for small
+  \caption[Suite 05 small-jump instantaneous regret]{Suite~05
+    incumbent instantaneous-regret trajectories for small
     jump widths. The plateau height identifies the residual barrier after the
-    local optimum is reached.}
+  local optimum is reached.}
 \end{figure}
 \begin{figure}[H]
   \ContinuedFloat
@@ -535,15 +556,15 @@ Matched-Budget Reference}
     \includegraphics[width=\linewidth]{results/barrier_mut/jump/k10-history_regret_instantaneous_best.pdf}
     \caption{\textsc{Jump}-$10$.}
   \end{subfigure}
-  \caption{Suite~05 incumbent instantaneous-regret trajectories for
+  \caption[Suite 05 Jump instantaneous regret]{Suite~05 incumbent
+    instantaneous-regret trajectories for
     \textsc{Jump}-$k$, $k\in\{2,3,5,7,10\}$. The trajectories descend into a
     width-dependent plateau whose height equals the remaining fitness gap to
-    the optimum.}
+  the optimum.}
   \label{fig:jumpinst}
 \end{figure}
 Figure~\ref{fig:jumpinst} depicts the incumbent, instantaneous regret
-curves for the Jump-$k$,
-$k \in {2,3,5,7,10}$.
+curves for Jump-$k$, $k \in \{2,3,5,7,10\}$.
 The instantaneous incumbent-regret trajectories show two
 distinct phases: an initial descent toward the local optimum, followed by a
 flat plateau at regret $k$ once the search reaches Hamming weight $n-k$.
@@ -580,10 +601,11 @@ changes the transient path into the plateau.
     \caption{\textsc{Jump}-$10$.}
     \label{fig:suite05-jump-k10-cr}
   \end{subfigure}
-  \caption{Suite~05 incumbent cumulative-regret trajectories on
+  \caption[Suite 05 Jump cumulative regret]{Suite~05 incumbent
+    cumulative-regret trajectories on
     \textsc{Jump} as the jump width increases. After the initial descent, the
     trapped phase appears as an approximately linear ramp whose slope is set by
-    the incumbent regret plateau.}
+  the incumbent regret plateau.}
   \label{fig:suite05-jump-cr}
 \end{figure}
 
@@ -599,9 +621,10 @@ changes the transient path into the plateau.
     \caption{Matched-budget convergence probability.}
     \label{fig:suite09-jump-k2-cdp}
   \end{subfigure}
-  \caption{Suite~09 matched-budget reference for \textsc{Jump}-$2$.
+  \caption[Suite 09 matched-budget Jump reference]{Suite~09
+    matched-budget reference for \textsc{Jump}-$2$.
     Cumulative regret records the cost of the trapped phase, while convergence
-    probability records only whether the optimum has been hit by each budget.}
+  probability records only whether the optimum has been hit by each budget.}
   \label{fig:suite09-jump-k2}
 \end{figure}
 The adaptive $k/n$ mutation rate increasingly separates from the fixed-rate
@@ -613,8 +636,7 @@ produces a larger cumulative-regret gap; see
 Figures~\ref{fig:suite05-jump-cr} and~\ref{fig:suite09-jump-k2}. This
 also shows why mean simple regret and convergence probability can be
 misleading at high budgets: they record the eventual plateau or success state,
-but not the accumulated cost of reaching it. !TODO: Quantify the gap at
-[budget(s)] using [ratio/difference/test result].!
+but not the accumulated cost of reaching it.
 
 \subsection{Suite 06: Plateau --- Neutral Walk and Mutation Rate}
 \label{sec:results:suite06}
@@ -640,36 +662,43 @@ but not the accumulated cost of reaching it. !TODO: Quantify the gap at
     \caption{\textsc{Jump}-$2$ convergence probability.}
     \label{fig:suite09-jump-k2-cdp-plateau-ref}
   \end{subfigure}
-  \caption{Matched $k=2$ comparison between the neutral-walk
+  \caption[Matched Plateau and Jump comparison]{Matched $k=2$
+    comparison between the neutral-walk
     \textsc{Plateau} landscape and the fitness-valley \textsc{Jump}
     landscape. Plateau and Jump differ most clearly in the early
-    instantaneous-regret descent and in the median cumulative-regret recovery.}
+  instantaneous-regret descent and in the median cumulative-regret recovery.}
   \label{fig:suite06-plateau-jump-k2}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.80\textwidth]{results/barrier_mut/plateau_jump/plateau_vs_jump_k5_b10000.pdf}
-  \caption{Budget-$10{,}000$ comparison of \textsc{Plateau}-$5$ and
+  \caption[Plateau and Jump regret distributions]{Budget-$10{,}000$
+    comparison of \textsc{Plateau}-$5$ and
     \textsc{Jump}-$5$ regret distributions. At this width the neutral-walk and
     fitness-valley mechanisms are much less visually separable than at
-    $k=2$.}
+  $k=2$.}
   \label{fig:suite06-plateau-jump-k5}
 \end{figure}
 
 The Plateau results are most informative when compared cross-suite against the
-matched-budget Jump reference in Suite~09, since Suite~06 does not contain Jump curves.
+matched-budget Jump reference in Suite~09, since Suite~06 does not
+contain Jump curves.
 At $k=2$, the incumbent cumulative-regret trajectories are visually distinct:
 Plateau-$2$ shows faster median recovery for several EA variants, and under the
 $10{,}000$-evaluation budget some median curves reach zero incumbent
 instantaneous regret (Figure~\ref{fig:suite06-plateau-k2-ir}),
 indicating convergence to the global optimum
-in the cumulative-regret trajectory (Figure~\ref{fig:suite06-plateau-k2-cr}). This contrasts with Jump-$2$ at the same budget, where optima are
+in the cumulative-regret trajectory
+(Figure~\ref{fig:suite06-plateau-k2-cr}). This contrasts with
+Jump-$2$ at the same budget, where optima are
 sampled in some runs, but the median trajectory does not converge
 Figures~\ref{fig:suite09-jump-k2-cr-plateau-ref}
-and~\ref{fig:suite09-jump-k2-cdp-plateau-ref}. At $k=5$, however, the distinction largely disappears:
+and~\ref{fig:suite09-jump-k2-cdp-plateau-ref}. At $k=5$, however, the
+distinction largely disappears:
 the Plateau and Jump cumulative-regret curves are similar both in shape and in
-magnitude (Figure~\ref{fig:suite06-plateau-jump-k5}). Thus, the neutral-walk mechanism is
+magnitude (Figure~\ref{fig:suite06-plateau-jump-k5}). Thus, the
+neutral-walk mechanism is
 clearly separable from Jump at small $k$, but becomes empirically harder to
 distinguish from a fitness-valley barrier as $k$ increases.
 
@@ -684,10 +713,11 @@ distinguish from a fitness-valley barrier as $k$ increases.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.80\textwidth]{results/nk_sa/sa_cooling_onemax_history_regret_instantaneous.pdf}
-  \caption{Suite~11 incumbent instantaneous-regret trajectories on
+  \caption[Suite 11 SA cooling trajectories]{Suite~11 incumbent
+    instantaneous-regret trajectories on
     \textsc{OneMax} for \acrshort{rls} and simulated-annealing cooling
     schedules. The onset of each low-regret floor gives a direct visual
-    diagnostic of effective cooling speed.}
+  diagnostic of effective cooling speed.}
   \label{fig:suite11-sa-cooling-ir}
 \end{figure}
 
@@ -706,7 +736,8 @@ diagnostic of schedule aggressiveness: fast schedules collapse
 quickly, while slower logarithmic schedules preserve exploration
 longer and delay stabilization. This supports the suite hypothesis
 that cooling schedules leave visible trajectory-level signatures,
-rather than only changing final regret values; see Figure~\ref{fig:suite11-sa-cooling-ir}.
+rather than only changing final regret values; see
+Figure~\ref{fig:suite11-sa-cooling-ir}.
 
 \subsection{Suite 03: NK Ruggedness --- Cooling $\times$ Epistasis Grid}
 \label{sec:results:suite03}
@@ -728,10 +759,11 @@ rather than only changing final regret values; see Figure~\ref{fig:suite11-sa-co
     \caption{NK landscape with $k=4$.}
     \label{fig:suite03-k4-cr}
   \end{subfigure}
-  \caption{Suite~03 incumbent cumulative-regret trajectories across
+  \caption[Suite 03 NK cumulative-regret trajectories]{Suite~03
+    incumbent cumulative-regret trajectories across
     increasing NK epistasis. Low-epistasis instances favour mutation-only
     baselines, while at $k=4$ the slower logarithmic cooling schedule begins to
-    dominate after a longer transient phase.}
+  dominate after a longer transient phase.}
   \label{fig:suite03-cr}
 \end{figure}
 
@@ -747,9 +779,10 @@ rather than only changing final regret values; see Figure~\ref{fig:suite11-sa-co
     \caption{\acrshort{sa}-Log with $d=0.5$ on NK $k=4$.}
     \label{fig:suite03-k4-profile-sa-log-d05}
   \end{subfigure}
-  \caption{Representative Suite~03 inverse runtime profile surfaces for NK
+  \caption[Suite 03 NK inverse runtime profiles]{Representative
+    Suite~03 inverse runtime profile surfaces for NK
     $k=4$. The saturation frontiers show where each algorithm ceases to make
-    reliable progress toward higher fitness levels.}
+  reliable progress toward higher fitness levels.}
   \label{fig:suite03-profiles}
 \end{figure}
 
@@ -807,10 +840,11 @@ the contour boundary of the corresponding surface
     \caption{NK $k=8$.}
     \label{fig:suite12-ir-k8}
   \end{subfigure}
-  \caption{Suite~12 incumbent instantaneous-regret trajectories under
+  \caption[Suite 12 calibrated-cooling regret trajectories]{Suite~12
+    incumbent instantaneous-regret trajectories under
     per-$k$ calibrated cooling. The terminal regret floor rises with epistasis,
     and calibrated simulated annealing becomes most useful on the more rugged
-    $k=6$ and $k=8$ landscapes.}
+  $k=6$ and $k=8$ landscapes.}
   \label{fig:suite12-ir}
 \end{figure}
 
@@ -836,14 +870,15 @@ the contour boundary of the corresponding surface
     \caption{Calibrated \acrshort{sa} on NK $k=8$.}
     \label{fig:suite12-k8-profile-sa}
   \end{subfigure}
-  \caption{Suite~12 inverse runtime profile surfaces for higher-epistasis NK
+  \caption[Suite 12 high-epistasis NK profiles]{Suite~12 inverse
+    runtime profile surfaces for higher-epistasis NK
     landscapes. The RLS surfaces saturate below the optimum, while calibrated
     simulated annealing maintains progress to higher fitness levels under the
-    displayed budgets.}
+  displayed budgets.}
   \label{fig:suite12-profiles}
 \end{figure}
 
-In Suite~12 (overrides \ref{tab:suite12-d}), the incumbent
+In Suite~12 (Table~\ref{tab:suite12-d}), the incumbent
 instantaneous-regret trajectories show a
 clear regime change with increasing epistasis. For $k \in \{0,2,4\}$,
 \acrshort{sa} does not fully collapse within the allotted budget
@@ -863,17 +898,36 @@ corroborate this interpretation: in particular, the RLS frontier
 saturates below the optimum, and the contour boundary gives a direct
 visual indication of the local fitness level at which the algorithm
 becomes trapped (Figures~\ref{fig:suite12-k6-profile-rls},
-\ref{fig:suite12-k6-profile-sa}, \ref{fig:suite12-k8-profile-rls},
+  \ref{fig:suite12-k6-profile-sa}, \ref{fig:suite12-k8-profile-rls},
 and~\ref{fig:suite12-k8-profile-sa}).
-\section{Hierarchical Structure and Scaling}
-\label{sec:results:scaling}
+\section{Hierarchical Structure}
+\label{sec:results:hierarchical}
 
 \subsection{Suite 07: \texorpdfstring{\acrshort{hiff}}{HIFF} Scaling
 with Problem Size}
 \label{sec:results:suite07}
+Suite~07 should be read as a finite-budget stress test of hierarchical
+structure, not as a dedicated asymptotic scaling experiment. Across the tested
+problem sizes, $n \in \{32,64,128\}$, the qualitative failure mode is strict
+one-bit greediness: once \acrshort{rls} reaches a locally coherent block
+structure, improving moves typically require coordinated flips that are
+inaccessible to its neighborhood. The resulting instantaneous-regret floors and
+best-fitness stagnation make this failure mode visible before the final budget.
+\todo{Reference Suite 07 incumbent instantaneous regret and history-best plots.}
 
-\subsection{Suite 13: Regret Scaling with $n$ on OneMax}
-\label{sec:results:suite13}
+The exploratory \acrshort{rlse} variant and the $(1+1)$-\acrshort{ea}
+mutation-rate
+grid test two ways of relaxing this limitation: accepting occasional worsening
+moves, and allowing multi-bit flips. Over the three tested
+\acrshort{hiff} sizes,
+these mechanisms improve partial progress but do not establish a general
+convergence threshold.\todo{Reference Suite 07 incumbent
+instantaneous regret and history-best plots.} The appropriate conclusion is therefore narrower than a
+regret-scaling law: on hierarchical landscapes, mutation and exploration affect
+both the final incumbent quality and the rate at which cumulative regret accrues
+under a fixed evaluation budget.\todo{Reference Suite 07 incumbent
+instantaneous regret and history-best plots.}
+\todo{Reference Suite 07 incumbent cumulative-regret}
 
 \section{Cross-Suite Synthesis}
 \label{sec:results:synthesis}

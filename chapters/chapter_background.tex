@@ -430,7 +430,8 @@ distribution over instances~\cite{droste2006blackbox}
     \label{fig:landscape-trap}
   \end{subfigure}
 
-  \caption{Unitation-based views of representative pseudo-Boolean benchmark
+  \caption[Pseudo-Boolean benchmark landscapes]{Unitation-based views
+    of representative pseudo-Boolean benchmark
     landscapes. Here $u=|x|_1$ denotes the number of one-bits. For the
     parameterized landscapes, $k$ is shown directly on the unitation axis and
   marks the width of the barrier, plateau, or deceptive region.}
@@ -625,6 +626,20 @@ Appendix~\ref{app:plateau-runtime}.
 
 \subsubsection{Hierarchical If-and-Only-If (HIFF)}
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{vis/hiff.png}
+  \caption[HIFF landscape sections]{From \cite[Figure
+    1]{watson1998modeling}: ``Three sections through the 64-bit H-IFF
+    landscape (as used in the following experiments) showing two
+    maximally distinct global optima (max. fit = 448) and illustrating
+    the fractal structure for the local optima arising from the
+    (consistent) hierarchical interdependencies. Bear in mind that we
+    are only viewing 65 points out of a total
+  $2^{64}$.''~\cite[p.~102]{watson1998modeling}}
+  \label{fig:hiff}
+\end{figure}
+
 The \textsc{\acrfull{hiff}} function is a benchmark designed to model
 \textit{hierarchical building-block
 interdependency}: a property absent from earlier \acrfull{ga} test
@@ -692,7 +707,8 @@ important benchmark for combinatorial optimization algorithms.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.4\textwidth]{petersen_graph.pdf}
-  \caption{From \cite{weisstein_petersen_graph}, depicting a Petersen
+  \caption[Petersen graph]{From \cite{weisstein_petersen_graph},
+    depicting a Petersen
   graph, a cubic graph on 10 vertices and 15 edges}
 \end{figure}
 
@@ -744,6 +760,20 @@ ruggedness and are widely used to study algorithmic scalability and
 robustness across a
 spectrum of problem difficulties.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{vis/nk.png}
+  \caption[NK-landscape surfaces by epistasis]{Adopted from
+    \cite[Figure~3]{csaszar2018note} Visualization of NK-landscape
+    surfaces with different epistatic interaction parameters. (a) Low
+    $K$ surface exhibits smooth, convex structure with a single global
+    optimum, characteristic of separable problems. (b) High $K$ surface
+    displays rugged, multimodal terrain with numerous local optima,
+    representing highly epistatic landscapes where variable
+  interactions dominate the fitness structure.}
+  \label{fig:nk-landscapes}
+\end{figure}
+
 \subsection{Landscape Properties}
 \label{subsec:landprop}
 
@@ -765,7 +795,8 @@ exploited. Ruggedness arises naturally from \textit{epistatic
 interactions}, where the contribution of one variable to the
 objective depends on the values of others, preventing any separable
 decomposition. As $K$ increases in the NK-landscape model
-(Section~\ref{subsubsec:nk}), epistasis intensifies and the number
+(Section~\ref{subsubsec:nk}; Figure~\ref{fig:nk-landscapes}),
+epistasis intensifies and the number
 of local optima grows, providing a tunable axis of landscape
 difficulty. Ruggedness is the primary motivation for stochastic
 search heuristics: randomized perturbation and acceptance of
@@ -847,8 +878,17 @@ defined in Section~\ref{subsec:bbo-perf}.
 \subsubsection[\texorpdfstring{Evolutionary Algorithms
 (EA)}{Evolutionary Algorithms (EA)}]{Evolutionary Algorithms (\acrshort{ea})}
 \label{subsubsec:ea}
-\begin{wrapfigure}{i}{0.7\textwidth}
-  \includegraphics[width=0.7\textwidth]{metaheuristics_taxonomy.pdf}
+
+Evolutionary algorithms are a broad family of population-based,
+randomized search
+heuristics inspired by biological evolution. It belongs to the family
+of \textit{metaphor-based} metaheuristics, as shown in
+Figure~\ref{fig:mettax}.
+
+\begin{wrapfigure}{r}{0.8\textwidth}
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{metaheuristics_taxonomy.pdf}
+  \end{center}
   \caption[Taxonomy of Metaheuristics based on source of
   inspiration]{Taxonomy of Metaheuristics based on source of
     inspiration. \acrshort{ea}s and \acrshort{sa} are examples. Adopted
@@ -856,11 +896,7 @@ defined in Section~\ref{subsec:bbo-perf}.
   \label{fig:mettax}
 \end{wrapfigure}
 
-Evolutionary algorithms are a broad family of population-based,
-randomized search
-heuristics inspired by biological evolution. It belongs to the family
-of \textit{metaphor-based} metaheuristics, as shown in
-Figure~\ref{fig:mettax}. In discrete
+In discrete
 optimization, the canonical
 paradigm maintains one or more \emph{candidate solutions} (bit
 strings) and iterates
@@ -981,7 +1017,8 @@ temperature decreases.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{boltzmann_dist.png}
-  \caption{From \cite[Figure 1]{nityananda2012bose}: The Boltzmann
+  \caption[Boltzmann distribution for simulated annealing]{From
+    \cite[Figure 1]{nityananda2012bose}: The Boltzmann
     distribution of particles over energy states.
     The horizontal axis represents
     the energy \(E\) of a physical state; in simulated annealing this

@@ -79,7 +79,7 @@ Table~\ref{tab:cli-commands} summarizes the available commands.
   Generate summary tables from existing results in \texttt{latex},
   \texttt{csv}, or \texttt{markdown} format. \\
   \hline
-  \caption{\acrshort{cli} sub-commands exposed by the
+  \caption[CLI sub-commands]{\acrshort{cli} sub-commands exposed by the
     \texttt{run\_experiment} entry
   point (equivalently \texttt{python -m regret}).}
   \label{tab:cli-commands}
@@ -278,7 +278,8 @@ is resolved from \acrshort{yaml} at parse time via a \textit{registry}.
 \begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{uml.png}
-  \caption{Simplified UML class diagram of the \texttt{regret} framework.
+  \caption[UML class diagram]{Simplified UML class diagram of the
+    \texttt{regret} framework.
     Solid triangle arrows ($\triangleright$) denote inheritance;
     dashed arrows denote dependency or instantiation.
     Hashes `\#' indicate abstract declarations.
@@ -374,7 +375,8 @@ Table~\ref{tab:output-structure} summarizes the full output organization.
   $\mathbb{E}[\mathrm{CR}(T)]$ verification.
   Requires \texttt{suite.profile: true}. \\
   \hline
-  \caption{Output file organization for a representative experiment.
+  \caption[Experiment output organization]{Output file organization
+    for a representative experiment.
     ``Normalization'' replaces spaces, parentheses, and special characters
   with underscores or removes them.}
   \label{tab:output-structure}
@@ -411,7 +413,8 @@ Table~\ref{tab:output-structure} summarizes the full output organization.
   CR profile verification  & \texttt{cr\_profile\_verification}
   & Yes \\
   \hline
-  \caption{Plot types generated across experiments. ``Profile required'' denotes
+  \caption[Generated experiment plot types]{Plot types generated
+    across experiments. ``Profile required'' denotes
   plots that require \texttt{suite.profile:~true}}
   \label{tab:plot-types}
 \end{longtable}
