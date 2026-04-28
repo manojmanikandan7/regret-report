@@ -177,6 +177,11 @@ $T$ evaluations is therefore
 \[
   \mathrm{CR}(T) \;:=\; \sum_{t=1}^{T} \bigl(f^* - B(t)\bigr).
 \]
+For the exact identity below, fitness values are assumed to lie on a
+non-negative integer-valued level grid, after any explicit translation or
+discretization. This is the setting used by the verification suite; real-valued
+landscapes such as NK are handled empirically by discretizing their observed
+fitness range and should be interpreted as approximations.
 
 The proof of the main theorem relies on two elementary lemmas.
 
@@ -216,8 +221,8 @@ runtime profile.
 
 \begin{theorem}[Tail-Sum Regret Representation]
   \label{thm:regret-profile}
-  For any randomized black-box algorithm operating on $f$ with finite budget
-  $T \in \mathbb{N}$,
+  For any randomized black-box algorithm operating on a non-negative
+  integer-valued fitness function $f$ with finite budget $T \in \mathbb{N}$,
   \[
     \mathbb{E}[\mathrm{CR}(T)]
     \;=\;

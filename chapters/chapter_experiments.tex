@@ -31,9 +31,9 @@ Each configuration specifies four top-level blocks: \texttt{suite}
 \subsection{Repetitions and budget}
 Each algorithm--problem pair is run for $R$ independent repetitions
 (typically 25--100) at budgets drawn from a per-suite budget list. The
-display horizon \texttt{budget\_for\_plots} is chosen to be roughly twice the
-expected time-to-first-optimum of the hardest algorithm on each problem, so
-trajectory plots show both approach and post-convergence behavior.
+display horizon \texttt{budget\_for\_plots} is chosen per suite to expose the
+trajectory phase of interest, such as approach, stagnation, saturation, or
+post-convergence behavior where convergence is observed.
 
 \subsection{Execution mode}
 All suites reported in this chapter were run in \texttt{full} mode with
@@ -132,7 +132,7 @@ is developed in Chapter~\ref{cha:profiles}.
       & RLS, RLSExpl, EA, SA-Log-d2.0
       & 50 & 10\,000 & No \\
       02 & Extended benchmark
-      & 9 pseudo-boolean + combinatorial
+      & 8 pseudo-Boolean + 1 combinatorial
       & same 4 families (with overrides)
       & 50 & 20\,000 & No \\
       \midrule
@@ -156,15 +156,15 @@ is developed in Chapter~\ref{cha:profiles}.
       06 & Plateau: neutral walk $\times$ rate
       & 4 Plateau ($k\in\{2,5,10,20\}$)
       & 3$\times$EA + SA-Log-d4.0
-      & 30 & 20\,000 & No \\
+      & 30 & 10\,000 & No \\
       07 & \acrshort{hiff} scaling
       & 3 \acrshort{hiff} ($n\in\{32,64,128\}$)
       & RLS, 4$\times$EA, SA-Log-d4.0
       & 25 & 50\,000 & No \\
-      09 & Jump: plateau duration (extended)
+      09 & Jump reference for Plateau comparison
       & 5 Jump (same as 05)
       & 2$\times$EA (fixed + adaptive)
-      & 25 & 50\,000 & No \\
+      & 25 & 10\,000 & No \\
       10 & Barrier archetype comparison
       & Jump/Trap/Plateau ($k=5$, $n=100$)
       & 4$\times$EA ($0.5/n$--$5/n$)
@@ -175,7 +175,7 @@ is developed in Chapter~\ref{cha:profiles}.
       & 50 & 10\,000 & No \\
       12 & NK saturation
       & 5 NK ($k\in\{0,2,4,6,8\}$, $n=20$)
-      & RLS, $(1+1)$-EA, SA-Log-d4.0
+      & RLS, $(1+1)$-EA, SA-Log per-$k$ $d$
       & 25 & 50\,000 & \textbf{Yes} \\
       13 & Regret scaling with $n$
       & 4 OneMax ($n\in\{25,50,100,200\}$)
@@ -217,17 +217,19 @@ algorithm on box-plots, performance profiles, and \acrshort{ttfo} distributions.
 
 \subsection{Suite 02: Extended Pseudo-Boolean Benchmark}
 
-Suite 02 extends the baseline to nine problems, adding Jump-5, Trap-5,
-Plateau-10, \acrshort{hiff}-64, and a combinatorial instance (Petersen-3-Color).
-The algorithm set is identical to suite 01. Budgets range from 500 to 20\,000
-over 50 runs. Profile analysis is disabled.
+Suite 02 evaluates nine problems in total: OneMax, LeadingOnes, TwoMax,
+Jump-3, Jump-5, Trap-5, Plateau-10, \acrshort{hiff}-64, and a combinatorial
+instance (Petersen-3-Color). The algorithm set is identical to suite 01.
+Budgets range from 500 to 20\,000 over 50 runs. Profile analysis is disabled.
 
 Three problems receive problem-specific algorithm overrides (full parameter
   values are listed in Table~\ref{tab:suite02-overrides} in the
-appendix). For \acrshort{rlse} on Jump-3, Jump-5, and Trap-5, the
-exploration rate is raised to $\varepsilon=0.05$ with decay disabled,
-maintaining
-persistent non-improving moves on barrier problems. For SA, the cooling
+appendix).
+For \acrshort{rlse} on \textsc{Jump-3}, \textsc{Jump-5}, and
+\textsc{Trap-5}, the exploration probability is raised from the
+default fixed value $\varepsilon=1/n=0.01$ to $\varepsilon=0.05$;
+decay is disabled throughout.
+For \acrshort{sa}, the cooling
 parameter is tripled to $d=6.0$ on Jump-5 and Trap-5, raising acceptance
 probability for worsening moves throughout the run. Both modifications target
 the same objective: improving escape from local or deceptive optima at moderate
@@ -242,9 +244,9 @@ budget.
     \textbf{Default} & \textbf{Override} \\
     \midrule
     \multirow{3}{*}{\acrshort{rlse}}
-    & Jump-3  & $\varepsilon$, decay & $0.01$, on & $0.05$, off \\
-    & Jump-5  & $\varepsilon$, decay & $0.01$, on & $0.05$, off \\
-    & Trap-5  & $\varepsilon$, decay & $0.01$, on & $0.05$, off \\
+    & Jump-3  & $\varepsilon$ & $0.01$ & $0.05$ \\
+    & Jump-5  & $\varepsilon$ & $0.01$ & $0.05$ \\
+    & Trap-5  & $\varepsilon$ & $0.01$ & $0.05$ \\
     \midrule
     \multirow{2}{*}{SA-Log-d\_2.0}
     & Jump-5  & $d$ & $2.0$ & $6.0$ \\
@@ -253,9 +255,8 @@ budget.
   \end{tabular}
   \caption{Problem-specific algorithm overrides in suite 02. For
     \acrshort{rlse} the default is $\varepsilon=1/n=0.01$
-    with exponential
-    decay ($\varepsilon_t = \varepsilon/t$); for SA the default cooling
-  parameter is $d=2.0$.}
+    with decay disabled, and only $\varepsilon$ is overridden; for SA the
+  default cooling parameter is $d=2.0$.}
   \label{tab:suite02-overrides}
 \end{table}
 
@@ -271,10 +272,10 @@ Suite 08 validates the tail-sum identity (Chapter~\ref{cha:profiles})
 \]
 on OneMax and LeadingOnes ($n=100$) using \acrshort{rls} and the $(1+1)$-EA.
 With $R=100$ independent runs (the highest run count in the study) Monte-Carlo
-variance in $\widehat{\mathbb{E}}[\text{CR}(T)]$ is suppressed to the point
-where any visible gap between trajectory-derived and profile-derived curves in
-the verification plot can be attributed to numerical discretization rather than
-sampling noise. The \texttt{budget\_for\_plots} for LeadingOnes is set to the
+variance in $\widehat{\mathbb{E}}[\text{CR}(T)]$ is small, but any visible gap
+between trajectory-derived and profile-derived curves in the verification plot
+should still be read as the combined effect of finite-run Monte Carlo error and
+fitness-grid discretization. The \texttt{budget\_for\_plots} for LeadingOnes is set to the
 maximum available (10\,000) to capture the full \acrshort{cr} ramp, which
 extends further than on OneMax due to its $\Theta(n^{2})$ expected convergence
 time. Profile analysis is enabled; pairwise annotations use \acrshort{rls} as
@@ -408,7 +409,8 @@ $0.5/n$ is omitted because it offers no advantage over $1/n$ for crossing a
 $k$-bit gap. Budgets range from 500 to 20\,000. Instantaneous regret is plotted
 on a log scale, while \acrshort{cr} uses a linear scale so that the
 trapped-phase slope remains visible. Profile analysis is disabled; the
-longer-horizon Jump study is deferred to suite 09.
+matched-budget Jump reference used for Plateau comparison is reported in
+suite~09.
 
 \subsection{Suite 06: Plateau Function Mutation Rate}
 
@@ -438,19 +440,18 @@ longer-horizon Jump study is deferred to suite 09.
 
 % Profile analysis is disabled.
 %
-Suite 06 mirrors suite 05 on Plateau instances ($k \in \{2,5,10,20\}$, $n=100$)
-to compare \acrshort{cr} trajectory shape across barrier types at
-structurally equivalent widths. The algorithm set is three
-$(1+1)$-\acrshort{ea} variants at rates $1/n$, $2/n$, and $5/n$, plus
-SA-Log-d\_4.0.
+Suite 06 evaluates Plateau instances ($k \in \{2,5,10,20\}$, $n=100$) to test
+how neutral-walk barriers appear in incumbent cumulative regret. The algorithm
+set is three $(1+1)$-\acrshort{ea} variants at rates $1/n$, $2/n$, and $5/n$,
+plus SA-Log-d\_4.0. The maximum budget is 10\,000 evaluations for all variants.
 
-The adaptive $k/n$ rate from suite 05 is omitted: it was motivated by the need
-to maximize the probability of exactly $k$ simultaneous flips for the Jump gap,
-a rationale that does not apply to the neutral walk on Plateau. SA is added to
-assess whether temperature-driven acceptance confers any advantage on
-a landscape
-where the neutral zone carries no fitness penalty. The shared values $k=2$ and
-$k=5$ support direct comparison with suite 05. Profile analysis is disabled.
+The adaptive $k/n$ rate used for Jump is omitted: it is motivated by the
+probability of flipping exactly $k$ bits across a fitness gap, whereas Plateau
+requires diffusion through a neutral region rather than a specific simultaneous
+jump. SA is included to test whether temperature-driven acceptance provides any
+benefit when the barrier is neutral rather than fitness-decreasing. Comparisons
+between Plateau and Jump at matched $k$ should use suite~09 as the Jump
+reference, especially at $k=2$ and $k=5$. Profile analysis is disabled.
 
 \subsection{Suite 07: Hierarchical IFF Scaling}
 
@@ -537,15 +538,19 @@ cases. Profile analysis is disabled.
   \label{tab:suite07-rates}
 \end{table}
 
-\subsection{Suite 09: Jump Plateau Duration}
+\subsection{Suite 09: Jump Reference for Plateau Comparison}
 
-Suite 09 uses the same five Jump instances and two EA variants as suite 05
-(rates $1/n$ and $k/n$ with identical per-problem overrides), extending the
-budget list to $\{1000, 5000, 10000, 25000, 50000\}$ and raising
-\texttt{budget\_for\_plots} to 50\,000 for the larger $k$ values. Where suite 05
-captures plateau onset for small $k$, suite 09 captures plateau duration across
-all $k$ values and, for small $k$ at the adaptive rate, potentially the plateau
-exit. Profile analysis is disabled.
+Suite 09 re-runs the Jump instances from suite~05 under the two principal
+$(1+1)$-\acrshort{ea} variants used for comparison: the fixed $1/n$ rate and
+the problem-adaptive $k/n$ rate. It provides the matched-budget Jump reference
+for interpreting the Plateau trajectories in suite~06. The maximum budget is
+10\,000 evaluations for all variants, aligning the Jump reference with the
+Plateau comparison horizon.
+
+This suite is therefore the correct source whenever Plateau and Jump are
+compared at the same $k$. In particular, the shared widths $k=2$ and $k=5$
+should be read as cross-suite comparisons between Plateau-$k$ in suite~06 and
+Jump-$k$ in suite~09, not as within-suite overlays.
 
 \subsection{Suite 10: Barrier Structure Comparison}
 
@@ -636,8 +641,8 @@ identifiable. Profile analysis is disabled.
 \subsection{Suite 12: NK Saturation}
 
 Suite 12 examines five NK instances ($k \in \{0,2,4,6,8\}$, $n=20$, seed 42)
-under \acrshort{rls}, the $(1+1)$-\acrshort{ea}, and SA-Log-d\_4.0 with
-per-$k$ cooling parameter escalation (values in
+under \acrshort{rls}, the $(1+1)$-\acrshort{ea}, and SA-Log with per-$k$
+cooling parameter escalation (values in
 Table~\ref{tab:suite12-d}). The landscape realizations at
 $k \in \{2,4,6,8\}$ are identical to suite 03, enabling direct comparison. The
 addition of $k=0$ (fully separable) provides a saturation baseline. Unlike
@@ -646,8 +651,8 @@ therefore asks whether adequate temperature maintenance changes the saturation
 outcome rather than how the cooling--epistasis interaction behaves across a full
 parameter sweep. Profile analysis is enabled; the
 \texttt{cr\_profile\_verification} plot is omitted because the NK fitness
-function is continuous and the integer-grid profile identity does not apply
-exactly.
+function is real-valued, so the integer-grid profile identity is applied only
+through discretization and does not hold exactly.
 
 \begin{table}[H]
   \centering
@@ -673,8 +678,8 @@ study) to produce empirical $\mathbb{E}[\text{CR}(T)]$ estimates suitable for
 fitting a scaling exponent. Using a single algorithm isolates the scaling
 behavior of the regret metric from algorithm-to-algorithm differences.
 \texttt{budget\_for\_plots} values are set somewhat above $5n\log_2 n$ so that
-the full post-convergence plateau is visible in trajectory plots. Profile
-analysis is disabled.
+the relevant scaling regime is visible in trajectory plots. Profile analysis is
+disabled.
 
 % \subsection{Suite 14: Population Dynamics}
 
@@ -707,10 +712,11 @@ principal links.
     & EA rates $1/n$ and $2/n$; problems at same nominal $k$
     & Barrier type (Trap/Jump/Plateau); additional rates per suite \\
     \addlinespace
-    Jump at two time horizons
+    Jump reference for Plateau
     & 05, 09
     & All 5 Jump instances; EA variants at $1/n$ and $k/n$
-    & Budget list and \texttt{budget\_for\_plots} (onset vs.\ duration) \\
+    & Suite 05 includes the $2/n$ rate and a 20\,000 maximum budget; Suite 09
+    aligns with the Plateau comparison horizon \\
     \addlinespace
     NK at two SA designs
     & 03, 12
@@ -726,8 +732,8 @@ principal links.
 Suites 04, 05, and 06 share the fixed rates $1/n$ and $2/n$, making Trap-$k$,
 Jump-$k$, and Plateau-$k$ results directly comparable at equal $k$; suite 10
 consolidates this at $k=5$ across all four EA rates simultaneously. Suites 05
-and 09 are identical in problem and algorithm design, differing only in budget
-horizon: suite 05 captures plateau onset, suite 09 captures plateau duration.
+and 09 share the Jump instances and the fixed/adaptive rates, but suite 09 drops
+the $2/n$ variant and aligns the budget with the Plateau comparison in suite 06.
 Suites 03 and 12 share landscape realizations at $k \in \{2,4,6,8\}$ but
 differ in SA design: suite 03 provides the clean grid for studying the
 cooling--epistasis interaction, while suite 12 provides the per-$k$ calibrated

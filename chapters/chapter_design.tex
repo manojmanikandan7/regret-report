@@ -292,20 +292,20 @@ is resolved from \acrshort{yaml} at parse time via a \textit{registry}.
 % Does not support multi-objective optimization, continuous
 % optimization, limited to binary strings.
 The framework is currently constrained to \textbf{binary search spaces}
-$\{0,1\}^n$; continuous and integer-valued domains are not supported.
+$\{0,1\}^n$; continuous and non-binary integer decision domains are not
+supported.
 \textbf{Multi-objective optimization} is not implemented. The NK landscape
 optimum computation uses exhaustive search, restricting its practical use to
-$n \leq 20$. Runtime profile analysis assumes integer-valued,
-unit-increment fitness functions for the exact tail-sum identity:
+$n \leq 20$. Runtime profile analysis assumes integer-valued or explicitly
+discretized fitness levels for the exact tail-sum identity:
 \[
   \mathbb{E}[\mathrm{CR}(T)]
   \;=\;
   \sum_{v=1}^{f^{*}}\sum_{t'=1}^{T}
   \bigl[1 - P(\tau_v \leq t')\bigr];
 \]
-continuous fitness functions (e.g.\texttt{NK-Landscape}) yield approximate
-results and may exhibit minor discrepancies in the $\mathbb{E}[\mathrm{CR}(T)]$
-verification plot.
+real-valued fitness functions (e.g.\ \texttt{NK-Landscape}) require
+discretization and therefore yield approximate runtime-profile results.
 
 % Considering addition to the next chapter.
 \subsection{Result Interpretations}
