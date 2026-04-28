@@ -1,0 +1,9 @@
+suite,problem,algorithm,budget,runs,median_final_incumbent_cr,median_simple_regret,mean_simple_regret,p_opt
+06_plateau_mutation,Plateau-k2,(1+1)-EA-mu_1-by-n,10000,30,16728.5,0.0,0.5333333333333333,0.7333333333333333
+09_jump_plateau,Jump-k2,(1+1)-EA-mu_1-by-n,10000,25,24399.0,2.0,1.76,0.12
+06_plateau_mutation,Plateau-k2,(1+1)-EA-mu_2-by-n,10000,30,19187.5,0.0,0.6666666666666666,0.6666666666666666
+09_jump_plateau,Jump-k2,(1+1)-EA-mu_k-by-n,10000,25,25354.0,2.0,1.44,0.28
+06_plateau_mutation,Plateau-k5,(1+1)-EA-mu_1-by-n,10000,30,53437.5,5.0,5.0,0.0
+09_jump_plateau,Jump-k5,(1+1)-EA-mu_1-by-n,10000,25,53377.0,5.0,5.0,0.0
+06_plateau_mutation,Plateau-k5,(1+1)-EA-mu_5-by-n,10000,30,58506.5,5.0,5.0,0.0
+09_jump_plateau,Jump-k5,(1+1)-EA-mu_k-by-n,10000,25,58246.0,5.0,5.0,0.0
