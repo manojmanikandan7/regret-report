@@ -1,8 +1,33 @@
 \chapter{Discussion and Evaluation of Results}
 \label{cha:results}
 
-\section{Overview}
-\label{sec:results:overview}
+This chapter turns the twelve experimental suites from
+Chapter~\ref{cha:exper} into evidence for the central claim of this
+report: the best-so-far trajectory reveals useful structure even when
+an algorithm does not reach the optimum within the available budget.
+Instead of asking only whether a run succeeds, the discussion asks how
+far the best solution found so far remains from the optimum, how quickly
+that gap closes, and where progress stalls.
+
+The main signal used for this purpose is incumbent cumulative regret
+(\acrshort{cr}). A rising \acrshort{cr} curve means the current
+best-so-far solution is still leaving fitness on the table; a curve that
+flattens means the remaining gap is closing. This makes the plots useful
+in cases where success probabilities are near zero and
+time-to-first-optimum summaries have little to say.
+
+The results are organized into five thematic groups. The chapter begins
+with baseline comparisons on standard pseudo-Boolean benchmarks
+(Sections~\ref{sec:results:baseline}--\ref{sec:results:suite02}), then
+checks the theoretical connection between runtime profiles and regret
+(Section~\ref{sec:results:verification}). It then studies barrier
+structure and mutation rate (Section~\ref{sec:results:barrier}), NK
+ruggedness and simulated-annealing cooling schedules
+(Section~\ref{sec:results:nk}), and finally hierarchical structure in
+\acrshort{hiff} (Section~\ref{sec:results:hierarchical}). Where runtime
+profile plots are available, they are used as a second view of the same
+behavior rather than as a separate metric.
+
 
 \section{Baseline Suites}
 \label{sec:results:baseline}
@@ -409,7 +434,7 @@ consistent with the sequential structure of \textsc{LeadingOnes}, where
 progress depends on extending the correct prefix, and with the known
 asymptotic contrast between the $\Theta(n \log n)$ optimization time of
 \textsc{OneMax} and the $\Theta(n^2)$ behavior of
-\textsc{LeadingOnes}. Thus, the inverse profiles verify the profile
+\textsc{LeadingOnes}. Thus, the inverse runtime profiles verify the profile
 construction itself and preserve the qualitative finite-$n$ runtime ordering of
 the underlying benchmark problems.
 
@@ -974,5 +999,67 @@ instantaneous regret and history-best plots.!
 \section{Cross-Suite Synthesis}
 \label{sec:results:synthesis}
 
+Across the experimental suites, three takeaways recur. They do not
+show that \acrshort{cr} uniquely identifies a landscape class; rather,
+they show that the best-so-far regret trajectory records the realized
+cost of search under a finite evaluation budget.
 
+\paragraph{Regret discriminates when \acrshort{ttfo} cannot.}
+In the hard finite-budget cases, binary convergence measures often go
+silent: \textsc{Trap} instances remain non-convergent within budget,
+\textsc{Jump} instances with larger $k$ settle onto a width-dependent
+regret plateau, and \textsc{Plateau} becomes difficult to distinguish
+from \textsc{Jump} once the induced search cost is similar
+(Figures~\ref{fig:suite04-trap-cr}, \ref{fig:suite05-jump-cr},
+\ref{fig:suite06-plateau-jump-k2}, and~\ref{fig:suite06-plateau-jump-k5}).
+High-epistasis NK and larger \acrshort{hiff} instances provide analogous
+rugged and hierarchical failure modes rather than literal barrier
+landscapes. In all three settings, the slope of incumbent \acrshort{cr},
+the floor of incumbent \acrshort{ir}, and the onset of stagnation
+continue to describe how far the retained solution remains from the
+optimum. This is the operational content of the project's central claim:
+regret provides structured information precisely where \acrshort{ttfo}
+distributions and $P(\mathrm{opt})$ summaries are least informative.
 
+\paragraph{The asymptotic regret ordering can invert the \acrshort{ttfo} ordering.}
+Suites~01 and~02 show that earlier arrival at the global optimum does
+not necessarily imply lower cumulative cost. The inversion on
+\textsc{LeadingOnes} and \textsc{BinVal}, where \acrshort{rls}
+reaches the optimum before the $(1+1)$-\acrshort{ea} but accumulates a
+larger regret asymptote, follows the mechanism of
+Corollary~\ref{cor:asymptotic-regret}. The asymptote is governed by
+first-hitting times across \emph{all} intermediate fitness levels, not
+only by the terminal hitting time. Thus, \acrshort{ttfo} records final
+arrival, while incumbent cumulative regret records the area under the
+best-so-far fitness gap: two algorithms can have the same endpoint, or
+even opposite endpoint rankings, while paying different path costs.
+
+\paragraph{Cooling schedule aggressiveness leaves a visible trajectory
+signature.}
+Suite~11 demonstrates that the instantaneous-regret curve gives a direct
+diagnostic of cooling speed, with the onset of the low-regret floor
+ordering schedules from fastest (SA-Exp) to slowest (SA-Log-$d=16$)
+(Figure~\ref{fig:suite11-sa-cooling-ir}). Suites~03 and~12 show why this
+matters: on low-epistasis NK landscapes, temperature-driven acceptance
+inflates cumulative regret relative to hill-climbing baselines, whereas
+at high epistasis ($k \geq 6$), calibrated logarithmic cooling maintains
+progress after mutation-only methods saturate
+(Figures~\ref{fig:suite03-cr} and~\ref{fig:suite12-ir}). The budget at
+which SA overtakes the $(1+1)$-\acrshort{ea} on NK-$k=4$ (roughly
+$3.3 \times 10^4$ evaluations) is therefore best read as an analog of
+the crossover behavior motivating runtime-profile reporting in
+\citet{pinto2018practice}, expressed here in the cumulative-regret plane
+rather than as a literal crossover fitness level.
+
+Suite~08 validates the theoretical interpretation behind these empirical
+readings: on integer-valued benchmarks, the profile-derived and directly
+averaged cumulative-regret curves agree within the stated relative
+maximum pointwise error threshold (\acrshort{rmae} $<1\%$), supporting
+the tail-sum decomposition of Theorem~\ref{thm:regret-profile}. For
+real-valued landscapes such as NK, the profile surfaces should still be
+read as discretized approximations, a limitation that bounds but does
+not invalidate the qualitative conclusions drawn in
+Section~\ref{sec:results:nk}. The practical conclusion is that
+\acrshort{cr} should be read as a trajectory diagnostic: its slope,
+floor, and crossover points expose failure modes that \acrshort{ttfo}
+and convergence probability hide under finite budgets.

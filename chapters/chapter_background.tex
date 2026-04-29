@@ -329,11 +329,11 @@ algorithms,
   \max_{I \in \mathcal{I}}\,\mathbb{E}_{A \sim q}[T(I,A)].
 \]
 A lower bound follows by exhibiting a distribution over instances on
-which every deterministic algorithm is slow. This parallels the
-minimax regret framework (Section~\ref{subsubsec:cr}), replacing the
-hitting criterion with a trajectory-level measure. The principle
-extends to memory-restricted and elitist models via a suitable
-superset construction~\cite{doerr2015onemax} (see
+which every deterministic algorithm is slow. The same minimax logic
+reappears later in regret analysis (Section~\ref{sec:regret}), where
+the optimized quantity is trajectory-level loss rather than a hitting-time
+criterion. The principle extends to memory-restricted and elitist models
+via a suitable superset construction~\cite{doerr2015onemax} (see
 Appendix~\ref{app:bbc-extended}).
 
 \subsection{Complexity Measures}
@@ -443,6 +443,9 @@ defined on binary strings of length $n$. Several benchmark functions
 are widely used to
 study and compare the behavior of randomized search heuristics, each encoding a
 different type of difficulty.~\cite{lengler2019drift,droste2006blackbox}
+Where known runtime results are cited below, they refer to the standard
+randomized search heuristics defined later in
+Subsubsections~\ref{subsubsec:ea} and~\ref{subsubsec:rls}.
 
 \subsubsection{OneMax}
 
@@ -866,9 +869,9 @@ $\mathbb{E}[\tau_{f^*}] = \Theta(n \log n)$ for the $(1+1)$-\acrshort{ea} on
 \textsc{OneMax} is a natural representative of unimodal functions.
 The \acrshort{nfl}
 theorems therefore make conditioning comparisons on a structured
-problem class a theoretical necessity not a
-practical convenience, which motivates the benchmark suite
-defined in Section~\ref{subsec:bbo-perf}.
+problem class a theoretical necessity, not a
+practical convenience, which motivates the benchmark families introduced
+above and the experimental suites defined in Chapter~\ref{cha:exper}.
 
 % \subsubsection{Taxonomy of Derivative-Free Methods}
 % % Brief map of the full space; help the reader locate RSHs within it
@@ -1148,6 +1151,7 @@ stabilizes.
 
 \subsubsection[\texorpdfstring{Randomized Local Search
 (RLS)}{Randomized Local Search (RLS)}]{\acrfull{rls}}
+\label{subsubsec:rls}
 
 \acrfull{rls} is a single-solution local search heuristic that at
 each step selects a neighbor of the current solution uniformly at
@@ -1497,8 +1501,7 @@ The \textit{instantaneous regret} at round $t$ is
   \rho_t = f^{*} - f(x_t),
 \]
 capturing the suboptimality of the single query made at step $t$.
-A related variant tracks the \textit{incumbent} (best-so-far)
-solution rather than
+A related variant tracks the \gls{incumbent} solution rather than
 the current query:
 \[
   \rho^{\mathrm{inc}}_t = f^{*} - f(\hat{x}_t),

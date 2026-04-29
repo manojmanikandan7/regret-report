@@ -157,6 +157,13 @@ foundation for this project.
 \printnoidxglossary[type=\acronymtype, title=Abbreviations and Acronyms,
 toctitle=Abbreviations and Acronyms]
 
+{%
+\let\oldglossarysection\glossarysection
+\renewcommand*{\glossarysection}[2][]{\section*{#2}}%
+\printnoidxglossary[title=Glossary]
+\let\glossarysection\oldglossarysection
+}
+
 % These include the actual text
 \include{chapters/chapter_introduction}
 % Word count aim                0500-0750
