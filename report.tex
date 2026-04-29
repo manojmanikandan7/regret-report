@@ -10,6 +10,7 @@
 \usepackage{graphicx}
 \usepackage{wrapfig}
 \usepackage{float}
+\usepackage[section]{placeins}
 \usepackage{url} % typeset URL's reasonably
 \usepackage{hyperref} % typeset URL's reasonably
 \usepackage[dvipsnames]{xcolor}
@@ -112,6 +113,16 @@
 % Uncomment the next line if you want subsubsections to be appear in
 % the table of contents
 \setcounter{tocdepth}{3}
+
+% Avoid stretching vertical whitespace through text pages when large floats are
+% deferred; any unavoidable leftover space stays at the page bottom instead.
+\raggedbottom
+
+% Top-align float-only pages instead of centering the float vertically.
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
 
 % Uncomment the following lines if you want to include the date as a
 % header in draft versions

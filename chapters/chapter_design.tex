@@ -421,9 +421,9 @@ Table~\ref{tab:output-structure} summarizes the full output organization.
 
 \section{Testing strategy}
 % Mention TDD, Red-Green Testing, selective coverage (weighted)
-\begin{wrapfigure}{r}{0.5\textwidth} %this figure will be at the right
+\begin{figure}[H]
   \centering
-  \includegraphics[width=0.5\textwidth]{red-green-refactor.png}
+  \includegraphics[width=0.55\linewidth]{red-green-refactor.png}
   \caption[Red--Green--Refactor \acrshort{tdd}
   technique]{Red--Green--Refactor \acrshort{tdd} technique. Start by
     writing a failing test (the red step). Next, write code that is
@@ -432,9 +432,11 @@ Table~\ref{tab:output-structure} summarizes the full output organization.
     are understood, refactors can be implemented that keeps the code
     clean (the blue step). The refactor step is safe since it will
   always be backed up by tests.~\cite{calais2023test}}
-\end{wrapfigure}
+  \label{fig:red-green-refactor}
+\end{figure}
+\FloatBarrier
 The test suite follows a \acrfull{tdd} discipline
-using a red--green--refactor workflow: tests were written prior to or alongside
+using a red--green--refactor workflow (Figure~\ref{fig:red-green-refactor}): tests were written prior to or alongside
 implementation and serve as executable
 specifications~\cite{agha2023test,calais2023test}. Coverage is measured
 using the \texttt{coverage}~\cite{coverage} package with branch

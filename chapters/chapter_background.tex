@@ -888,16 +888,15 @@ heuristics inspired by biological evolution. It belongs to the family
 of \textit{metaphor-based} metaheuristics, as shown in
 Figure~\ref{fig:mettax}.
 
-\begin{wrapfigure}{r}{0.8\textwidth}
-  \begin{center}
-    \includegraphics[width=0.7\textwidth]{metaheuristics_taxonomy.pdf}
-  \end{center}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{metaheuristics_taxonomy.pdf}
   \caption[Taxonomy of Metaheuristics based on source of
   inspiration]{Taxonomy of Metaheuristics based on source of
     inspiration. \acrshort{ea}s and \acrshort{sa} are examples. Adopted
   from \cite[Figure 5]{rajwar2023exhaustive}}
   \label{fig:mettax}
-\end{wrapfigure}
+\end{figure}
 
 In discrete
 optimization, the canonical
@@ -1458,7 +1457,7 @@ as a sequential learning problem: a probabilistic surrogate
 (typically a Gaussian process) models the unknown objective, and an
 acquisition function selects the next query by trading predicted
 value against uncertainty. Incidentally, it has yielded a mature regret
-theory: the GP-UCB algorithm admits sublinear cumulative-regret
+theory: the GP-UCB algorithm admits sublinear \acrshort{cr}
 guarantees under Gaussian-process or
 RKHS\footnote{\textit{abbr.}~Reproducing kernel Hilbert space.
 (Optionally, see \cite{ghojogh2021reproducing})} assumptions
