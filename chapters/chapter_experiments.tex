@@ -157,7 +157,7 @@ is developed in Chapter~\ref{cha:profiles}.
       06 & Plateau: neutral walk $\times$ rate
       & 4 Plateau ($k\in\{2,5,10,20\}$)
       & 3$\times$EA + SA-Log-d4.0
-      & 30 & 10\,000 & No \\
+      & 30 & 20\,000 & No \\
       07 & \acrshort{hiff} scaling
       & 3 \acrshort{hiff} ($n\in\{32,64,128\}$)
       & \acrshort{rls}, 4$\times$ $(1+1)$-\acrshort{ea}, \acrshort{rlse}
@@ -165,11 +165,11 @@ is developed in Chapter~\ref{cha:profiles}.
       09 & Jump reference for Plateau comparison
       & 5 Jump (same as 05)
       & 2$\times$EA (fixed + adaptive)
-      & 25 & 10\,000 & No \\
+      & 25 & 50\,000 & No \\
       10 & Barrier archetype comparison
       & Jump/Trap/Plateau ($k=5$, $n=100$)
       & 4$\times$EA ($0.5/n$--$5/n$)
-      & 30 & 10\,000 & No \\
+      & 30 & 50\,000 & No \\
       11 & SA cooling diagnostics
       & OneMax, LeadingOnes
       & RLS, 6$\times$SA-Log, SA-Lin, SA-Exp
@@ -208,8 +208,8 @@ The six problems are: OneMax ($n=100$), LeadingOnes ($n=100$), TwoMax
 ($n=100$), Jump-3 ($n=100$, $k=3$), Trap-10 ($n=100$, $k=10$), and \acrshort{bv}
 ($n=50$). \acrshort{bv} uses $n=50$ rather than $n=100$ because its exponential
 fitness structure already produces large fitness gaps and rapid convergence at
-this size; the \texttt{budget\_for\_plots} of 500 reflects this. The 50 runs
-per combination are evaluated at six budgets: $\{200, 500, 1000, 2000, 5000,
+this size; the \texttt{budget\_for\_plots} of 300 reflects this. The 50 runs
+per combination are evaluated at six budgets: $\{300, 500, 1000, 2000, 5000,
 10000\}$. Pairwise statistical annotations use \acrshort{rls} as the reference
 algorithm on box-plots, performance profiles, and \acrshort{ttfo} distributions.
 
@@ -263,7 +263,7 @@ budget.
 
 \subsection{Suite 08: Runtime Profile Verification}
 
-Suite 08 validates the tail-sum identity (Chapter~\ref{cha:profiles})
+Suite 08 tests the tail-sum identity (Chapter~\ref{cha:profiles})
 \[
   \mathbb{E}[\text{CR}(T)]
   = \sum_{v=1}^{f^{*}} \sum_{t'=1}^{T}
@@ -271,11 +271,14 @@ Suite 08 validates the tail-sum identity (Chapter~\ref{cha:profiles})
 \]
 on OneMax and LeadingOnes ($n=100$) using \acrshort{rls} and the $(1+1)$-EA.
 With $R=100$ independent runs (the highest run count in the study) Monte-Carlo
-variance in $\widehat{\mathbb{E}}[\text{CR}(T)]$ is small, but any visible gap
-between trajectory-derived and profile-derived curves in the verification plot
-should still be read as the combined effect of finite-run Monte Carlo error and
-fitness-grid discretization. The \texttt{budget\_for\_plots} for
-LeadingOnes is set to the
+variance in $\widehat{\mathbb{E}}[\text{CR}(T)]$ is small. Moreover, the direct
+and profile-derived curves are computed from the same runs, so sampling
+variation affects the estimator rather than explaining a systematic separation
+between the two curves. For these integer-valued benchmarks the profile grid is
+the exact level set $\{1,\ldots,100\}$ and the plotted time grid contains every
+evaluation, so the comparison is an exact check of the implemented discrete
+tail-sum convention up to floating-point roundoff. The
+\texttt{budget\_for\_plots} for LeadingOnes is set to the
 maximum available (10\,000) to capture the full \acrshort{cr} ramp, which
 extends further than on OneMax due to its $\Theta(n^{2})$ expected convergence
 time. Profile analysis is enabled; pairwise annotations use \acrshort{rls} as
@@ -393,8 +396,9 @@ barrier types. Profile analysis is disabled.
 
 % The budget list extends to 20\,000 and includes six points:\\
 % $\{500, 1000, 2000, 5000, 10000, 20000\}$. \acrshort{cr} is plotted on a
-% linear $y$-axis (\texttt{log\_y: false}), while instantaneous regret uses
-% \texttt{log\_y: true}. This distinction matters: during the plateau phase
+% linear $y$-axis (\texttt{log\_y: false}), and instantaneous regret is also
+% shown on a linear axis in the generated suite figures. This distinction
+% matters: during the plateau phase
 % (when the algorithm is trapped at $\text{ones}=n-k$), cumulative regret grows
 % linearly with $t$, and this linear slope is the signal of interest; a
 % logarithmic $y$-axis would compress it to near-zero and make it invisible.
@@ -406,9 +410,9 @@ Suite 05 studies five Jump instances ($k \in \{2,3,5,7,10\}$, $n=100$) under
 three $(1+1)$-\acrshort{ea} variants: fixed rates $1/n$ and $2/n$, and a
 problem-adaptive rate $k/n$ set via per-problem overrides. The lower rate
 $0.5/n$ is omitted because it offers no advantage over $1/n$ for crossing a
-$k$-bit gap. Budgets range from 500 to 20\,000. Instantaneous regret is plotted
-on a log scale, while \acrshort{cr} uses a linear scale so that the
-trapped-phase slope remains visible. Profile analysis is disabled; the
+$k$-bit gap. Budgets range from 500 to 20\,000. Both instantaneous regret and
+\acrshort{cr} are plotted on linear axes in this suite so that the
+trapped-phase plateau and slope remain visible. Profile analysis is disabled; the
 matched-budget Jump reference used for Plateau comparison is reported in
 suite~09.
 
@@ -443,7 +447,7 @@ suite~09.
 Suite 06 evaluates Plateau instances ($k \in \{2,5,10,20\}$, $n=100$) to test
 how neutral-walk barriers appear in incumbent cumulative regret. The algorithm
 set is three $(1+1)$-\acrshort{ea} variants at rates $1/n$, $2/n$, and $5/n$,
-plus SA-Log-d\_4.0. The maximum budget is 10\,000 evaluations for all variants.
+plus SA-Log-d\_4.0. The maximum budget is 20\,000 evaluations for all variants.
 
 The adaptive $k/n$ rate used for Jump is omitted: it is motivated by the
 probability of flipping exactly $k$ bits across a fitness gap, whereas Plateau
@@ -546,8 +550,9 @@ Suite 09 re-runs the Jump instances from suite~05 under the two principal
 $(1+1)$-\acrshort{ea} variants used for comparison: the fixed $1/n$ rate and
 the problem-adaptive $k/n$ rate. It provides the matched-budget Jump reference
 for interpreting the Plateau trajectories in suite~06. The maximum budget is
-10\,000 evaluations for all variants, aligning the Jump reference with the
-Plateau comparison horizon.
+50\,000 evaluations for all variants, while the per-problem plotting horizon is
+10\,000 evaluations to align the displayed Jump reference with the Plateau
+comparison horizon.
 
 This suite is therefore the correct source whenever Plateau and Jump are
 compared at the same $k$. In particular, the shared widths $k=2$ and $k=5$
@@ -560,8 +565,8 @@ Jump-$k$ in suite~09, not as within-suite overlays.
 % ($n=100$): Jump-k5, Trap-k5, and Plateau-k5. Four $(1+1)$-EA variants at
 % rates $0.5/n$, $1/n$, $2/n$, and $5/n$ are applied with no per-problem
 % overrides, meaning the same rate is used on all three barrier types. The
-% budget list extends to 10\,000, matching the common barrier-comparison
-% horizon used for the $k=5$ archetype plots.
+% budget list extends to 50\,000, with a 10\,000-evaluation plotting horizon
+% used for the $k=5$ archetype plots.
 
 % The motivation for fixing $k=5$ and varying the barrier type (rather than
 % fixing the type and varying $k$) is that Jump-k5, Trap-k5, and Plateau-k5
@@ -585,7 +590,8 @@ Jump-$k$ in suite~09, not as within-suite overlays.
 %
 Suite 10 compares Jump-k5, Trap-k5, and Plateau-k5 at $n=100$ under four
 $(1+1)$-\acrshort{ea} mutation rates: $0.5/n$, $1/n$, $2/n$, and $5/n$, applied
-uniformly across all three barrier types with budgets to 10\,000. Since all
+uniformly across all three barrier types with budgets to 50\,000 and a
+10\,000-evaluation plotting horizon. Since all
 three barriers share $\mathbb{E}[\text{\acrshort{ttfo}}] = \Theta(n^{k})$ at
 rate $1/n$, \acrshort{ttfo} distributions cannot separate them when
 $P(\text{opt}) \approx 0$; \acrshort{cr} trajectories accumulate
@@ -696,7 +702,8 @@ principal links.
     & 05, 09
     & All 5 Jump instances; EA variants at $1/n$ and $k/n$
     & Suite 05 includes the $2/n$ rate and a 20\,000 maximum budget; Suite 09
-    aligns with the Plateau comparison horizon \\
+    uses a 50\,000 maximum budget but aligns its plotting horizon with the
+    Plateau comparison \\
     \addlinespace
     NK at two SA designs
     & 03, 12
@@ -713,7 +720,8 @@ Suites 04, 05, and 06 share the fixed rates $1/n$ and $2/n$, making Trap-$k$,
 Jump-$k$, and Plateau-$k$ results directly comparable at equal $k$; suite 10
 consolidates this at $k=5$ across all four EA rates simultaneously. Suites 05
 and 09 share the Jump instances and the fixed/adaptive rates, but suite 09 drops
-the $2/n$ variant and aligns the budget with the Plateau comparison in suite 06.
+the $2/n$ variant and aligns its plotting horizon with the Plateau comparison in
+suite 06.
 Suites 03 and 12 share landscape realizations at $k \in \{2,4,6,8\}$ but
 differ in SA design: suite 03 provides the clean grid for studying the
 cooling--epistasis interaction, while suite 12 provides the per-$k$ calibrated

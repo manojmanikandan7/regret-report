@@ -353,12 +353,12 @@ larger in absolute value.
     Problem & Algorithm & \acrshort{rmse} & \acrshort{mae} & \acrshort{rmae} \\
     \midrule
     \multirow{2}{8.5em}{\textsc{OneMax} (Budget: 2\,000)}
-      & $(1+1)$-\acrshort{ea} & 46.92318 & 49.13000 & 0.00862 \\
-      & \acrshort{rls}        & 47.27119 & 49.13000 & 0.00998 \\
+      & $(1+1)$-\acrshort{ea} & $8.90\times10^{-12}$ & $1.18\times10^{-11}$ & $2.09\times10^{-15}$ \\
+      & \acrshort{rls}        & $3.02\times10^{-12}$ & $4.55\times10^{-12}$ & $9.33\times10^{-16}$ \\
     \midrule
     \multirow{2}{8.5em}{\textsc{LeadingOnes} (Budget: 10\,000)}
-      & $(1+1)$-\acrshort{ea} & 81.38108 & 98.97000 & 0.00043 \\
-      & \acrshort{rls}        & 80.51411 & 98.97000 & 0.00040 \\
+      & $(1+1)$-\acrshort{ea} & $1.37\times10^{-9}$ & $2.82\times10^{-9}$ & $1.22\times10^{-14}$ \\
+      & \acrshort{rls}        & $3.57\times10^{-9}$ & $5.76\times10^{-9}$ & $2.33\times10^{-14}$ \\
     \bottomrule
   \end{tabular}
   \caption[Pointwise profile verification distances]{Pointwise
@@ -368,42 +368,36 @@ larger in absolute value.
 \end{table}
 \FloatBarrier
 
-The profile identity holds to within small scale-normalized error
-across all four combinations. \acrshort{rmae} does not exceed 1\% in
-any case (0.862\% and 0.998\% for \textsc{OneMax}, and just 0.043\%
-and 0.040\% for \textsc{LeadingOnes}), confirming that residual
-deviation is consistent with finite-run Monte Carlo error and
-discretization of the integer fitness grid. The larger absolute errors on
-\textsc{LeadingOnes} (\acrshort{rmse} $\approx 80$--$81$ versus
-$\approx 47$ on \textsc{OneMax}) reflect the much greater cumulative
-regret scale of that problem; the \acrshort{rmae} values are in fact
-smaller by roughly an order of magnitude. Notably, the maximum
-deviation is identical across both algorithms within each problem
-(49.13 and 98.97 respectively), suggesting that a substantial part of
-the residual gap is tied to the fitness-grid discretization at a
-specific time point rather than to an algorithm-specific trajectory.
+The profile identity holds to floating-point precision across all four
+combinations. The largest \acrshort{mae} is $5.76\times10^{-9}$, and the
+largest \acrshort{rmae} is only $2.33\times10^{-14}$.
+Thus, on integer-valued benchmarks with exact fitness levels and complete time
+grids, the direct trajectory average and the profile-derived tail-sum curve are
+numerically indistinguishable (Table~\ref{tab:profile-verification-distances}).
 
-Since the empirical curve is averaged over $R=100$ independent runs,
-sampling variation is reduced. The observed deviations
-should therefore be interpreted as a combined effect of finite-run Monte
-Carlo error and numerical discretization of the integer fitness grid.
-Because the relative maximum errors remain below $1\%$ in all cases, the
-residual discrepancy is small enough for profile-derived diagnostics to be
-used later, subject to the discretization caveat for real-valued landscapes.
-
+This agreement is stronger than what would be expected from an independent
+Monte-Carlo comparison because the two curves are computed from the same
+$R=100$ runs. Sampling variation affects which trajectories are observed, but
+both curves are deterministic transformations of that same sample. The
+pointwise comparison therefore tests implementation agreement: for OneMax and
+LeadingOnes, the profile calculation uses the exact integer fitness levels
+$1,\ldots,100$ and every evaluation time point at the displayed budgets. The
+remaining differences are therefore numerical round-off. 
+The separate discretization caveat applies later to
+real-valued landscapes such as NK.
 \begin{figure}[!htbp]
   \centering
   \begin{subfigure}[t]{0.49\textwidth}
     \includegraphics[width=\linewidth]{results/verification/inv_prof_surf_onemax_RLS.pdf}
     \caption[\acrshort{rls} profile on
     \textsc{OneMax}]{\acrshort{rls} for the \textsc{OneMax} problem, with
-    maximum budget 1\,000}
+    displayed profile horizon 1\,000}
   \end{subfigure}
   \begin{subfigure}[t]{0.49\textwidth}
     \includegraphics[width=\linewidth]{results/verification/inv_prof_surf_onemax_(1+1)-EA.pdf}
     \caption[$(1+1)$-\acrshort{ea} profile on
     \textsc{OneMax}]{$(1+1)$-\acrshort{ea} for the \textsc{OneMax} problem,
-    with maximum budget 1\,000}
+    with displayed profile horizon 1\,000}
   \end{subfigure}
   \begin{subfigure}[t]{0.48\textwidth}
     \includegraphics[width=\linewidth]{results/verification/inv_prof_surf_leadingones_RLS.pdf}
@@ -428,7 +422,7 @@ the two benchmark regimes. For \textsc{OneMax}, the saturation frontier is
 compressed into the early part of the budget: low and intermediate fitness
 levels satisfy $P(\tau_v \le T) \approx 1$ after only a few hundred
 evaluations, and the contour near the optimum $f^\ast$ reaches high
-probability well before the end of the $T=2000$ window for both
+probability well before the end of the displayed $T=1000$ window for both
 \acrshort{rls} and the $(1+1)$-\acrshort{ea}. In contrast, the
 \textsc{LeadingOnes} surfaces exhibit a broad diagonal transition band
 across the full $T=10000$ range. The probability mass moves gradually from
@@ -444,16 +438,15 @@ the underlying benchmark problems.
 
 The verification result supports the use of profile-derived
 $\mathbb{E}[\mathrm{CR}(T)]$ curves on integer-valued or explicitly
-discretized fitness levels in the remaining evaluation suites. Since the
-identity from Chapter~\ref{cha:profiles} holds to within small
-scale-normalized error on tractable integer-valued benchmarks, the same
-profile construction provides a useful diagnostic reference in Suites~03
-and~12, where direct averaging is more susceptible to sampling noise
-because only $R=25$ runs are available. For the real-valued NK landscapes,
-however, those profile surfaces should be read as discretized
-approximations rather than exact identities. Section~\ref{sec:results:synthesis}
-returns to this point by relating the Suite~08 verification to the
-saturation frontiers observed in the NK benchmark suites.
+discretized fitness levels in the remaining evaluation suites. The same profile
+construction provides a useful diagnostic reference in Suites~03 and~12, where
+direct averaging is more susceptible to sampling noise because only $R=25$ runs
+are available. For the real-valued NK landscapes, however, those profile
+surfaces should be read as discretized approximations rather than exact
+identities. Section~\ref{sec:results:synthesis} returns to this point by
+relating the Suite~08 verification to the saturation frontiers observed in the
+NK benchmark suites.
+%
 \section{Barrier Structure and Mutation Rate}
 \label{sec:results:barrier}
 \subsection{Suite 04: Trap --- Deception Width and Mutation Rate}
@@ -743,8 +736,7 @@ usable samples.
 
 The \textsc{Jump}-$5$ and \textsc{Plateau}-$5$ incumbent
 \acrshort{cr} curves remain close in shape, matching the behavior
-already observed in the Suite~06 matched comparison. !TODO:Reference
-Suite~06 and the Suite~10 incumbent \acrshort{cr} figure.! At this
+already observed in the Suite~06 matched comparison~\ref{fig:suite06-plateau-jump-k2}. At this
 width, the neutral-walk and gap-crossing mechanisms induce similar
 realized \acrshort{ir} curves under the tested mutation rates, so their cumulative
 curves primarily record comparable optimization cost rather than a
@@ -991,6 +983,8 @@ instantaneous regret and history-best plots.!
 
 \section{Cross-Suite Synthesis}
 \label{sec:results:synthesis}
+%   is never reached within budget --- the condition under which classical
+%   measures are least useful and anytime performance measurement matters most.
 
 Across the experimental suites, three takeaways recur. They do not
 show that \acrshort{cr} uniquely identifies a landscape class; rather,
@@ -1044,15 +1038,13 @@ the crossover behavior motivating runtime-profile reporting in
 \citet{pinto2018practice}, expressed here in the \acrshort{cr} plane
 rather than as a literal crossover fitness level.
 
-Suite~08 validates the theoretical interpretation behind these empirical
+Suite~08 supports the theoretical interpretation behind these empirical
 readings: on integer-valued benchmarks, the profile-derived and directly
-averaged \acrshort{cr} curves agree within the stated relative
-maximum pointwise error threshold (\acrshort{rmae} $<1\%$), supporting
-the tail-sum decomposition of Theorem~\ref{thm:regret-profile}. For
-real-valued landscapes such as NK, the profile surfaces should still be
-read as discretized approximations, a limitation that bounds but does
-not invalidate the qualitative conclusions drawn in
-Section~\ref{sec:results:nk}. The practical conclusion is that
+averaged \acrshort{cr} curves agree to floating-point precision, consistent with
+the tail-sum decomposition of Theorem~\ref{thm:regret-profile}. For real-valued
+landscapes such as NK, the profile surfaces should still be read as discretized
+approximations, a limitation that bounds but does not invalidate the qualitative
+conclusions drawn in Section~\ref{sec:results:nk}. The practical conclusion is that
 \acrshort{cr} should be read as a trajectory diagnostic: its slope,
 floor, and crossover points expose failure modes that \acrshort{ttfo}
 and convergence probability hide under finite budgets.
