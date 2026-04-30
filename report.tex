@@ -169,10 +169,11 @@ foundation for this project.
 toctitle=Abbreviations and Acronyms]
 
 {%
-\let\oldglossarysection\glossarysection
-\renewcommand*{\glossarysection}[2][]{\section*{#2}}%
-\printnoidxglossary[title=Glossary]
-\let\glossarysection\oldglossarysection
+  \let\oldglossarysection\glossarysection
+  \renewcommand*{\glossarysection}[2][]{
+  \section*{#2}}%
+  \printnoidxglossary[title=Glossary]
+  \let\glossarysection\oldglossarysection
 }
 
 % These include the actual text

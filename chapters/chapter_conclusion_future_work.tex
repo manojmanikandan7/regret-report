@@ -2,7 +2,125 @@
 \chapter{Conclusion and Future Work}
 \label{cha:conc}
 
-
 \section{Conclusion}
 
+This project set out to address a gap that \citet{pinto2018practice}
+identified explicitly but left open: the absence of a \textit{combined
+anytime measure} capable of describing the full quality trajectory of a
+black-box optimization algorithm rather than only its terminal behavior.
+The three success criteria established in
+Section~\ref{subsec:intro:success} provided the evidentiary floor
+against which that gap could be declared closed.
+
+\paragraph{Theoretical criterion.}
+Theorem~\ref{thm:regret-profile} establishes the required link between
+expected incumbent \acrfull{cr} and the distributional runtime profile
+$\mathcal{P}(v,t) = \mathbb{P}(\tau_v > t)$. Together with
+Corollary~\ref{cor:asymptotic-regret}, it shows that long-run
+\acrshort{cr} is governed by expected first-hitting times across
+all fitness levels, not only by the time to the optimum. This supplies
+the unified anytime measure called for in the literature.
+
+The criterion further required numerical corroboration within
+Monte-Carlo sampling error on at least two benchmark functions. Suite
+08 (Section~\ref{sec:results:suite08}) provides this corroboration on
+\textsc{OneMax} and \textsc{LeadingOnes} for both \acrshort{rls} and
+the $(1+1)$-\acrshort{ea}, with scale-normalized maximum pointwise
+errors (\acrshort{rmae}) below $1\%$ in all four combinations
+(Table~\ref{tab:profile-verification-distances}).
+The theoretical criterion is therefore met for the integer-valued benchmark
+setting tested here.
+
+\paragraph{Empirical criterion.}
+The empirical criterion required \acrshort{cr} trajectories to
+yield qualitatively distinct signatures across at least three landscape
+archetypes that classical measures cannot separate. The experimental
+evidence meets this standard on multiple axes.
+
+On smooth unimodal landscapes (\textsc{OneMax}, \textsc{LeadingOnes},
+\textsc{BinVal}), Suites~01 and~02 show that incumbent \acrshort{cr}
+curves converge to finite asymptotes whose ordering can \textit{invert}
+the \acrshort{ttfo} ordering. Thus, the asymptotic identity has direct
+empirical consequence: early progress across intermediate fitness
+levels matters, even when the final optimum is eventually reached.
+
+On barrier and deceptive landscapes (\textsc{Jump}, \textsc{Trap},
+\textsc{Plateau}), where $P(\text{opt}) \approx 0$ within the
+available budget and \acrshort{ttfo} distributions provide no usable
+samples, \acrshort{cr} trajectories remain informative. Even when
+barrier archetypes are not perfectly separated within the finite
+budget, their slopes expose residual fitness gaps and stagnation
+levels. This is the operational content of the project's central claim:
+regret provides structured information precisely where binary
+convergence measures go silent.
+
+SA cooling schedule aggressiveness is directly legible in the
+instantaneous regret trajectory (Suite~11), with the onset of the
+low-regret floor ordering schedules from fastest to slowest. On NK
+landscapes, the regret plots expose the cooling--ruggedness trade-off:
+temperature-driven exploration is costly on low-epistasis instances but
+becomes competitive, and in calibrated cases beneficial, as epistasis
+increases. The empirical criterion is met across more than three
+landscape archetypes.
+
+\paragraph{Software criterion.}
+The \texttt{regret} framework provides the required reproducible
+execution layer for all reported suites, including trajectory
+recording, regret computation, runtime-profile analysis, and
+\acrfull{ci}-enforced branch coverage across Python 3.12, 3.13, and
+3.14.
+
+All three success criteria are therefore satisfied. In answering
+\citet{pinto2018practice}'s call, this project demonstrates that
+incumbent \acrshort{cr} is a natural extension of fixed-budget
+analysis. A connection was established between \acrshort{cr}
+and runtime profiles on integer-valued pseudo-Boolean landscapes, with
+discretization required beyond that setting.
+
 \section{Future Work}
+
+\paragraph{Tight analytical and asymptotic regret bounds.}
+While Theorem~\ref{thm:regret-profile} provides a route from known
+hitting-time bounds to regret bounds via the distributional runtime
+profile, the resulting expressions are in general loose. Deriving
+tight asymptotic characterizations of $\mathbb{E}[\mathrm{CR}(T)]$ for
+\acrshort{rls} and the $(1+1)$-\acrshort{ea} on
+\textsc{OneMax}, \textsc{LeadingOnes}, and $\textsc{Jump}_k$ remains an
+open theoretical problem. A larger scaling study over increasing $n$
+would complement this by testing whether observed regret asymptotes
+grow at the rates predicted by summing known $\mathbb{E}[\tau_v]$
+expressions across fitness levels.
+
+\paragraph{Extension to unknown optima.}
+A key assumption throughout this project is that the global optimum
+$f^*$ is known in advance, which is necessary for computing exact
+regret values. This assumption holds for the emulated benchmark
+problems studied here but rarely in genuine black-box practice. Future
+work could pursue two complementary directions: the development of
+principled heuristics for estimating $f^*$ online, and the adoption of
+a probabilistic treatment of the global optimum that would allow the
+tail-sum identity to be applied under uncertainty. Problems where the
+optimum is known apriori, but the objective landscape remains hidden
+represent a particularly tractable intermediate case: the regret
+framework developed here provides the necessary foundation for
+exploiting that knowledge.
+
+\paragraph{Regret-optimal parameter schedules.}
+The $\varepsilon$-greedy and decaying-$\varepsilon$-greedy
+\acrshort{rls} variants studied in this project use exploration
+schedules motivated by classical bandit theory, but it is not known
+whether these schedules minimize \acrshort{cr} in the
+pseudo-Boolean setting, where reward structure is non-stationary.
+An analog of the UCB1 construction~\cite{auer2002finite} adapted to
+the search-space structure of $\{0,1\}^n$ could provide a principled
+route to parameter control with explicit regret guarantees, connecting
+the exploration--exploitation analysis of online learning to the
+adaptive operator selection literature in evolutionary computation.
+
+\paragraph{High-probability tail bounds.}
+The analyses presented here concern expected quantities, corresponding
+to the Las Vegas framework. Deriving high-probability tail bounds on
+incumbent \acrshort{cr}, analogous to the concentration results
+available for bandit algorithms~\cite{lattimore2020bandit}, would
+allow practitioners to give finite-confidence guarantees on worst-case
+trajectory quality rather than only on its expectation.

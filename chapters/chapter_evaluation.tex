@@ -160,7 +160,18 @@ observed, the regret trajectory continues to distinguish algorithms
 by the quality of their trapped incumbent, information that a binary
 optimum achievement measure cannot provide.
 
-
+% For the \textsc{Jump}($k=3$) and \textsc{Trap}($k=10$), all
+% algorithms are stuck in the basins, within the given budget. This
+% means $\mathbb{E}[T]$ is not defined (in this run),
+% $\mathcal{P}(opt)\approx 0$. However, looking at the \emph{slope
+% (or gradient)} of the median \acrshort{cr} curves for each
+% algorithm, it is clear they are,
+% \begin{enumerate*}
+%     \item Parallel to one another;
+%     \item The steeper the slope, the greater the value cost of
+% entrapment in local optima;
+%     \item The non-zero gradients are primarily problem dependent.
+% \end{enumerate*}
 
 \subsection{Suite 02: Extended Pseudo-Boolean Benchmark}
 \label{sec:results:suite02}
@@ -353,17 +364,21 @@ larger in absolute value.
     Problem & Algorithm & \acrshort{rmse} & \acrshort{mae} & \acrshort{rmae} \\
     \midrule
     \multirow{2}{8.5em}{\textsc{OneMax} (Budget: 2\,000)}
-      & $(1+1)$-\acrshort{ea} & $8.90\times10^{-12}$ & $1.18\times10^{-11}$ & $2.09\times10^{-15}$ \\
-      & \acrshort{rls}        & $3.02\times10^{-12}$ & $4.55\times10^{-12}$ & $9.33\times10^{-16}$ \\
+    & $(1+1)$-\acrshort{ea} & $8.90\times10^{-12}$ &
+    $1.18\times10^{-11}$ & $2.09\times10^{-15}$ \\
+    & \acrshort{rls}        & $3.02\times10^{-12}$ &
+    $4.55\times10^{-12}$ & $9.33\times10^{-16}$ \\
     \midrule
     \multirow{2}{8.5em}{\textsc{LeadingOnes} (Budget: 10\,000)}
-      & $(1+1)$-\acrshort{ea} & $1.37\times10^{-9}$ & $2.82\times10^{-9}$ & $1.22\times10^{-14}$ \\
-      & \acrshort{rls}        & $3.57\times10^{-9}$ & $5.76\times10^{-9}$ & $2.33\times10^{-14}$ \\
+    & $(1+1)$-\acrshort{ea} & $1.37\times10^{-9}$ &
+    $2.82\times10^{-9}$ & $1.22\times10^{-14}$ \\
+    & \acrshort{rls}        & $3.57\times10^{-9}$ &
+    $5.76\times10^{-9}$ & $2.33\times10^{-14}$ \\
     \bottomrule
   \end{tabular}
   \caption[Pointwise profile verification distances]{Pointwise
     distances between the empirically calculated $\mathbb{E}[\mathrm{CR}]$
-    and the distributional profile-derived $\mathrm{CR}$.}
+  and the distributional profile-derived $\mathrm{CR}$.}
   \label{tab:profile-verification-distances}
 \end{table}
 \FloatBarrier
@@ -382,7 +397,7 @@ both curves are deterministic transformations of that same sample. The
 pointwise comparison therefore tests implementation agreement: for OneMax and
 LeadingOnes, the profile calculation uses the exact integer fitness levels
 $1,\ldots,100$ and every evaluation time point at the displayed budgets. The
-remaining differences are therefore numerical round-off. 
+remaining differences are therefore numerical round-off.
 The separate discretization caveat applies later to
 real-valued landscapes such as NK.
 \begin{figure}[!htbp]
@@ -573,7 +588,8 @@ Matched-Budget Reference}
   the optimum.}
   \label{fig:jumpinst}
 \end{figure}
-Figures~\ref{fig:jumpinst-small} and~\ref{fig:jumpinst} depict the incumbent, instantaneous regret
+Figures~\ref{fig:jumpinst-small} and~\ref{fig:jumpinst} depict the
+incumbent, instantaneous regret
 curves for Jump-$k$, $k \in \{2,3,5,7,10\}$.
 The instantaneous incumbent-regret trajectories show two
 distinct phases: an initial descent toward the local optimum, followed by a
@@ -744,7 +760,7 @@ usable samples.
     \textsc{Jump}-$5$, \textsc{Plateau}-$5$, and \textsc{Trap}-$5$ are exactly
     identical for the purpose used here: they show zero endpoint convergence for
     every mutation-rate variant, so the regret distribution is the more
-    informative finite-budget diagnostic.}
+  informative finite-budget diagnostic.}
   \label{fig:suite10-regret-boxplot}
 \end{figure}
 
@@ -768,7 +784,7 @@ usable samples.
   \caption[Suite 10 barrier-archetype instantaneous regret]{Suite~10
     incumbent \acrshort{ir} trajectories for the three $k=5$ barrier
     archetypes. The plots expose the trapped-regret floors even when
-    convergence probability is uniformly uninformative.}
+  convergence probability is uniformly uninformative.}
   \label{fig:suite10-ir}
 \end{figure}
 
@@ -792,15 +808,17 @@ usable samples.
   \caption[Suite 10 barrier-archetype cumulative regret]{Suite~10
     incumbent \acrshort{cr} trajectories for the three $k=5$ barrier
     archetypes. The cumulative curves record the cost of each trapped phase
-    under identical mutation-rate variants and budget.}
+  under identical mutation-rate variants and budget.}
   \label{fig:suite10-cr}
 \end{figure}
 
 The \textsc{Jump}-$5$ and \textsc{Plateau}-$5$ incumbent
 \acrshort{cr} curves remain close in shape, matching the behavior
-already observed in the Suite~06 matched comparison~\ref{fig:suite06-plateau-jump-k2}. At this
+already observed in the Suite~06 matched
+comparison~\ref{fig:suite06-plateau-jump-k2}. At this
 width, the neutral-walk and gap-crossing mechanisms induce similar
-realized \acrshort{ir} curves under the tested mutation rates, so their cumulative
+realized \acrshort{ir} curves under the tested mutation rates, so
+their cumulative
 curves primarily record comparable optimization cost rather than a
 visibly separate barrier signature (Figures~\ref{fig:suite10-ir}
 and~\ref{fig:suite10-cr}).
@@ -809,7 +827,8 @@ The \textsc{Trap}-$5$ median incumbent \acrshort{ir} trajectories
 show a clearer contrast. Across all four mutation-rate variants, the
 algorithm spends substantially longer at intermediate fitness
 levels before settling into the deceptive basin with residual regret
-approximately $k$ (Figure~\ref{fig:suite10-trap-k5-ir}). This extended intermediate phase is
+approximately $k$ (Figure~\ref{fig:suite10-trap-k5-ir}). This
+extended intermediate phase is
 consistent with the deceptive gradient: progress can continue locally,
 but it carries the search toward the wrong basin rather than toward the
 global optimum.
@@ -1040,7 +1059,7 @@ with Problem Size}
   \caption[Suite 07 HIFF instantaneous regret]{Suite~07 incumbent
     \acrshort{ir} trajectories for \acrshort{hiff} as problem size increases.
     The terminal floors show the partial-progress level reached under the
-    finite evaluation budgets.}
+  finite evaluation budgets.}
   \label{fig:suite07-ir}
 \end{figure}
 
@@ -1063,7 +1082,7 @@ with Problem Size}
   \end{subfigure}
   \caption[Suite 07 HIFF best-history plots]{Suite~07 best-so-far fitness
     histories for \acrshort{hiff}. These plots show the hierarchical
-    stagnation levels directly, complementing the regret view.}
+  stagnation levels directly, complementing the regret view.}
   \label{fig:suite07-best}
 \end{figure}
 
@@ -1086,7 +1105,7 @@ with Problem Size}
   \end{subfigure}
   \caption[Suite 07 HIFF cumulative regret]{Suite~07 incumbent
     \acrshort{cr} trajectories for \acrshort{hiff}. Increasing problem size
-    raises the cumulative cost of partial progress under the fixed budgets.}
+  raises the cumulative cost of partial progress under the fixed budgets.}
   \label{fig:suite07-cr}
 \end{figure}
 
@@ -1106,7 +1125,8 @@ moves, and allowing multi-bit flips. Over the three tested
 \acrshort{hiff} sizes,
 these mechanisms improve partial progress but do not establish a general
 convergence threshold (Figures~\ref{fig:suite07-ir}
-and~\ref{fig:suite07-best}). The appropriate conclusion is therefore narrower than a
+and~\ref{fig:suite07-best}). The appropriate conclusion is therefore
+narrower than a
 regret-scaling law: on hierarchical landscapes, mutation and exploration affect
 both the final incumbent quality and the rate at which cumulative regret accrues
 under a fixed evaluation budget (Figures~\ref{fig:suite07-ir},
@@ -1139,7 +1159,8 @@ optimum. This is the operational content of the project's central claim:
 regret provides structured information precisely where \acrshort{ttfo}
 distributions and $P(\mathrm{opt})$ summaries are least informative.
 
-\paragraph{The asymptotic regret ordering can invert the \acrshort{ttfo} ordering.}
+\paragraph{The asymptotic regret ordering can invert the
+\acrshort{ttfo} ordering.}
 Suites~01 and~02 show that earlier arrival at the global optimum does
 not necessarily imply lower cumulative cost. The inversion on
 \textsc{LeadingOnes} and \textsc{BinVal}, where \acrshort{rls}
@@ -1175,7 +1196,8 @@ averaged \acrshort{cr} curves agree to floating-point precision, consistent with
 the tail-sum decomposition of Theorem~\ref{thm:regret-profile}. For real-valued
 landscapes such as NK, the profile surfaces should still be read as discretized
 approximations, a limitation that bounds but does not invalidate the qualitative
-conclusions drawn in Section~\ref{sec:results:nk}. The practical conclusion is that
+conclusions drawn in Section~\ref{sec:results:nk}. The practical
+conclusion is that
 \acrshort{cr} should be read as a trajectory diagnostic: its slope,
 floor, and crossover points expose failure modes that \acrshort{ttfo}
 and convergence probability hide under finite budgets.
