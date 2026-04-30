@@ -2,4 +2,36 @@
 % Single spacing can be turned on for the abstract
 %
 % {\singlespacing
-TODO: Add abstract after completion of report
+Optimization algorithms are routinely applied to problems where the
+only available feedback is the quality of a proposed solution -- no
+structural information, no gradients. Evaluating how well such
+algorithms perform has traditionally relied on a single question: how
+long until the best possible solution is found? This measure, while
+theoretically convenient, says nothing about solution quality before
+that moment arrives, and fails entirely when the budget runs out
+before the optimum is reached.
+
+This report addresses that gap. It develops a formal connection
+between a trajectory-aware performance measure from reinforcement learning, 
+cumulative regret, and an existing framework from evolutionary
+computation that tracks how quickly algorithms improve across
+different quality levels, dubbed `Runtime Profiles'. The resulting identity shows that these two
+perspectives, previously treated as separate, are mathematically
+equivalent. This provides the "combined anytime measure" the
+literature has called for but not yet delivered.
+
+To validate and explore this connection, a purpose-built experimental
+framework was developed, enabling reproducible, large-scale
+comparisons of several algorithm families across a broad collection
+of benchmark problems. These problems range from smooth,
+well-understood landscapes to deceptive, hierarchical, and highly
+rugged ones, each posing a different kind of challenge.
+
+The experiments confirm the theoretical identity numerically and
+reveal that regret trajectories expose meaningful differences between
+algorithms even in cases where traditional measures are silent: when
+no algorithm finds the optimum within the available budget, when
+landscapes trap algorithms in suboptimal regions, or when two
+algorithms arrive at the same endpoint via very different paths.
+Across all settings, regret provides structured diagnostic
+information that convergence-based summaries traditionally cannot.

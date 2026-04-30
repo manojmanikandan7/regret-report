@@ -430,7 +430,8 @@ distribution over instances~\cite{droste2006blackbox}
     \label{fig:landscape-trap}
   \end{subfigure}
 
-  \caption[Pseudo-Boolean benchmark landscapes]{Unitation\footnotemark-based views
+  \caption[Pseudo-Boolean benchmark
+  landscapes]{Unitation\footnotemark-based views
     of representative pseudo-Boolean benchmark
     landscapes. Here $u=|x|_1$ denotes the number of one-bits. For the
     parameterized landscapes, $k$ is shown directly on the unitation axis and
@@ -438,7 +439,11 @@ distribution over instances~\cite{droste2006blackbox}
   \label{fig:benchmark-landscape-subfigures}
 \end{figure}
 \footnotetext{\emph{Unitation} is the number of ones in a bitstring}
-\footnotetext{\emph{Unitation} is essentially the sum of n independent Bernoulli variables, so is sharply peaked at n/2 which is the expected mean. The variance is n/4. Random search for any particular string (e.g.\textsc{OneMax}) will spend most of the time around strings of approximately half ones and half zeros.}
+\footnotetext{\emph{Unitation} is essentially the sum of n
+  independent Bernoulli variables, so is sharply peaked at n/2 which is
+  the expected mean. The variance is n/4. Random search for any
+  particular string (e.g.\textsc{OneMax}) will spend most of the time
+around strings of approximately half ones and half zeros.}
 The \textit{pseudo-Boolean} setting considers functions $f :
 \{0,1\}^n \to \mathbb{R}$
 defined on binary strings of length $n$. Several benchmark functions
@@ -656,8 +661,9 @@ multi-level sense.
 
 The fitness of a bitstring $x \in \{0,1\}^n$, where $n$ must be a
 power of two, is defined recursively. A block $B$ of length one
-always contributes a fitness of one. 
-Let $|B|$ describes the \emph{length} of bitstring $B$. For any longer block, if all 
+always contributes a fitness of one.
+Let $|B|$ describes the \emph{length} of bitstring $B$. For any
+longer block, if all
 bits in $B$ are identical (all zeros or all ones), the block
 contributes $|B|$ to fitness and its two halves are recursively
 evaluated; otherwise only the recursive evaluation of the two halves
