@@ -189,11 +189,13 @@ $T$ evaluations is therefore
 \[
   \mathrm{CR}(T) \;:=\; \sum_{t=1}^{T} \bigl(f^* - B(t)\bigr).
 \]
-For the exact identity below, fitness values are assumed to lie on a
-non-negative integer-valued level grid, after any explicit translation or
-discretization. This is the setting used by the verification suite; real-valued
-landscapes such as NK are handled empirically by discretizing their observed
-fitness range and should be interpreted as approximations.
+For the identity below, fitness values are assumed, after any
+explicit translation or rescaling, to lie on the integer level grid
+\(\{0,1,\ldots,f^*\}\), with \(f^* \in \mathbb{N}\). Hence, \(B(t)\) is
+integer-valued and sums over \(v=1,\ldots,f^*\) are counting-measure sums
+over unit target levels. Real-valued landscapes such as NK landscapes are handled
+empirically by discretizing the observed fitness range, and the resulting
+profile-derived regret curves should be interpreted as approximations.
 
 The proof of the main theorem relies on two elementary lemmas.
 
@@ -202,6 +204,13 @@ The proof of the main theorem relies on two elementary lemmas.
   For any integer $b$ with $0 \le b \le f^*$,
   \[
     f^* - b \;=\; \sum_{v=1}^{f^*} \mathbf{1}[b < v].
+    \footnote{The zero level is omitted because all fitness values are non-negative:
+    \(\mathbf{1}[b<0]=0\) for every admissible incumbent value \(b\).
+    Hence, \[
+    \sum_{v=0}^{f^*}\mathbf{1}[b<v]
+    = \sum_{v=1}^{f^*}\mathbf{1}[b<v]
+    \].
+    }
   \]
 \end{lemma}
 
@@ -361,6 +370,27 @@ measuring algorithm
 performance but are two views of the same underlying quantity,
 connected through the
 distributional runtime profile $\mathcal{P}(v, t)$.
+
+\begin{remark}[Real-valued objectives]
+  \label{rem:real-valued-objectives}
+  The integer-valued assumption is used only to express regret as a
+  counting-measure sum over unit fitness thresholds. For a real-valued
+  objective \(f : \{0,1\}^n \to [0,f^*]\), the corresponding exact identity
+  replaces this sum by an integral. Since
+  \[
+    f^* - b = \int_0^{f^*} \mathbf{1}[b < v]\,dv
+  \]
+  for \(b \in [0,f^*]\), the same argument gives
+  \[
+    \mathbb{E}[\mathrm{CR}(T)]
+    =
+    \int_0^{f^*} \sum_{t=1}^{T}
+    \mathbb{P}(\tau_v > t)\,dv,
+  \]
+  where \(\tau_v\) denotes the first time the incumbent value reaches at
+  least \(v\). This continuous-threshold form is not used in the empirical
+  verification in this report; it remains an open problem for rigorous formalization.
+\end{remark}
 
 \section{Practical Relevance}
 \label{subsec:profiles-relevance}
