@@ -14,7 +14,7 @@ by providing only the \textit{zeroth-order} information.
 A supplementary experimental framework, \texttt{regret}, was developed to
 support the orchestration and analysis of experiments on pseudo-Boolean and
 combinatorial optimization problems. The framework was motivated by the
-absence of readily available tooling that combines (i)~flexible, declarative
+absence of readily available software infrastructure that combines (i)~flexible, declarative
 batch experiment execution, (ii)~trajectory-level data collection, and
 (iii)~regret-specific analysis pipelines in a single cohesive system.
 
@@ -25,7 +25,7 @@ runtime profile analysis, or the configuration-first experiment
 execution model required
 for this project's experimental protocol. \texttt{regret} was therefore
 purpose-built to fill this gap, providing a reproducible, extensible
-environment for studying simple, instantaneous, and \acrshort{cr} across
+environment for studying \acrfull{sr}, \acrfull{ir}, and \acrfull{cr} across
 a controlled suite of algorithms and benchmark problems.
 
 \subsection{Preexisting software}
@@ -120,7 +120,7 @@ execution of logically grouped experiment suites from a single invocation.
 The software was intended to be extensive and configurable for other
 developers and users to interact with quickly, with options for
 modularity when required.
-This was enabled by the adoption of configuration-first, job dispatch
+This was enabled by the adoption of configuration-first job dispatch
 policy for independent and declarative experimentation. Problems and
 Algorithms to test against can easily be defined by extending
 abstract classes \texttt{Problem} and \texttt{Algorithm}, ensuring a
@@ -483,7 +483,7 @@ Runtime installation: \texttt{uv sync}; development installation:
   \texttt{ipympl}                       & 0.10.0 & Interactive
   Matplotlib in notebooks \\
   \texttt{networkx}~\cite{networkx}& 3.6.1  & Graph problem
-  instances (e.g.\ Petersen colouring) \\
+  instances (e.g.\ Petersen coloring) \\
   \hline
   \multicolumn{3}{l}{\textit{Configuration and \acrshort{cli}}} \\
   \hline
